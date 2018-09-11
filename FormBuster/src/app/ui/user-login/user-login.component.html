@@ -1,0 +1,32 @@
+<h1>Login</h1>
+
+<!-- <p>
+  Learn more about
+  <a href="https://angularfirebase.com/tag/authentication">Firebase auth strategies</a>.
+</p> -->
+<hr>
+
+<div *ngIf="!(auth.user | async); else alreadyLoggedIn">
+
+  <h3>Tracks login</h3>
+
+    <button (click)="signInWithGoogle()" class="button btn-social btn-google">
+      <i class="fa fa-google fa-lg"></i> Login with Tracks
+    </button>
+    <!-- <h3>Anonymous Login</h3>
+
+      <button (click)="signInAnonymously()" class="button button-info">
+        <i class="fa fa-user-secret fa-lg"></i> Connect Anonymously
+      </button> -->
+
+    <hr>
+
+    <user-form></user-form>
+
+</div>
+
+<ng-template #alreadyLoggedIn>
+  <p class="text-success">
+    You are logged in <i class="fa fa-thumbs-up"></i>
+  </p>
+</ng-template>

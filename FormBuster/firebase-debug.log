@@ -1,0 +1,80 @@
+[debug] [2018-09-10T22:22:21.866Z] ----------------------------------------------------------------------
+[debug] [2018-09-10T22:22:21.870Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2018-09-10T22:22:21.871Z] CLI Version:   4.2.1
+[debug] [2018-09-10T22:22:21.871Z] Platform:      darwin
+[debug] [2018-09-10T22:22:21.871Z] Node Version:  v8.11.4
+[debug] [2018-09-10T22:22:21.871Z] Time:          Mon Sep 10 2018 18:22:21 GMT-0400 (EDT)
+[debug] [2018-09-10T22:22:21.871Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-10T22:22:21.920Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-10T22:22:21.920Z] > authorizing via signed-in user
+[debug] [2018-09-10T22:22:21.923Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-10T22:22:21.923Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+
+[debug] [2018-09-10T22:22:22.222Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-10T22:22:22.285Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/formbuster-73603  
+ 
+[debug] [2018-09-10T22:22:22.897Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-10T22:22:22.899Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/formbuster-73603  
+ 
+[debug] [2018-09-10T22:22:23.176Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/mcnels/Documents/FIT/2018/Fall/CSE4201/FormBuster/FormBuster'...
+[info] 
+[debug] [2018-09-10T22:22:23.179Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/886328297024/clients/_:getWebAppConfig  
+ 
+[debug] [2018-09-10T22:22:23.589Z] <<< HTTP RESPONSE 200
+[info] i  hosting[formbuster-73603]: Serving hosting files from: public
+[info] ✔  hosting[formbuster-73603]: Local server: http://localhost:5000
+[debug] [2018-09-10T22:28:26.710Z] ----------------------------------------------------------------------
+[debug] [2018-09-10T22:28:26.712Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2018-09-10T22:28:26.713Z] CLI Version:   4.2.1
+[debug] [2018-09-10T22:28:26.713Z] Platform:      darwin
+[debug] [2018-09-10T22:28:26.713Z] Node Version:  v8.11.4
+[debug] [2018-09-10T22:28:26.713Z] Time:          Mon Sep 10 2018 18:28:26 GMT-0400 (EDT)
+[debug] [2018-09-10T22:28:26.713Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-10T22:28:26.727Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-10T22:28:26.728Z] > authorizing via signed-in user
+[debug] [2018-09-10T22:28:26.730Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/formbuster-73603  
+ 
+[debug] [2018-09-10T22:28:27.207Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-10T22:28:27.209Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/formbuster-73603  
+ 
+[debug] [2018-09-10T22:28:27.577Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/mcnels/Documents/FIT/2018/Fall/CSE4201/FormBuster/FormBuster'...
+[info] 
+[debug] [2018-09-10T22:28:27.579Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/886328297024/clients/_:getWebAppConfig  
+ 
+[debug] [2018-09-10T22:28:27.876Z] <<< HTTP RESPONSE 200
+[warn] ⚠  hosting: Port 5000 is not available. Trying another port...
+[info] i  hosting[formbuster-73603]: Serving hosting files from: public
+[info] ✔  hosting[formbuster-73603]: Local server: http://localhost:5005
+[debug] [2018-09-11T01:26:12.855Z] ----------------------------------------------------------------------
+[debug] [2018-09-11T01:26:12.859Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2018-09-11T01:26:12.859Z] CLI Version:   4.2.1
+[debug] [2018-09-11T01:26:12.859Z] Platform:      darwin
+[debug] [2018-09-11T01:26:12.859Z] Node Version:  v8.11.4
+[debug] [2018-09-11T01:26:12.871Z] Time:          Mon Sep 10 2018 21:26:12 GMT-0400 (EDT)
+[debug] [2018-09-11T01:26:12.871Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-11T01:26:12.932Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-11T01:26:12.933Z] > authorizing via signed-in user
+[debug] [2018-09-11T01:26:12.936Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/formbuster-73603  
+ 
+[debug] [2018-09-11T01:26:13.643Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-11T01:26:13.645Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/formbuster-73603  
+ 
+[debug] [2018-09-11T01:26:13.942Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/mcnels/Documents/FIT/2018/Fall/CSE4201/FormBuster/FormBuster'...
+[info] 
+[debug] [2018-09-11T01:26:13.944Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/886328297024/clients/_:getWebAppConfig  
+ 
+[debug] [2018-09-11T01:26:14.186Z] <<< HTTP RESPONSE 200
+[warn] ⚠  hosting: Port 5000 is not available. Trying another port...
+[warn] ⚠  hosting: Port 5000 is not available. Trying another port...
+[warn] ⚠  hosting: Port 5000 is not available. Trying another port...
+[info] i  hosting[formbuster-73603]: Serving hosting files from: public
+[info] ✔  hosting[formbuster-73603]: Local server: http://localhost:5015

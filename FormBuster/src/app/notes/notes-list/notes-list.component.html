@@ -1,0 +1,14 @@
+<h1>My Forms</h1>
+
+<hr>
+
+<input [(ngModel)]="content" placeholder="Add something in your folder" class="input" name="note">
+
+
+<button class="button is-success" (click)="clickHandler()" [disabled]="content?.length < 2 || content?.length > 200">
+  Add
+</button>
+<hr>
+<div *ngFor="let note of notes | async">
+    <note-detail [note]="note"></note-detail>
+</div>
