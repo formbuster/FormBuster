@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <title>Form Buster</title>
+</head>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link href="styles.css" rel="stylesheet" type="text/css">
+<script src="scripts.js"></script>
+
+<body>
+<header>
+    <div class="w3-theme-red w3-bar">
+        <button id="openNav" class="w3-button w3-theme-red w3-large w3-left" onclick="w3_toggle()">&#9776;</button>
+        <a href="http://formbuster.me" class="w3-bar-item w3-button w3-large">FORMBUSTER</a>
+        <a href="#" class="w3-bar-item w3-button w3-right">Sign out</a>
+        <a href="#" class="w3-bar-item w3-button w3-right w3-border-right">Notification Preferences</a>
+        <a href="#" class="w3-bar-item w3-button w3-right w3-border-right">Test Student</a>
+    </div>
+
+    <div class="w3-sidebar w3-bar-block w3-card w3-black w3-animate-left" style="display:none" id="mySidebar">
+        <a href="#" class="w3-bar-item w3-button w3-hover-theme w3-large">Dashboard</a>
+        <a href="#" class="w3-bar-item w3-button w3-hover-theme w3-large">Forms</a>
+        <a href="#" class="w3-bar-item w3-button w3-hover-theme w3-large">History</a>
+    </div>
+</header>
+
+<div id="main">
+    <div class="w3-cell-row">
+
+        <div class="w3-container w3-cell" style="width: 70%;">
+            <div class="w3-text-theme-red"><H2>In-Progress</H2></div>
+            <div class=" w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">
+                <H3>Registration Form</H3>
+                <H4 class="w3-right">Submission Date: 09-09-2018</H4>
+                <h4 class="w3-right">Due Date: 09-18-2018</h4>
+                <button class="w3-button w3-circle w3-green">✔</button>
+                <button class="w3-button w3-circle w3-gray">✔</button>
+                <button class="w3-button w3-circle w3-gray">✔</button>
+
+            </div>
+        </div>
+
+        <div class="w3-container w3-cell w3-right">
+            <div class="w3-text-theme-red"><H2>Notifications</H2></div>
+            <div class="w3-panel w3-white w3-display-container">
+              <span onclick="this.parentElement.style.display='none'"
+                    class="w3-button w3-white w3-medium w3-display-topright">&times;</span>
+                <p>David Lee has approved your Registration Form hbiub</p>
+                <p>4 min ago</p>
+            </div>
+            <div class="w3-panel w3-white w3-display-container">
+              <span onclick="this.parentElement.style.display='none'"
+                    class="w3-button w3-white w3-medium w3-display-topright">&times;</span>
+                <p>David Lee has approved your Registration F</p>
+                <p>4 min ago</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="w3-container w3-theme-red" id="footer">
+    &#0169 2018 FORMBUSTER, All Rights Reserved
+    <a href="#" class="w3-bar-item w3-button w3-right">About</a>
+    <a href="#" class="w3-bar-item w3-button w3-right">Help</a>
+    <a href="#" class="w3-bar-item w3-button w3-right">Contact Us</a>
+</div>
+
+
+</body>
+
+
+</html>
