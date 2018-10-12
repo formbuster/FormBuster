@@ -2,15 +2,22 @@
 .w3-hover-theme:hover {color:#000 !important; background-color:#f4eded !important}
 .w3-border-theme {border-color:#770000 !important}
 .w3-text-theme-red {color:#770000 !important}
+header{
+    overflow: auto;
 
+}
 body {
     background-color: #F4EDED;
 }
 
 #footer{
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height:50px;
+    height:30px;
+}
+
+.form-contents {
+    display: none;
 }
