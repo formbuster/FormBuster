@@ -24,35 +24,11 @@
          * Handles the sign in button press.
          */
         function toggleSignOut() {
-            if (firebase.auth().currentUser) {
-                // [START signout]
-                firebase.auth().signOut();
-                window.location = 'http://formbuster.me/';
-                // [END signout]
-            } else {
-
-            }
-            document.getElementById('sign-out').disabled = true;
+            firebase.auth().signOut();
+            window.location = 'http://formbuster.me/';
         }
 
         function initApp() {
-            // Listening for auth state changes.
-            // [START authstatelistener]
-            firebase.auth().onAuthStateChanged(function(user) {
-                if (user) {
-                    // User is signed in.
-                    var uid = user.uid;
-
-                    document.getElementById('quickstart-account-details').textContent = JSON.stringify(uid, null, '  ');
-                } else {
-                    // User is signed out.
-                }
-                // [START_EXCLUDE silent]
-                document.getElementById('sign-out').disabled = false;
-                // [END_EXCLUDE]
-            });
-            // [END authstatelistener]
-
             document.getElementById('sign-out').addEventListener('click', toggleSignOut, false);
         }
 
@@ -62,7 +38,7 @@
     </script>
 </head>
 <body>
-    <p>Student [<pre><code id="quickstart-account-details">null</code></pre>] is logged in.</p>
+    <p>Student is logged in.</p>
     <button id="sign-out" name="signout">Sign Out</button>
 
 </body>
