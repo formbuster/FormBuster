@@ -20,20 +20,28 @@
 
     <script type="text/javascript">
 
-        function toggleSignOut() {
-            firebase.auth().onAuthStateChanged(function (user) {
-                if (user) {
-                    toggleSignOut();
-                    window.location = 'http://pseudotracks.me/';
-                }
+        // function toggleSignOut() {
+        //     firebase.auth().onAuthStateChanged(function (user) {
+        //         if (user) {
+        //             toggleSignOut();
+        //             window.location = 'http://pseudotracks.me/';
+        //         }
+        //     });
+        // }
+        window.signOut = function signOut(_e) {
+            firebase.auth().signOut().then(function() {
+                window.location = 'http://pseudotracks.me/';
+                // Sign-out successful.
+            }).catch(function(error) {
+                // An error happened.
             });
         }
 
     </script>
 </head>
 <body>
-    <p>Student is logged in.</p>
-    <button onclick="toggleSignOut()" name="signout">Sign Out</button>
+    <!--<p>Student is logged in.</p>-->
+    <button onclick="signOut()">Sign Out</button>
 
 </body>
 </html>
