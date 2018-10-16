@@ -29,12 +29,14 @@
         //     });
         // }
         window.signOut = function signOut(_e) {
-            firebase.auth().signOut().then(function() {
-                window.location = 'http://pseudotracks.me/';
-                // Sign-out successful.
-            }).catch(function(error) {
-                // An error happened.
-            });
+            if (firebase.auth().currentUser) {
+                firebase.auth().signOut().then(function () {
+                    window.location = 'http://pseudotracks.me/';
+                    // Sign-out successful.
+                }).catch(function (error) {
+                    // An error happened.
+                });
+            }
         }
 
     </script>
