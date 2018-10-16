@@ -25,10 +25,16 @@
          */
         function toggleSignOut() {
             firebase.auth().signOut();
-            window.location = 'http://formbuster.me/';
         }
 
         function initApp() {
+            firebase.auth().onAuthStateChanged(function (user) {
+                // Once authenticated, instantiate Form Buster with the logged in user
+                if (user) {
+                    toggleSignOut();
+                    window.location = 'http://pseudotracks.me/';
+                }
+            });
             document.getElementById('sign-out').addEventListener('click', toggleSignOut, false);
         }
 
