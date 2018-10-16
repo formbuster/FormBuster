@@ -4,46 +4,11 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase.js"></script>
-    <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "AIzaSyAWosl7w3NfRpAYL-j1XWLDZujl8GpO-KA",
-            authDomain: "pseudotracks-bb89e.firebaseapp.com",
-            databaseURL: "https://pseudotracks-bb89e.firebaseio.com",
-            projectId: "pseudotracks-bb89e",
-            storageBucket: "pseudotracks-bb89e.appspot.com",
-            messagingSenderId: "369787432909"
-        };
-        firebase.initializeApp(config);
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
-
-    <script type="text/javascript">
-
-        // function toggleSignOut() {
-        //     firebase.auth().onAuthStateChanged(function (user) {
-        //         if (user) {
-        //             toggleSignOut();
-        //             window.location = 'http://pseudotracks.me/';
-        //         }
-        //     });
-        // }
-        window.signOut = function signOut(_e) {
-            if (firebase.auth().currentUser) {
-                firebase.auth().signOut().then(function () {
-                    window.location = 'http://pseudotracks.me/';
-                    // Sign-out successful.
-                }).catch(function (error) {
-                    // An error happened.
-                });
-            }
-        }
-
-    </script>
 </head>
 <body>
     <!--<p>Student is logged in.</p>-->
-    <button onclick="signOut()">Sign Out</button>
-
+    <button onclick="dash.signOut()">Sign Out</button>
+    <script src="../js/firebase.js"></script>
+    <script src="../js/dash.js"></script>
 </body>
 </html>
