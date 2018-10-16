@@ -20,32 +20,20 @@
 
     <script type="text/javascript">
 
-        /**
-         * Handles the sign in button press.
-         */
         function toggleSignOut() {
-            firebase.auth().signOut();
-        }
-
-        function initApp() {
             firebase.auth().onAuthStateChanged(function (user) {
-                // Once authenticated, instantiate Form Buster with the logged in user
                 if (user) {
                     toggleSignOut();
                     window.location = 'http://pseudotracks.me/';
                 }
             });
-            document.getElementById('sign-out').addEventListener('click', toggleSignOut, false);
         }
 
-        window.onload = function() {
-            initApp();
-        };
     </script>
 </head>
 <body>
     <p>Student is logged in.</p>
-    <button id="sign-out" name="signout">Sign Out</button>
+    <button onclick="toggleSignOut()" name="signout">Sign Out</button>
 
 </body>
 </html>
