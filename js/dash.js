@@ -1,22 +1,22 @@
-var dash = {};
+var homeApp = {};
 (function() {
-    var firebase = app_firebase;
-    var uid = null;
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            // User is signed in
-            uid = user.uid;
-        } else {
-            // redirect to login page
-            uid = null;
-            alert('Please log in first.');
-            window.location = 'http://pseudotracks.me/';
-        }
-    });
+  var firebase = app_firebase;
+  var uid = null;
 
-    function signOut() {
-        firebase.auth().signOut();
-    }
+  firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+          // User is signed in
+          uid = user.uid;
+      } else {
+          // redirect to login page
+          uid = null;
+          window.location.replace('login.html');
+      }
+  });
 
-    dash.signOut = signOut();
+  function logOut(){
+    firebase.auth().signOut();
+  }
+
+  homeApp.logOut = logOut;
 })()
