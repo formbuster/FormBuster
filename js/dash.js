@@ -10,7 +10,7 @@ var homeApp = {};
       } else {
           // redirect to login page
           uid = null;
-          window.location.replace('login.html');
+          window.location.replace('http://pseudotracks.me/');
       }
   });
 
