@@ -1,22 +1,30 @@
 var homeApp = {};
-(function() {
-  var firebase = app_firebase;
-  var uid = null;
+(function(){
+  var mainContainer = document.getElementById("main_container");
 
-  firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-          // User is signed in
-          uid = user.uid;
-      } else {
-          // redirect to login page
-          uid = null;
-          window.location.replace('http://pseudotracks.me/');
-      }
-  });
-
-  function logOut(){
-    firebase.auth().signOut();
+  var signOut =  function(){
+        firebase.auth().signOut().then(function(){
+            console.log('success');
+            window.location.replace("http://pseudotracks.me/");
+        },function(){})
+    }
+  
+  var init = function(){
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in
+            console.log("stay");
+            mainContainer.style.display = "";
+        } else {
+            // redirect to login page
+            mainContainer.style.display = "none";
+            console.log("redirect");
+            window.location.replace("http://pseudotracks.me/");
+        }
+    });
   }
-
-  homeApp.logOut = logOut;
-})()
+    
+  init();
+  
+  homeApp.logout = signOut;
+})();
