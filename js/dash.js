@@ -28,13 +28,13 @@ var mainApp = {};
     });
   //}
  
- document.getElementById("signout").onclick = function () {
+ function signOut() {
     console.log("trying to log out");
     app_firebase.auth().signOut();
     console.log("logged out");
   }
     
   //init();
-  
+  document.getElementById("signout").onclick = signOut;
    //mainApp.logout = signOut();
 })();
