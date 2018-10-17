@@ -2,6 +2,7 @@
 .w3-hover-theme:hover {color:#000 !important; background-color:#f4eded !important}
 .w3-border-theme {border-color:#770000 !important}
 .w3-text-theme-red {color:#770000 !important}
+.w3-important-red {background-color: rgba(244, 67, 54, .6)}
 header{
     overflow: auto;
 
