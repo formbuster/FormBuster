@@ -2,12 +2,12 @@ var homeApp = {};
 (function(){
   var mainContainer = document.getElementById("main_container");
 
-  var signOut =  function(){
-        firebase.auth().signOut().then(function(){
-            console.log('success');
-            window.location.replace("http://pseudotracks.me/");
-        },function(){})
-    }
+//   var signOut =  function(){
+//         firebase.auth().signOut().then(function(){
+//             console.log('success');
+//             window.location.replace("http://pseudotracks.me/");
+//         },function(){})
+//     }
   
   var init = function(){
     firebase.auth().onAuthStateChanged(function(user) {
@@ -26,5 +26,5 @@ var homeApp = {};
     
   init();
   
-  homeApp.logout = signOut;
+//   homeApp.logout = signOut;
 })();
