@@ -28,7 +28,7 @@ var mainApp = {};
     });
   //}
  
- function signOut(){
+ document.getElementById("signout").onclick = function () {
     console.log("trying to log out");
     app_firebase.auth().signOut();
     console.log("logged out");
@@ -36,5 +36,5 @@ var mainApp = {};
     
   //init();
   
-   mainApp.logout = signOut();
+   //mainApp.logout = signOut();
 })();
