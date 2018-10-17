@@ -1,0 +1,32 @@
+#mySidebar {
+    display: none;
+}
+
+input[type=text] {
+    width: 50%;
+    padding: 6px;
+    border: none;
+    font-size: 17px;
+    display: block;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+}
+
+student {
+    width: 50%;
+    padding: 6px;
+    border: none;
+    font-size: 17px;
+    text-align: left;
+    display: block;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+}
+
+#notificationPreferences{
+    display: none;
+}
