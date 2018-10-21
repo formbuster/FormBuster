@@ -7,33 +7,68 @@
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
         <style>
-        body,h1 {font-family: "Raleway", sans-serif}
-        body, html {height: 100%}
-        .bgimg {
-            background-image: url('img/campus-bg.jpg');
-            min-height: 100%;
-            background-position: center;
-            background-size: cover;
-            filter:brightness(79%);
-        }
-    </style>
+            body,h1 {font-family: "Raleway", sans-serif}
+            body, html {height: 100%}
+            .bgimg {
+                background-image: url('img/campus-bg.jpg');
+                min-height: 100%;
+                background-position: center;
+                background-size: cover;
+                filter:brightness(79%);
+            }
+        </style>
+
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+        <script>
+            // Initialize FormBuster Firebase (DEFAULT)
+            formBusterApp = firebase.initializeApp({
+                apiKey: "AIzaSyD5gttM9fq--1BIbLtn79UbtXrMlf56oAA",
+                authDomain: "formbuster-73603.firebaseapp.com",
+                databaseURL: "https://formbuster-73603.firebaseio.com",
+                projectId: "formbuster-73603",
+                storageBucket: "formbuster-73603.appspot.com",
+                messagingSenderId: "886328297024"
+            });
+
+            // Initialize PseudoPAWS Firebase
+            pseudoPAWSApp = firebase.initializeApp({
+                apiKey: "AIzaSyCAxnlp-J7GPIjTRMmsVuEfpNRxRAK5hlw",
+                authDomain: "pseudopaws.firebaseapp.com",
+                databaseURL: "https://pseudopaws.firebaseio.com",
+                projectId: "pseudopaws",
+                storageBucket: "pseudopaws.appspot.com",
+                messagingSenderId: "1031657828400"
+            }, "pseudoPAWS");
+
+            // Initialize PseudoTRACKS Firebase
+            pseudoTRACKSApp = firebase.initializeApp({
+                apiKey: "AIzaSyAWosl7w3NfRpAYL-j1XWLDZujl8GpO-KA",
+                authDomain: "pseudotracks-bb89e.firebaseapp.com",
+                databaseURL: "https://pseudotracks-bb89e.firebaseio.com",
+                projectId: "pseudotracks-bb89e",
+                storageBucket: "pseudotracks-bb89e.appspot.com",
+                messagingSenderId: "369787432909"
+            }, "pseudoTRACKS");
+        </script>
     </head>
 
     <body>
-    <div class="bgimg w3-display-container w3-text-white"></div>
-    <div class="w3-display-topleft w3-padding-large w3-xlarge">
-        <!--Logo Placeholder-->
-    </div>
-    <div class="w3-display-middle w3-text-white">
-        <h1 class="w3-jumbo w3-animate-top">Form Buster</h1>
-        <hr class="w3-border-grey" style="margin:auto;width:40%">
-        <p class="w3-large w3-center"><a href="https://auth.formbuster.me/" class="w3-btn w3-ripple w3-red w3-round-large" value="login">Login</a></p>
-        <p class="w3-large w3-center"><a href="http://formbuster.me/src/roadmap.html" class="w3-btn w3-ripple w3-red w3-round-large">Roadmap</a></p>
-    </div>
-    <div class="w3-display-bottomleft w3-padding-large w3-text-white">
-        Brought to you by <a href="http://formbuster.me/src/roadmap.html">Form Buster</a>
-    </div>
+        <script src="userGeneration.js"></script>
 
-
+        <div class="bgimg w3-display-container w3-text-white"></div>
+        <div class="w3-display-topleft w3-padding-large w3-xlarge">
+            <!--Logo Placeholder-->
+        </div>
+        <div class="w3-display-middle w3-text-white">
+            <h1 class="w3-jumbo w3-animate-top">Form Buster</h1>
+            <hr class="w3-border-grey" style="margin:auto;width:40%">
+            <p class="w3-large w3-center"><a href="https://auth.formbuster.me/" class="w3-btn w3-ripple w3-red w3-round-large" value="login">Login</a></p>
+            <p class="w3-large w3-center"><a href="http://formbuster.me/src/roadmap.html" class="w3-btn w3-ripple w3-red w3-round-large">Roadmap</a></p>
+        </div>
+        <div class="w3-display-bottomleft w3-padding-large w3-text-white">
+            Brought to you by <a href="http://formbuster.me/src/roadmap.html">Form Buster</a>
+        </div>
     </body>
 </html>
