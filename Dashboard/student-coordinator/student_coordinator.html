@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="../general-styles.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <title>Form Buster</title>
+
+</head>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script src="../general_dashboard/scripts.js"></script>
+<link href="student_coordinator_styles.css" rel="stylesheet" type="text/css">
+
+<script>
+  $(function(){
+    $('#dashboard').load('../general_dashboard/dashboard.html #general-top-bar');
+  });
+  $(function(){
+      $('#students-list').load('../general_student_list/student_list.html #students-list');
+  });
+</script>
+
+<header>
+    <div id="dashboard"></div>
+</header>
+
+    <div id="students-list"></div>
+
+</body>
+</html>

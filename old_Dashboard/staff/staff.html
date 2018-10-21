@@ -1,22 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="styles.css" rel="stylesheet" type="text/css">
+    <link href="../styles.css" rel="stylesheet" type="text/css">
     <meta charset="UTF-8">
     <title>Form Buster</title>
 
 </head>
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link href="styles.css" rel="stylesheet" type="text/css">
-<script src="scripts.js"></script>
+<link href="../styles.css" rel="stylesheet" type="text/css">
+<script src="../general_dashboard/scripts.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <link href="staff_styles.css" rel="stylesheet" type="text/css">
+<script src="staff.js"></script>
+
 
 <script>
   $(function(){
-    $('#header').load('dashboard.html');
+    $('#header').load('dashboard.html', function() {
+        document.getElementById("dashboard").addEventListener("click", showDashboard);
+        document.getElementById("students").addEventListener("click", showStudentsList);
+    });
+    $('#students-list').load('student_list.html', function() {
+
+    });
   });
+
 </script>
 
 <body onresize="check()">
@@ -24,13 +33,14 @@
     <div id="header"></div>
 </header>
 
+
 <div class="w3-cell-row">
 
-    <div id="main" style="margin-left:20%">
+    <div id="main">
 
-        <div class="w3-container w3-cell w3-threequarter">
+        <div id = "dashboard-contents" class="w3-container w3-cell w3-threequarter" style="margin-left:20%">
             <div class="w3-text-theme-red"><H2>Incoming Forms</H2></div>
-            <div onclick="document.getElementById('id01').style.display='block'" class="w3-red w3-opacity w3-button w3-block w3-round-xlarge" style="margin-bottom: 10px">
+            <div onclick="document.getElementById('id01').style.display='block'" class="w3-important-red w3-button w3-block w3-round-xlarge" style="margin-bottom: 10px">
                 <div class="w3-left">
                     <H3>Registration Form (Student, Test)</H3>
                     <span class="w3-left w3-badge w3-green w3-large">✓</span>
@@ -55,5 +65,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="students-list" style="display: none; margin-left:20%"></div>
+
     </div>
 </body>

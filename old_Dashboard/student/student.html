@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="styles.css" rel="stylesheet" type="text/css">
+    <link href="../styles.css" rel="stylesheet" type="text/css">
     <meta charset="UTF-8">
     <title>Form Buster</title>
-
 
 </head>
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link href="styles.css" rel="stylesheet" type="text/css">
-<link href="student.css" rel="stylesheet" type="text/css">
-<script src="scripts.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<link href="../general-styles.css" rel="stylesheet" type="text/css">
+<link href="student.css" rel="stylesheet" type="text/css">
+<script src="../general_dashboard/scripts.js"></script>
 
 <script>
   $(function(){
-    $('#header').load('dashboard.html');
+    $('#header').load('../general_dashboard/dashboard.html');
   });
 </script>
 
@@ -27,7 +27,7 @@
 
 <div>
 
-    <div id="main" style="margin-left:15%">
+    <div id="main-container-dashboard" style="margin-left:15%">
         <div class="w3-cell-row">
 
             <div class="w3-container w3-cell w3-threequarter">
@@ -90,12 +90,7 @@
         </div>
 
     </div>
-    <div class="w3-container w3-theme-red w3-bottom" id="footer">
-        &#0169 2018 FORMBUSTER, All Rights Reserved
-        <a href="#" class="w3-bar-item w3-button w3-right">About</a>
-        <a href="#" class="w3-bar-item w3-button w3-right">Help</a>
-        <a href="#" class="w3-bar-item w3-button w3-right">Contact Us</a>
-    </div>
+
 </div>
 
 </body>
