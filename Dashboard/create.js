@@ -51,10 +51,11 @@ function getInTransitForm() {
             second_nested_div.appendChild(h4_due_date);
 
         main_div.appendChild(second_nested_div);
-        //Here I am not able to figure out how to use the on click so that when the panel is clicked.
-        //the pop up of form details will show.
 
-        //main_div.addEventListener("click", document.getElementById('id01').style.display='block');
+        /*Todo: break up the function so that code is not repeated. Some of the same code
+        lines 29-41, will be used above for the in-progress form information.
+        */
+        main_div.onclick = function(){console.log("clicked")};
         document.getElementById("transit_form_list").appendChild(main_div);
     }
 }
