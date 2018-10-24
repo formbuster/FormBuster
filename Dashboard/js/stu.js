@@ -107,6 +107,30 @@ function getNotifications() {
 
 
 /*
+This function's purpose is to generate the history view for a student on their dashboard.
+Todo: Implement this so that it will generate the code for the student's history.
+ */
+function getPastForms() {
+
+}
+
+function logOut() {
+
+}
+
+function saveForm() {
+
+}
+
+function retractForm() {
+
+}
+
+function chooseDifferentApprover() {
+
+}
+
+/*
             <!-- popup bar, this is not used yet, will be used with line 62, when a form is clicked -->
             <div id="id01" class="w3-modal">
                 <div class="w3-modal-content">

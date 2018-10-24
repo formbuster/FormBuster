@@ -17,8 +17,11 @@
     $('#header').load('genDashboard.html', function() {
         document.getElementById("dashboard").addEventListener("click", showDashboard);
         document.getElementById("students").addEventListener("click", showStudentsList);
+        document.getElementById("history").addEventListener("click", showHistoryList);
+        document.getElementById("formsManagement").addEventListener("click", showFormManagement);
     });
       $('#students-list').load('student_list.html');
+      $('#history-list').load('historyList.html');
   });
 </script>
 
@@ -32,7 +35,7 @@
 
     <div id="main">
 
-        <div id = "dashboard-contents" class="w3-container w3-cell w3-threequarter" style="margin-left:20%">
+        <div id = "dashboard-contents" class="w3-container w3-cell w3-threequarter" style="margin-left:15%">
             <div class="w3-text-theme-red"><H2>Incoming Forms</H2></div>
             <!--Todo: swap this out with a function to generate the forms view-->
             <!--Todo: figure out why the important red is not displaying-->
@@ -63,7 +66,18 @@
             </div>
         </div>
 
+        <!--Todo: automate generation-->
         <div id="students-list" style="display: none; margin-left:20%; margin-right:10%" class="w3-center"></div>
 
+        <!--Todo: automate generation-->
+        <div id="history-list" style="display: none; margin-left:15%; margin-right:10%">
+            <div class="w3-text-theme-red"><H2>Past Forms</H2></div>
+        </div>
+
+        <!--Todo: automate generation-->
+        <div id="form-management" style="display: none; margin-left:15%; margin-right:10%">
+            <div class="w3-text-theme-red"><H2>Form Management</H2>
+                <p>Coming soon Spring 2019..</p></div>
+        </div>
     </div>
 </body>
