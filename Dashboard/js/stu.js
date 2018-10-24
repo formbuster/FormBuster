@@ -1,12 +1,35 @@
 /*
-THis file contains the functions to populate data for the student role in order to display on dashboard.
+THis file contains the functions to populate data for the student role in order to display on dashboard as well as the side
+tabs.
  */
+
+function showDashboard() {
+    document.getElementById("dashboard-contents").style.display = "block";
+    document.getElementById("forms-list").style.display = "none";
+    document.getElementById("history-list").style.display = "none";
+}
+
+function showFormsList() {
+    document.getElementById("forms-list").style.display = "block";
+    document.getElementById("dashboard-contents").style.display = "none";
+    document.getElementById("history-list").style.display = "none";
+}
+
+function showHistoryList() {
+    document.getElementById("history-list").style.display = "block";
+    document.getElementById("forms-list").style.display = "none";
+    document.getElementById("dashboard-contents").style.display = "none";
+}
+
 
 function setUpDashboard() {
     getInProgressForm();
     //getNotifications();
 }
 
+function getDisplayName() {
+    document.getElementById("display-name").innerHTML = getUserName();
+}
 /*
 This function's purpose is to generate the in-process forms view for a student on their dashboard.
  */

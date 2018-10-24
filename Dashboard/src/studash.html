@@ -5,32 +5,37 @@
         <meta charset="UTF-8">
         <title>Form Buster</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
     </head>
 
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
     <link href="../css/stu.css" rel="stylesheet" type="text/css">
     <script src="../js/stu.js"></script>
     <script src="../js/firebase.js"></script>
 
     <script>
         $(function(){
-            $('#dashboard').load('genDashboard.html');
+            $('#header').load('genDashboard.html', function() {
+                document.getElementById("dashboard").addEventListener("click", showDashboard);
+                document.getElementById("forms").addEventListener("click", showFormsList);
+                document.getElementById("history").addEventListener("click", showHistoryList);
+           });
+            $('#forms-list').load('formList.html');
+            $('#history-list').load('historyList.html');
         });
         $(function(){
             $('#notification').load('notification.html');
 
         });
+
     </script>
 
 
     <body onresize="check()" onload="setUpDashboard()">
         <header>
-            <div id="dashboard"></div>
+            <div id="header"></div>
         </header>
 
-        <div id="main-container-dashboard" style="margin-left:15%">
+        <div id="dashboard-contents" style="margin-left:15%">
 
             <div class="w3-container w3-cell w3-threequarter">
                 <div class="w3-text-theme-red"><H2>In-Progress</H2></div>
@@ -40,9 +45,15 @@
 
             <div id="notifications-list" class="w3-container w3-cell w3-right w3-quarter">
                 <div class="w3-text-theme-red"><H2>Notifications</H2></div>
-                <!-- will be replaced later, so that it can be filled when getNotifications is called-->
+                <!-- Todo: create function so that it can be filled when getNotifications is called-->
                 <div id = "notification"></div>
             </div>
+        </div>
+
+        <div id="forms-list" style="display: none; margin-left:20%; margin-right:10%" class="w3-center"></div>
+        <div id="history-list" style="display: none; margin-left:15%; margin-right:10%">
+            <div class="w3-text-theme-red"><H2>Past Forms</H2></div>
+
         </div>
 
     </body>

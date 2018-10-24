@@ -5,11 +5,9 @@ function getDisplayName() {
 function showDashboard() {
     document.getElementById("dashboard-contents").style.display = "block";
     document.getElementById("students-list").style.display = "none";
-
 }
 
 function showStudentsList() {
     document.getElementById("students-list").style.display = "block";
     document.getElementById("dashboard-contents").style.display = "none";
-
 }

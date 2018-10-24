@@ -5,7 +5,7 @@ It will also contain information of the logged in user, and will be accessed by 
 
 
 
-// Initialize FormBuster Firebase (DEFAULT)
+/*// Initialize FormBuster Firebase (DEFAULT)
 formBusterApp = firebase.initializeApp({
     apiKey: "AIzaSyD5gttM9fq--1BIbLtn79UbtXrMlf56oAA",
     authDomain: "formbuster-73603.firebaseapp.com",
@@ -24,7 +24,7 @@ pseudoPAWSApp = firebase.initializeApp({
     storageBucket: "pseudopaws.appspot.com",
     messagingSenderId: "1031657828400"
 }, "pseudoPAWS");
-
+*/
 
 //Todo: return proper user name
 function getUserName() {
