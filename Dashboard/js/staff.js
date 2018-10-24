@@ -9,7 +9,7 @@ function showDashboard() {
 }
 
 function showStudentsList() {
-    document.getElementById("dashboard-contents").style.display = "none";
     document.getElementById("students-list").style.display = "block";
+    document.getElementById("dashboard-contents").style.display = "none";
 
 }
