@@ -43,6 +43,8 @@ function showHistoryList() {
 function setUpDashboard() {
     getInProgressForm();
     //getNotifications();
+    getCourse();
+
 }
 
 function getDisplayName() {
