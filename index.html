@@ -1,107 +1,74 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> <head>
-    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
-    <script>
-        // Initialize FormBuster Firebase (DEFAULT)
-        formBusterApp = firebase.initializeApp({
-            apiKey: "AIzaSyD5gttM9fq--1BIbLtn79UbtXrMlf56oAA",
-            authDomain: "formbuster-73603.firebaseapp.com",
-            databaseURL: "https://formbuster-73603.firebaseio.com",
-            projectId: "formbuster-73603",
-            storageBucket: "formbuster-73603.appspot.com",
-            messagingSenderId: "886328297024"
-        });
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/home.css">
+        <title>Form Buster</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <style>
+            body,h1 {font-family: "Raleway", sans-serif}
+            body, html {height: 100%}
+            .bgimg {
+                background-image: url('img/campus-bg.jpg');
+                min-height: 100%;
+                background-position: center;
+                background-size: cover;
+                filter:brightness(79%);
+            }
+        </style>
 
-        // Initialize PseudoPAWS Firebase
-        pseudoPAWSApp = firebase.initializeApp({
-            apiKey: "AIzaSyCAxnlp-J7GPIjTRMmsVuEfpNRxRAK5hlw",
-            authDomain: "pseudopaws.firebaseapp.com",
-            databaseURL: "https://pseudopaws.firebaseio.com",
-            projectId: "pseudopaws",
-            storageBucket: "pseudopaws.appspot.com",
-            messagingSenderId: "1031657828400"
-        }, "pseudoPAWS");
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+        <script>
+            // Initialize FormBuster Firebase (DEFAULT)
+            formBusterApp = firebase.initializeApp({
+                apiKey: "AIzaSyD5gttM9fq--1BIbLtn79UbtXrMlf56oAA",
+                authDomain: "formbuster-73603.firebaseapp.com",
+                databaseURL: "https://formbuster-73603.firebaseio.com",
+                projectId: "formbuster-73603",
+                storageBucket: "formbuster-73603.appspot.com",
+                messagingSenderId: "886328297024"
+            });
 
-        // Initialize PseudoTRACKS Firebase
-        pseudoTRACKSApp = firebase.initializeApp({
-            apiKey: "AIzaSyAWosl7w3NfRpAYL-j1XWLDZujl8GpO-KA",
-            authDomain: "pseudotracks-bb89e.firebaseapp.com",
-            databaseURL: "https://pseudotracks-bb89e.firebaseio.com",
-            projectId: "pseudotracks-bb89e",
-            storageBucket: "pseudotracks-bb89e.appspot.com",
-            messagingSenderId: "369787432909"
-        }, "pseudoTRACKS");
-    </script>
-<title>Form Buster</title>
-</head>
+            // Initialize PseudoPAWS Firebase
+            pseudoPAWSApp = firebase.initializeApp({
+                apiKey: "AIzaSyCAxnlp-J7GPIjTRMmsVuEfpNRxRAK5hlw",
+                authDomain: "pseudopaws.firebaseapp.com",
+                databaseURL: "https://pseudopaws.firebaseio.com",
+                projectId: "pseudopaws",
+                storageBucket: "pseudopaws.appspot.com",
+                messagingSenderId: "1031657828400"
+            }, "pseudoPAWS");
 
-<body>
-  <h1><center>Form Buster: Online Form Approval and Tracking</center></h1>
-<p>
-<hr>
-<p>
-<center>
-      <TABLE border=1><TBODY>
-	<TR align=center>
-          <TD>Project Name</TD>
-          <TD><a href="https://xd.adobe.com/view/a6c7b77b-a9ff-476d-402e-defde43ca8a6-d0f6/?fullscreen">Form Buster</a></TD>
-	<TR align=center>
-          <TD>Team Members and Email Addresses</TD>
-          <TD><p>Grace Dolphy - gdolphy2015@my.fit.edu</p>
-        <p>Raphael Setin - rsetin2015@my.fit.edu</p>
-        <p>McNels Sylvestre - msylvestreph2016@my.fit.edu</p></TD>
-	<TR align=center>
-          <TD>Client</TD>
-		<TD><a href="https://cs.fit.edu/~pkc/">Dr. Philip Chan</a></TD></TR>
-	<TR align=center>
-          <TD>Faculty Sponsor</TD>
-		<TD><a href="https://eraldoribeiro.github.io">Dr. Eraldo Ribeiro</a></TD></TR>
-      </TBODY></TABLE>
-</center>
-<p>
-<center>
-<h3>First Semester</h3>
-      <TABLE border=1><TBODY>
-	<TR align=center>
-          <TD>Plan (Sep 5)</TD>
-          <TD><a href="plan1.pdf">Plan</a>, <a href="plan1Pres.pdf">Presentation</a></TD>
-	<TR align=center>
-          <TD>Milestone 1 (Oct 1)</TD>
-          <TD><a href="requirement.pdf">Requirement</a>, <a href="design.pdf">Design</a>, <a href="test.pdf">Test</a>, <a href="milestone1.pdf">Presentation</a>, <a href="eval1.pdf">Progress Evaluation</a></TD>
-	<TR align=center>
-          <TD>Milestone 2 (Oct 29)</TD>
-          <TD><a href="milestone3.pdf">Presentation</a>, <a href="eval2.pdf">Progress Evaluation</a></TD></TR>
-	<TR align=center>
-          <TD>Milestone 3 (Nov 26)</TD>
-          <TD><a href="milestone3.pdf">Presentation</a>, <a href="eval3.pdf">Progress Evaluation</a></TD></TR>
-      </TBODY></TABLE>
-</center>
+            // Initialize PseudoTRACKS Firebase
+            pseudoTRACKSApp = firebase.initializeApp({
+                apiKey: "AIzaSyAWosl7w3NfRpAYL-j1XWLDZujl8GpO-KA",
+                authDomain: "pseudotracks-bb89e.firebaseapp.com",
+                databaseURL: "https://pseudotracks-bb89e.firebaseio.com",
+                projectId: "pseudotracks-bb89e",
+                storageBucket: "pseudotracks-bb89e.appspot.com",
+                messagingSenderId: "369787432909"
+            }, "pseudoTRACKS");
+        </script>
+    </head>
 
-<center>
+    <body>
+        <script src="userGeneration.js"></script>
 
-<h3>Second Semester</h3>
-
-      <TABLE border=1><TBODY>
-	<TR align=center>
-          <TD>Plan (Jan ?)</TD>
-          <TD><a href="plan2.pdf">Plan</a>, <a href="plan2Pres.pdf">Presentation</a></TD>
-	<TR align=center>
-          <TD>Milestone 4 (Feb ?)</TD>
-          <TD><a href="milestone4.pdf">Presentation</a>, <a href="eval4.pdf">Progress Evaluation</a></TD>
-	<TR align=center>
-          <TD>Milestone 5 (Mar ?)</TD>
-          <TD><a href="poster.pdf">Poster</a>, <a href="ebook.pdf">e-book page</a>, <a href="milestone5.pdf">Presentation</a>, <a href="eval5.pdf">Progress Evaluation</a></TD></TR>
-	<TR align=center>
-          <TD>Milestone 6 (Apr ?)</TD>
-          <TD><a href="userManual.pdf">User Manual</a>, <a href="demoVideo.jpg">Demo Video</a>, <a href="milestone6.pdf">Presentation</a>, <a href="eval6.pdf">Progress Evaluation</a></TD></TR>
-      </TBODY></TABLE>
-</center>
-
-<p>
-<hr>
-<p> Demo:
-https://docs.google.com/presentation/d/1FdzoBGzXto9eLabGAbk0brGHNb8mMrVNNJ_s08UMR1c/edit?usp=sharing <p/>
-	      
-</body> </html>
+        <div class="bgimg w3-display-container w3-text-white"></div>
+        <div class="w3-display-topleft w3-padding-large w3-xlarge">
+            <!--Logo Placeholder-->
+        </div>
+        <div class="w3-display-middle w3-text-white">
+            <h1 class="w3-jumbo w3-animate-top">Form Buster</h1>
+            <hr class="w3-border-grey" style="margin:auto;width:40%">
+            <p class="w3-large w3-center"><a href="https://auth.formbuster.me/" class="w3-btn w3-ripple w3-red w3-round-large" value="login">Login</a></p>
+            <p class="w3-large w3-center"><a href="http://formbuster.me/src/roadmap.html" class="w3-btn w3-ripple w3-red w3-round-large">Roadmap</a></p>
+        </div>
+        <div class="w3-display-bottomleft w3-padding-large w3-text-white">
+            Brought to you by <a href="http://formbuster.me/src/roadmap.html">Form Buster</a>
+        </div>
+    </body>
+</html>

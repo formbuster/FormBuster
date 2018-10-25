@@ -1,0 +1,12 @@
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg {
+    /*opacity: 0.8;*/
+    background-image: url('/img/campus-bg.jpg');
+    min-height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+.w3-display-middle {
+    /*opacity: 0.5;*/
+}
