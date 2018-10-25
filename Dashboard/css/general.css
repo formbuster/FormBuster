@@ -4,6 +4,8 @@
 .w3-text-theme-red {color:#770000 !important}
 .w3-important-red {background-color: rgba(244, 67, 54, .6)}
 .w3-hover-theme-red:hover {color:#000 !important; background-color:#770000 !important}
+.w3-background {background-color:#f4eded}
+.w3-search-bar-grey {background-color:#CCCCCC}
 
 header{
     overflow: auto;
