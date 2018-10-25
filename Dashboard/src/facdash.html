@@ -14,7 +14,13 @@
 
 <script>
   $(function(){
-    $('#header').load('genDashboard.html');
+    $('#header').load('genDashboard.html', function() {
+        document.getElementById("dashboard").addEventListener("click", showDashboard);
+        document.getElementById("students").addEventListener("click", showStudentsList);
+        document.getElementById("history").addEventListener("click", showHistoryList);
+    });
+      $('#students-list').load('student_list.html');
+      $('#history-list').load('historyList.html');
   });
 
 </script>
@@ -26,33 +32,43 @@
 
 <div class="w3-cell-row">
 
-    <div id= "main-container-dashboard" class="w3-container w3-cell w3-threequarter" style="margin-left:20%">
-        <div class="w3-text-theme-red"><H2>Incoming Forms</H2></div>
-        <!--Todo: swap this out with a function to generate the forms view-->
-        <div onclick="document.getElementById('id01').style.display='block'" class="w3-important-red w3-button w3-block w3-round-xlarge" style="margin-bottom: 10px">
-            <div class="w3-left">
-                <H3>Registration Form (Student, Test)</H3>
-                <span class="w3-left w3-badge w3-green w3-large">✓</span>
-                <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
-                <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
+    <div id= "main-container-dashboard" >
+        <div id = "dashboard-contents" class="w3-container w3-cell w3-threequarter" style="margin-left:15%">
+            <div class="w3-text-theme-red"><H2>Incoming Forms</H2></div>
+            <!--Todo: swap this out with a function to generate the forms view-->
+            <div onclick="document.getElementById('id01').style.display='block'" class="w3-important-red w3-button w3-block w3-round-xlarge" style="margin-bottom: 10px">
+                <div class="w3-left">
+                    <H3>Registration Form (Student, Test)</H3>
+                    <span class="w3-left w3-badge w3-green w3-large">✓</span>
+                    <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
+                    <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
+                </div>
+                <div class="w3-right">
+                    <H4>Submission Date: 09-09-2018</H4>
+                    <h4>Due Date: 09-18-2018</h4>
+                </div>
             </div>
-            <div class="w3-right">
-                <H4>Submission Date: 09-09-2018</H4>
-                <h4>Due Date: 09-18-2018</h4>
+            <!--Todo: swap this out with a function to generate the forms view-->
+            <div onclick="document.getElementById('id01').style.display='block'" class="w3-white w3-button w3-block w3-leftbar w3-round-xlarge">
+                <div class="w3-left">
+                    <H3>Registration Form (Student, Test)</H3>
+                    <span class="w3-left w3-badge w3-green w3-large">✓</span>
+                    <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
+                    <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
+                </div>
+                <div class="w3-right">
+                    <H4>Submission Date: 09-09-2018</H4>
+                    <h4>Due Date: 09-18-2018</h4>
+                </div>
             </div>
         </div>
-        <!--Todo: swap this out with a function to generate the forms view-->
-        <div onclick="document.getElementById('id01').style.display='block'" class="w3-white w3-button w3-block w3-leftbar w3-round-xlarge">
-            <div class="w3-left">
-                <H3>Registration Form (Student, Test)</H3>
-                <span class="w3-left w3-badge w3-green w3-large">✓</span>
-                <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
-                <span class="w3-left w3-margin-left w3-badge w3-grey w3-large">✓</span>
-            </div>
-            <div class="w3-right">
-                <H4>Submission Date: 09-09-2018</H4>
-                <h4>Due Date: 09-18-2018</h4>
-            </div>
+
+        <!--Todo: automate generation-->
+        <div id="students-list" style="display: none; margin-left:20%; margin-right:10%" class="w3-center"></div>
+
+        <!--Todo: automate generation-->
+        <div id="history-list" style="display: none; margin-left:15%; margin-right:10%">
+            <div class="w3-text-theme-red"><H2>Past Forms</H2></div>
         </div>
     </div>
 </body>
