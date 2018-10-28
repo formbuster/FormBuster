@@ -66,6 +66,8 @@ function submitClick() {
             console.log(doc.id, " => ", doc.data());
         });
     });
+
+
     formDB.collection("cities").doc("NY").set({
         name: "New York",
         state: "NY",
@@ -76,6 +78,26 @@ function submitClick() {
     formDB.collection("cities").doc("SP").update({
         name: "Sao Paulo",
         state: "SP"
-    })
+    });
 
+    formDB.collection("users").doc(userName).collection("inProgressForms").doc("registration_10232018184000").update({
+        approvals: firebase.firestore.FieldValue.arrayRemove({date: "date", status: false, tracksID: "IDDD", test: true})
+    });
+
+    formDB.collection("users").doc(userName).collection("inProgressForms").doc("registration_10232018184000").update({
+        test: null
+    });
+
+
+    formDB.collection("users").doc(userName).collection("inProgressForms").doc("Registration_10242018221600").get().then(function(doc) {
+        if (doc.exists) {
+            const docData = doc.data();
+            formDB.collection("users").doc(userName).collection("inProgressForms").doc("Registration_TEST").set(docData);
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
 }
