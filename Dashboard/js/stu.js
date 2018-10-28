@@ -42,7 +42,7 @@ function showHistoryList() {
 
 function setUpDashboard() {
     getInProgressForm();
-    //getNotifications();
+    getNotifications();
     getCourse();
 
 }
@@ -71,6 +71,7 @@ function getInProgressForm() {
         var txt_form_name = document.createTextNode(obj.form_name);
         h3_form_name.appendChild(txt_form_name);
         first_nested_div.appendChild(h3_form_name);
+
         //generate check marks
         for (i = 1; i <= obj.needed_approvals; i++) {
             var span_check_mark = document.createElement('span');
@@ -85,7 +86,7 @@ function getInProgressForm() {
             first_nested_div.appendChild(span_check_mark);
         }
         var second_nested_div = document.createElement("div");
-        second_nested_div.className = "w3-right"
+        second_nested_div.className = "w3-right";
         var h4_submission_date = document.createElement('h3');
         var submission_date_txt = document.createTextNode("Submission Date: " + obj.submission_date);
         h4_submission_date.appendChild(submission_date_txt);
@@ -111,18 +112,26 @@ Todo: Fix this so it works, or generate the html code using JS.
  */
 
 function getNotifications() {
-    var txt = '{"message":"David Lee has approved your Registration Form", "time":  "min ago"}';
+    var txt = '{"message":"David Lee has approved your Registration Form", "time":  "4 min ago"}';
     var obj = JSON.parse(txt);
     console.log(obj.message + " " + obj.time);
 
-    var notification_div = document.createElement("div");
-    notification_div.id = "notification";
+    const amountOfNotifications = 2;
+    const message = obj.message;
+    const time = obj.time;
 
-    document.getElementById("notifications-list").appendChild(notification_div);
-
-    console.log(document.getElementById("message"));
-    var insideContent=$("#message").html();
-    alert(insideContent);
+    for (i = 0; i < amountOfNotifications; i ++) {
+        $("#notification").append(
+            '<div class="w3-container w3-cell w3-white">\n' +
+            '    <span onclick="this.parentElement.style.display=\'none\'" class="w3-button w3-white w3-large w3-right">&times;</span>\n' +
+            '    <div id="message">\n' +
+            '        <p>' + message + '</p>\n' +
+            '    </div>\n' +
+            '    <div class="time">\n' +
+            '        <p>' + time + '</p>\n' +
+            '    </div>\n' +
+            '</div><br>\n');
+    }
 }
 
 
