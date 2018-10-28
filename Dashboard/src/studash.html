@@ -11,6 +11,11 @@
     <link href="../css/stu.css" rel="stylesheet" type="text/css">
     <script src="../js/stu.js"></script>
     <script src="../js/courses.js"></script>
+
+    <!-- Firebase Initialization scripts -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
     <script src="../js/firebase.js"></script>
 
     <script>
@@ -33,7 +38,7 @@
         <div id="dashboard-contents" style="margin-left:15%">
 
             <div class="w3-container w3-cell w3-threequarter">
-                <div class="w3-text-theme-red"><H2>In-Progress</H2></div>
+                <div class="w3-text-theme-red"><H2>In-Progress Forms</H2></div>
                 <!-- this should be filled when getInProgressForm is called-->
                 <div id ="transit_form_list"></div>
             </div>
