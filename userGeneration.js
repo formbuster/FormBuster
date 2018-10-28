@@ -10,6 +10,7 @@ STUDENT: 10 (number of majors) * 3 (3 people in "Oceanography" degree: 2 student
           be an advisee of the faculty member in which has the "not advisor" role, which is what we want)
 */
 
+// This function is not yet completely functional, as it calls in asynchronous mode, messing up the order
 function resetUsers () {
     deleteUsers();
     createUsers();
@@ -250,7 +251,7 @@ function createStudent (pawsDB, formBusterDB, userType, userFirst, userMiddle, u
     createTracksUser(userEmail, username);
 
     // Create user in Form Buster
-    createFormBusterUser(formBusterDB, userEmail, username);
+    createFormBusterUser(formBusterDB, username);
 }
 
 function createFaculty (pawsDB, formBusterDB, userType, userFirst, userMiddle, userLast, street, apartment, zipcode, city, state,
@@ -290,7 +291,7 @@ function createFaculty (pawsDB, formBusterDB, userType, userFirst, userMiddle, u
     createTracksUser(userEmail, username);
 
     // Create user in Form Buster
-    createFormBusterUser(formBusterDB, userEmail, username);
+    createFormBusterUser(formBusterDB, username);
 }
 
 function createStudentCoordinator (pawsDB, formBusterDB, userType, userFirst, userMiddle, userLast, street, apartment, zipcode, city, state) {
@@ -321,7 +322,7 @@ function createStudentCoordinator (pawsDB, formBusterDB, userType, userFirst, us
     createTracksUser(userEmail, username);
 
     // Create user in Form Buster
-    createFormBusterUser(formBusterDB, userEmail, username);
+    createFormBusterUser(formBusterDB, username);
 }
 
 function createStaff (pawsDB, formBusterDB, userType, userFirst, userMiddle, userLast, street, apartment, zipcode, city, state) {
@@ -352,14 +353,12 @@ function createStaff (pawsDB, formBusterDB, userType, userFirst, userMiddle, use
     createTracksUser(userEmail, username);
 
     // Create user in Form Buster
-    createFormBusterUser(formBusterDB, userEmail, username);
+    createFormBusterUser(formBusterDB, username);
 }
 
 // Create user in Form Buster.
-function createFormBusterUser (formBusterDB, userEmail, username) {
-    formBusterDB.collection("users").doc(username).set({
-        email: userEmail
-    })
+function createFormBusterUser (formBusterDB, username) {
+    formBusterDB.collection("users").doc(username).set({});
 }
 
 // Create user in pseudoTRACKS.
