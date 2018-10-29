@@ -7,6 +7,13 @@
 <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase.js"></script>
 <script src="../js/tempfirebase.js"></script>
 <script src="../js/temphome.js"></script>
+<script>
+    $(function(){
+        $('#general_dashboard').load('genDashboard.html', function() {
+            document.getElementById("signOut").addEventListener("click", homeApp.logOut);
+        });
+    });
+</script>
 
 <div id = "general_dashboard">
     <div id="general-top-bar" class="w3-bar w3-theme-red w3-top-bar">
