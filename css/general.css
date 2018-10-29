@@ -1,0 +1,62 @@
+.w3-theme-red {color:#fff !important; background-color:#770000 !important}
+.w3-hover-theme:hover {color:#000 !important; background-color:#f4eded !important}
+.w3-border-theme {border-color:#770000 !important}
+.w3-text-theme-red {color:#770000 !important}
+.w3-important-red {background-color: rgba(244, 67, 54, .6)}
+.w3-hover-theme-red:hover {color:#000 !important; background-color:#770000 !important}
+.w3-background {background-color:#f4eded}
+.w3-search-bar-grey {background-color:#CCCCCC}
+
+header{
+    overflow: auto;
+
+}
+body {
+    background-color: #F4EDED;
+}
+
+#footer{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+}
+
+.form-contents {
+    display: none;
+}
+
+.tooltip {
+    position: absolute;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: rgba(0, 0, 0, 0.71);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 150%;
+    left: 50%;
+    margin-left: -70px;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

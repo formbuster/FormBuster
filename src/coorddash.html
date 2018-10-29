@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="../css/general.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <title>Form Buster</title>
+</head>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<link href="../css/coord.css" rel="stylesheet" type="text/css">
+<script src="../js/coord.js"></script>
+<script src="../js/firebase.js"></script>
+
+<script>
+    $(function(){
+        $('#dashboard').load('genDashboard.html');
+    });
+    $(function(){
+        $('#students-list').load('student_list.html #students-list');
+    });
+</script>
+
+<header>
+    <div id="dashboard"></div>
+</header>
+
+<!-- todo: create a function to generate this list-->
+<div id="students-list" style="margin-left: 20%; margin-right: 20%;"></div>
+
+</body>
+</html>

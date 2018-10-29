@@ -17,45 +17,10 @@
                 filter:brightness(79%);
             }
         </style>
-
-        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
-        <script>
-            // Initialize FormBuster Firebase (DEFAULT)
-            formBusterApp = firebase.initializeApp({
-                apiKey: "AIzaSyD5gttM9fq--1BIbLtn79UbtXrMlf56oAA",
-                authDomain: "formbuster-73603.firebaseapp.com",
-                databaseURL: "https://formbuster-73603.firebaseio.com",
-                projectId: "formbuster-73603",
-                storageBucket: "formbuster-73603.appspot.com",
-                messagingSenderId: "886328297024"
-            });
-
-            // Initialize PseudoPAWS Firebase
-            pseudoPAWSApp = firebase.initializeApp({
-                apiKey: "AIzaSyCAxnlp-J7GPIjTRMmsVuEfpNRxRAK5hlw",
-                authDomain: "pseudopaws.firebaseapp.com",
-                databaseURL: "https://pseudopaws.firebaseio.com",
-                projectId: "pseudopaws",
-                storageBucket: "pseudopaws.appspot.com",
-                messagingSenderId: "1031657828400"
-            }, "pseudoPAWS");
-
-            // Initialize PseudoTRACKS Firebase
-            pseudoTRACKSApp = firebase.initializeApp({
-                apiKey: "AIzaSyAWosl7w3NfRpAYL-j1XWLDZujl8GpO-KA",
-                authDomain: "pseudotracks-bb89e.firebaseapp.com",
-                databaseURL: "https://pseudotracks-bb89e.firebaseio.com",
-                projectId: "pseudotracks-bb89e",
-                storageBucket: "pseudotracks-bb89e.appspot.com",
-                messagingSenderId: "369787432909"
-            }, "pseudoTRACKS");
-        </script>
     </head>
 
     <body>
-        <script src="userGeneration.js"></script>
+        <script src="admin/userGeneration.js"></script>
 
         <div class="bgimg w3-display-container w3-text-white"></div>
         <div class="w3-display-topleft w3-padding-large w3-xlarge">
@@ -64,7 +29,8 @@
         <div class="w3-display-middle w3-text-white">
             <h1 class="w3-jumbo w3-animate-top">Form Buster</h1>
             <hr class="w3-border-grey" style="margin:auto;width:40%">
-            <p class="w3-large w3-center"><a href="https://auth.formbuster.me/" class="w3-btn w3-ripple w3-red w3-round-large" value="login">Login</a></p>
+            <!--<p class="w3-large w3-center"><a href="https://auth.formbuster.me/" class="w3-btn w3-ripple w3-red w3-round-large" value="login">Login</a></p>-->
+            <p class="w3-large w3-center"><a href="http://formbuster.me/src/templogin.html" class="w3-btn w3-ripple w3-red w3-round-large" value="login">Login</a></p>
             <p class="w3-large w3-center"><a href="http://formbuster.me/src/roadmap.html" class="w3-btn w3-ripple w3-red w3-round-large">Roadmap</a></p>
         </div>
         <div class="w3-display-bottomleft w3-padding-large w3-text-white">
