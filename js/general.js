@@ -1,4 +1,4 @@
-function w3_toggle() {
+function w3_toggle () {
   var toggle = document.getElementById("mySidebar");
   if (toggle.style.display === "none") {
     document.getElementById("dashboard-contents").style.marginLeft = "15%";
@@ -11,7 +11,7 @@ function w3_toggle() {
   }
 }
 
-function check() {
+function check () {
     console.log(window.innerWidth + "px");
     if (window.innerWidth <= 933) {
         document.getElementById("dashboard-contents").style.marginLeft = "0%";
@@ -34,7 +34,7 @@ function getFormDueDate (formName) {
     return pawsDB.collection("formDeadlines").doc(formName).get().then(function(doc) {
         if (doc.exists) {
             const docData = doc.data();
-            return getFormattedDate(docData.deadline.toDate());
+            return docData.deadline.toDate();
         } else {
             // doc.data() will be undefined in this case
             console.log("No such document!");
@@ -56,6 +56,21 @@ function getDateFromTimestamp (timestamp) {
     return date;
 }
 
+function getExactDateAndTime (date) {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear().toString();
+
+    const hour = date.getHours();
+    const min = date.getMinutes();
+    const second = date.getSeconds();
+
+    const formattedSubmDate = month + "/" + day + "/" + year + " at " + ("00" + hour).substr(-2,2) + ":"
+        + ("00" + min).substr(-2,2) + ":" + ("00" + second).substr(-2,2);
+
+    return formattedSubmDate;
+}
+
 function getFormattedDate (date) {
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -64,4 +79,3 @@ function getFormattedDate (date) {
     const fullDate = month + "/" + day + "/" + year;
     return fullDate;
 }
-
