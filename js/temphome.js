@@ -19,4 +19,4 @@ var homeApp = {};
     }
 
     homeApp.logOut = logOut;
-})();
+})()
