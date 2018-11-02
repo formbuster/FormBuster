@@ -73,35 +73,86 @@ function getInProgressForm() {
         querySnapshot.forEach(function(doc) {
             // doc.data() is never undefined for query doc snapshots
 
-            const docData = doc.data();
+            const formDoc = doc.data();
             const formName = doc.id.toString().split('_')[0];
             const submDate = getFormattedDate(getDateFromTimestamp(doc.id.toString().split('_')[1]));
+            const exactSubmDate = getExactDateAndTime(getDateFromTimestamp(doc.id.toString().split('_')[1]));
             const dueDatePromise = getFormDueDate(formName);
-            const approvals = docData.approvals;
+            const approvals = formDoc.approvals;
 
             var main_div = document.createElement("div");
             main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom\t";
+
             //make a new div with class name, and append it to main div
             var first_nested_div = document.createElement("div");
             first_nested_div.className = "w3-left";
             main_div.appendChild(first_nested_div);
+
             //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
             var h3_form_name = document.createElement('h3');
-            var txt_form_name = document.createTextNode(formName);
-            h3_form_name.appendChild(txt_form_name);
+            h3_form_name.appendChild(document.createTextNode(formName));
+            h3_form_name.title = formName + " Form";
+            h3_form_name.className = "form_name_tooltip";
             first_nested_div.appendChild(h3_form_name);
+
             //generate check marks
-            for (i = 0; i < approvals.length; i++) {
+            for (let i = 0; i < approvals.length; i++) {
                 console.assert(approvals[i].status != false, {message: "Assertion failed. We cannot have a declined approval in 'inProgressForms'."});
-                var span_check_mark = document.createElement('span');
-                var span_check_tooltip = document.createElement('span');
-                span_check_tooltip.className = "tooltiptext";
 
                 pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
                     if (doc.exists) {
-                        const docData = doc.data();
-                        var tooltip_txt = document.createTextNode(docData.name.first + " " + docData.name.last);
-                        span_check_tooltip.appendChild(tooltip_txt);
+                        const pawsDoc = doc.data();
+
+                        var span_check_mark = document.createElement('span');
+                        span_check_mark.appendChild(document.createTextNode("✓"));
+
+                        var userInfo = pawsDoc.userType;
+                        if (userInfo != "Staff") { // then it means it's a Faculty member
+                            userInfo = pawsDoc.facultyRole;
+                        }
+                        span_check_mark.title = '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last;
+
+                        if (approvals.length > 0) {
+                            span_check_mark.classList.add("w3-margin-left");
+                        }
+                        if (approvals[i].status == null) {
+                            // has not been approved so use the grey check mark style
+                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
+                        } else if (approvals[i].status == true) {
+                            // Green check mark since it has already been approved..
+                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
+                        }
+                        if (i > 0) {
+                            span_check_mark.classList.add("w3-margin-left");
+                        }
+                        first_nested_div.appendChild(span_check_mark);
+
+                        // Reload "bubble_tooltip" class.
+                        $(document).ready(function() {
+                            $('.form_name_tooltip').tooltipster({
+                                theme: "tooltipster-borderless",
+                                side: "top",
+                                animation: "grow",
+                                functionPosition: function(instance, helper, position){
+                                    position.coord.top += 15;
+                                    return position;
+                                }
+                            });
+
+                            $('.bubble_tooltip').tooltipster({
+                                theme: "tooltipster-borderless",
+                                side: "bottom",
+                                animation: "grow",
+                                contentAsHTML: true
+                            });
+
+                            $('.form_date_tooltip').tooltipster({
+                                theme: "tooltipster-borderless",
+                                position: "left",
+                                animation: "grow",
+
+                            });
+                        });
                     } else {
                         // doc.data() will be undefined in this case
                         console.log("No such document!");
@@ -109,48 +160,37 @@ function getInProgressForm() {
                 }).catch(function(error) {
                     console.log("Error getting document:", error);
                 });
-
-                if (approvals[i].status == null) {
-                    // has not been approved so use the grey check mark style
-                    span_check_mark.className = "w3-left w3-margin-left w3-badge w3-grey w3-large";
-                } else if (approvals[i].status == true) {
-                    //Green check mark since it has already been approved..
-                    span_check_mark.className = "w3-left w3-badge w3-green w3-large";
-                }
-                var txt_form_name = document.createTextNode("✓");
-                span_check_mark.appendChild(txt_form_name);
-                span_check_mark.appendChild(span_check_tooltip);
-
-
-                var div_bubble = document.createElement('div');
-                div_bubble.className = "tooltip";
-                div_bubble.appendChild(span_check_mark);
-
-
-                first_nested_div.appendChild(div_bubble);
             }
+
+            // Second nested div (right side)
             var second_nested_div = document.createElement("div");
             second_nested_div.className = "w3-right";
+
             var h4_submission_date = document.createElement('h3');
-            var submission_date_txt = document.createTextNode("Submission Date: " + submDate);
-            h4_submission_date.appendChild(submission_date_txt);
+            h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
+            h4_submission_date.title = exactSubmDate;
+            h4_submission_date.className = "form_date_tooltip";
+
+
             second_nested_div.appendChild(h4_submission_date);
             var h4_due_date = document.createElement('h3');
 
             dueDatePromise.then(function(result) {
-                var due_date_txt = document.createTextNode("Due Date: " + result);
-                h4_due_date.appendChild(due_date_txt);
+                h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
+                h4_due_date.style.textAlign = "left";
+                h4_due_date.title = getExactDateAndTime(result);
+                h4_due_date.className = "form_date_tooltip";
+
                 second_nested_div.appendChild(h4_due_date);
                 main_div.appendChild(second_nested_div);
             });
-
 
             /*Todo: finish function call for on click, (see below)
             Todo: lines 29-41 should be used above for the in-progress form information.
             */
             main_div.onclick = function(){console.log("clicked")};
             document.getElementById("transit_form_list").appendChild(main_div);
-        })
+        });
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
     });
