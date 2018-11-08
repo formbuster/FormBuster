@@ -43,7 +43,7 @@ function showHistoryList() {
 function setUpDashboard() {
     getInProgressForm();
     getNotifications();
-    getCourse();
+    //getCourse();
 
 }
 
@@ -247,6 +247,11 @@ function retractForm() {
 
 function chooseDifferentApprover() {
 
+}
+
+function test_call() {
+        var id =
+            console.log($(this).attr('id'));
 }
 
 /*
