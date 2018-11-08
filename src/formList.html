@@ -10,8 +10,7 @@
             <p class="w3-left">Used for students to add or drop classes.</p>
         </div>
         <div class="w3-right">
-            <!-- todo: make the on click call a a function -->
-            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="document.getElementById('id01').style.display='block'">Start Form</button>
+            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="startRegistrationForm()">Start Form</button>
         </div>
     </div>
 
@@ -27,60 +26,74 @@
     </div>
 </div>
 
-<div id="id01" class="w3-modal" onload="startRegistrationFormProcess()">
+<div id="id01" class="w3-modal">
     <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
         <div class="w3-container">
-            <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright w3-round-xlarge w3-padding">&times;</span>
+            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge w3-padding">&times;</span>
             <div class="w3-text-theme-red" style="display: block">
                 <p></p>
                 <H3 class="w3-left">Registration Form</H3>
                 <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
             </div>
+            <div id ="first-page">
+                <div class="w3-container">
+                    <table id="classesTable" class="w3-table">
+                        <tr>
+                            <th>CRN</th>
+                            <th>Prefix</th>
+                            <th>Course No.</th>
+                            <th>Sec.</th>
+                            <th>Course Title</th>
+                            <th>Audit</th>
+                        </tr>
+                        <!--addCourseRow() is responsible for adding the rows of the table it is inserted here-->
+                    </table>
+                    <div class="w3-btn w3-theme-red w3-left w3-circle" onclick="addCourseRow()">+</div>
+                </div>
 
-            <div class="w3-container">
-                <table id="classesTable" class="w3-table">
-                    <tr>
-                        <th>CRN</th>
-                        <th>Prefix</th>
-                        <th>Course No.</th>
-                        <th>Sec.</th>
-                        <th>Course Title</th>
-                        <th>Audit</th>
-                    </tr>
-                    <!-- todo: somehow call addCourseRow, instead of repeating code for row-1-->
-                    <tr id="row-1">
-                        <td><input id="crn-1" class="w3-input" size="4" type="text"></td>
-                        <td><input id="prefix-1" class="w3-input" size="4" type="text"></td>
-                        <td><input id="course_no-1" class="w3-input" size="4" type="text"></td>
-                        <td><input id="sec-1" class="w3-input" size="4" type="text"></td>
-                        <td><input id="course_title-1" class="w3-input" size="20" type="text"></td>
-                        <td id="audit-1" class="w3-center"><input class="w3-check" type="checkbox"></td>
-                        <td class=><p class="w3-xlarge" style="margin-top: -3px" onclick="removeCourseRow('row-1')">x</p></td>
-                    </tr>
-                </table>
-                <div class="w3-btn w3-theme-red w3-left w3-circle" onclick="addCourseRow()">+</div>
+                <br>
+                <div>
+                    * A student may audit a course with the permission of his or her advisor and payment (if applicable) of an audit fee. An auditor does not receive a grade; an AU is recorded
+                    on the transcript in place of the grade if the auditor has, in general, maintained a satisfactory course attendance (usually 75 percent class attendance) and completed the
+                    appropriate assignments. If the student does not meet requirements, a final grade of F may be awarded. No changes in registration from credit to audit or from audit to credit
+                    will be permitted after the second week of classes.
+                </div>
+                <br>
+                <div class="">
+                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">Discard</button>
+                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
+                    <button id="save_registration_form" class="w3-button w3-blue w3-round-xxlarge" onclick="continueForm()">Continue</button>
+                </div>
+                <br>
             </div>
-
-            <br>
-            <div>
-                * A student may audit a course with the permission of his or her advisor and payment (if applicable) of an audit fee. An auditor does not receive a grade; an AU is recorded
-                on the transcript in place of the grade if the auditor has, in general, maintained a satisfactory course attendance (usually 75 percent class attendance) and completed the
-                appropriate assignments. If the student does not meet requirements, a final grade of F may be awarded. No changes in registration from credit to audit or from audit to credit
-                will be permitted after the second week of classes.
+            <div id = "second-page" style="display: none">
+                <div id = "confirm-courses" class="w3-container"></div>
+                <div>Students are responsible for meeting all published prerequisite requirements for their registered courses to ensure they have the
+                    background necessary for successful performance. A student who fails or drops a prerequisite course after registration for the following
+                    term, must, in consultation with his/her adviser, submit a “Change in Registration Status” form to add the prerequisite course.
+                </div>
+                <br>
+                <div class="">
+                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="goBack()">Back</button>
+                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
+                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
+                    <button id="submit_registration_form" class="w3-button w3-blue w3-round-xxlarge" onclick="submitRegistrationForm()">Submit</button>
+                </div>
             </div>
-            <br>
-            <div class="">
-                <button class="w3-button w3-grey w3-round-xxlarge">Discard</button>
-                <button class="w3-button w3-grey w3-round-xxlarge">Save</button>
-                <!-- todo: submit should check if any fields are blank"-->
-                <button id="submit_registration_form" class="w3-button w3-blue w3-round-xxlarge" onclick="submitForm()">Submit</button>
-            </div>
-            <br>
         </div>
     </div>
 </div>
 
 <script>
+    //this is used to generate unique id's for the rows, so we can use the id to get the information from the fields.
+    let courseUniqueID;
+
+    function startRegistrationForm() {
+        courseUniqueID = 1; //reset the ids when we restart a form to keep the number low.
+        addCourseRow();
+        document.getElementById('id01').style.display='block';
+    }
+
     class DesiredCourse {
         constructor(crn, prefix, course_no, sec, course_title, audit) {
             this.crn = crn;
@@ -92,7 +105,37 @@
         }
     }
 
-    function submitForm (){
+    /*
+    Close the form, don't save any of the information that may have been added into the form, but remove
+    the used ids for reuse.
+     */
+    function closeForm() {
+        $("#classesTable tr").each(function() {
+            //nth row with course info.
+            let row = this.id.split('-')[1];
+            if (row > 0) {
+                removeCourseRow(this.id, true);
+            }
+        });
+        document.getElementById('id01').style.display='none'
+    }
+
+    function continueForm() {
+        document.getElementById('first-page').style.display='none';
+
+        //set up next page.
+        if (document.getElementById('confirm-courses-table') == null) { //don't want multiple tables if someone hits back, continue may times.
+            $("#confirm-courses").append("<div id='confirm-courses-table'>Generate table...</div>");
+        }
+        document.getElementById('second-page').style.display='block';
+    }
+
+    /*
+    The form will be saved if the user presses save or if the form is submitted. Use ifSubmit to know,
+    if we need to send out form, send notifications update dashboards....
+    Todo: don't save/submit empty forms
+     */
+    function saveRegistrationForm (ifSubmit) {
         var courses_list = [];
 
         $("#classesTable tr").each(function() {
@@ -100,25 +143,43 @@
             let row = this.id.split('-')[1];
             if (row > 0) {
                 courses_list.push(
+                    //get row information and add it to call
                     new DesiredCourse(
-                    document.getElementById("crn-" + row).value,
-                    document.getElementById("prefix-" + row).value,
-                    document.getElementById("course_no-" + row).value,
-                    document.getElementById("sec-" + row).value,
-                    document.getElementById("course_title-" + row).value,
-                    document.getElementById("audit-" + row).checked) //todo: figure out value for checkbox.
-                )
+                        document.getElementById("crn-" + row).value,
+                        document.getElementById("prefix-" + row).value,
+                        document.getElementById("course_no-" + row).value,
+                        document.getElementById("sec-" + row).value,
+                        document.getElementById("course_title-" + row).value,
+                        document.getElementById("audit-" + row).checked) //todo: figure out value for checkbox.
+                );
+
                 removeCourseRow(this.id, true);
             }
         });
 
-        //saved the form data in courses_list, print to console to show its representation.
-        console.log(courses_list);
-        document.getElementById('id01').style.display='none'
+        if (ifSubmit) { //about to submit
+            /*
+            todo: send to database (maybe notification).
+            todo: remove console log once data gets to where it is needed
+            saved the form data in courses_list, print to console to show its representation.*/
+            submitRegistrationForm(courses_list);
+        } else { //save the form information, we can retrieve it later, then just close the page
+            document.getElementById('id01').style.display='none';
+            console.log("Form was saved for later", courses_list);
+
+            document.getElementById('second-page').style.display='none';
+            document.getElementById('first-page').style.display='block';
+        }
     }
 
-    //this is used to generate unique id's for the rows, so a user can delete a row.
-    let courseUniqueID = 1;
+    function goBack() {
+        document.getElementById('first-page').style.display='block';
+        document.getElementById('second-page').style.display='none';
+    }
+
+    function submitRegistrationForm(courses_list) {
+        console.log("Form was submitted", courses_list);
+    }
 
     /*
     When the user selects the '+' to add an additional row, only if the row count is within 8.
@@ -143,17 +204,19 @@
     }
 
     /*
-    When the user selects the 'x' for a course row hide the row, only if the row count is more than 1.
+    When the user selects the 'x' for a course row remove (not hide) the row, only if the row count is more than 1.
+    removeAll is true when the form is submitted; at this time there is no need to keep those elements now
+    because the data is already saved.
      */
     function removeCourseRow(id, removeAll) {
         let num_rows = $('#classesTable tr').length-1;
         if (num_rows > 1 || removeAll) {
             document.getElementById(id).remove();
-            //document.getElementById(id).style.display = 'none'
         } else {
             alert("At least one course must be present on this form");
         }
     }
+
 </script>
 
 
@@ -165,3 +228,16 @@
             </div>
             <div>
 -->
+
+<!---
+                    just in case we would want to change how the course rows look.
+                    <tr id="row-1">
+                        <td><input id="crn-1" class="w3-input" size="4" type="text"></td>
+                        <td><input id="prefix-1" class="w3-input" size="4" type="text"></td>
+                        <td><input id="course_no-1" class="w3-input" size="4" type="text"></td>
+                        <td><input id="sec-1" class="w3-input" size="4" type="text"></td>
+                        <td><input id="course_title-1" class="w3-input" size="20" type="text"></td>
+                        <td id="audit-1" class="w3-center"><input class="w3-check" type="checkbox"></td>
+                        <td class=><p class="w3-xlarge" style="margin-top: -3px" onclick="removeCourseRow('row-1')">x</p></td>
+                    </tr>
+                   -->
