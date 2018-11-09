@@ -163,18 +163,29 @@
             todo: remove console log once data gets to where it is needed
             saved the form data in courses_list, print to console to show its representation.*/
             submitRegistrationForm(courses_list);
-        } else { //save the form information, we can retrieve it later, then just close the page
+        } else { //form information is already saved, we can retrieve it later, so just close the page
             document.getElementById('id01').style.display='none';
             console.log("Form was saved for later", courses_list);
 
+            //switch back for first page of the form.
             document.getElementById('second-page').style.display='none';
             document.getElementById('first-page').style.display='block';
+
+            createDraft(courses_list);
         }
     }
 
     function goBack() {
         document.getElementById('first-page').style.display='block';
         document.getElementById('second-page').style.display='none';
+    }
+
+    /*
+    When the form is saved, we will need to save it in the user's draft section.
+    Todo: when starting a form make sure the user does not already have a draft.
+    */
+    function createDraft(courses_list) {
+        console.log("Saved to drafts..");
     }
 
     function submitRegistrationForm(courses_list) {
