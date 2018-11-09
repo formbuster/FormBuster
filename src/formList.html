@@ -167,12 +167,12 @@
             document.getElementById('id01').style.display='none';
             console.log("Form was saved for later", courses_list);
 
-            //switch back for first page of the form.
-            document.getElementById('second-page').style.display='none';
-            document.getElementById('first-page').style.display='block';
-
             createDraft(courses_list);
         }
+
+        //switch back to first page of the form.
+        document.getElementById('second-page').style.display='none';
+        document.getElementById('first-page').style.display='block';
     }
 
     function goBack() {
