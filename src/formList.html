@@ -86,7 +86,7 @@
 
 <script>
     //this is used to generate unique id's for the rows, so we can use the id to get the information from the fields.
-    let courseUniqueID;
+    let courseUniqueID = 1;
 
     function startRegistrationForm() {
         courseUniqueID = 1; //reset the ids when we restart a form to keep the number low.
@@ -190,6 +190,7 @@
             alert("Only up to 8 courses are allowed to be added to this form!");
         } else {
             courseUniqueID++;
+            console.log(courseUniqueID);
 
             $("#classesTable").append("                    <tr id=\"row-" + courseUniqueID + "\">\n" +
                 "                        <td><input id=\"crn-" + courseUniqueID + "\" class=\"w3-input\" size=\"4\" type=\"text\"></td>\n" +
@@ -198,7 +199,7 @@
                 "                        <td><input id=\"sec-" + courseUniqueID + "\" class=\"w3-input\" size=\"4\" type=\"text\"></td>\n" +
                 "                        <td><input id=\"course_title-" + courseUniqueID + "\" class=\"w3-input\" size=\"20\" type=\"text\"></td>\n" +
                 "                        <td id=\"audit-" + courseUniqueID + "\" class=\"w3-center\"><input class=\"w3-check\" type=\"checkbox\"></td>\n" +
-                "                        <td class=><p class=\"w3-xlarge\" style=\"margin-top: -3px\" onclick=\"removeCourseRow('row-1')\">x</p></td>\n" +
+                "                        <td class=><p class=\"w3-xlarge\" style=\"margin-top: -3px\" onclick=\"removeCourseRow('row-"+ courseUniqueID + "')\">x</p></td>\n" +
                 "                    </tr>");
         }
     }
