@@ -135,18 +135,7 @@
         document.getElementById('first-page').style.display='none';
 
         //erase all old rows, if any, the user may have clicked the back and continue button multiple times.
-        $("#confirmClassesTable tr").each(function() {
-            let row = this.id.split('-')[2];
-            console.log(row);
-            if (row > 0) {
-                document.getElementById("c-row-" + row).remove();
-            }
-        });
-
-            //set up next page.
-        //if (document.getElementById('confirm-courses-table') == null) { //don't want multiple tables if someone hits back, continue many times.
-          //  $("#confirm-courses").append("<div id='confirm-courses-table'>Generate table...</div>");
-        //}
+        removeConfirmationTable();
 
         document.getElementById('second-page').style.display='block';
         let num = 0;
@@ -187,6 +176,7 @@
     /*
     The form will be saved if the user presses save or if the form is submitted. Use ifSubmit to know,
     if we need to send out form, send notifications update dashboards....
+    But no matter if you save or submit it, the table needs to be deleted.
     Todo: don't save/submit empty forms
      */
     function saveRegistrationForm (ifSubmit) {
@@ -220,11 +210,10 @@
         } else { //save the form information, we can retrieve it later, then just close the page
             document.getElementById('id01').style.display='none';
             console.log("Form was saved for later", courses_list);
-
         }
+
         document.getElementById('second-page').style.display='none';
         document.getElementById('first-page').style.display='block';
-
     }
 
     function goBack() {
@@ -235,6 +224,7 @@
     function submitRegistrationForm(courses_list) {
         console.log("Form was submitted", courses_list);
         document.getElementById('id01').style.display='none';
+        removeConfirmationTable();
     }
 
     /*
@@ -271,6 +261,22 @@
         } else {
             alert("At least one course must be present on this form");
         }
+    }
+
+
+    /*
+    delete the whole table for the confirmation table as well, so this id can get reused.
+     */
+    function removeConfirmationTable() {
+        //erase all rows from confirmation table after submitting the form or when entering the
+        // continuation page, in order to regenerate a new confirmation table.
+        $("#confirmClassesTable tr").each(function() {
+            let row = this.id.split('-')[2];
+            console.log(row);
+            if (row > 0) {
+                document.getElementById("c-row-" + row).remove();
+            }
+        });
     }
 
 </script>
