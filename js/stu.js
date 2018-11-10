@@ -249,11 +249,6 @@ function chooseDifferentApprover() {
 
 }
 
-function test_call() {
-        var id =
-            console.log($(this).attr('id'));
-}
-
 /*
             <!-- popup bar, this is not used yet, will be used with line 62, when a form is clicked -->
             <div id="id01" class="w3-modal">
