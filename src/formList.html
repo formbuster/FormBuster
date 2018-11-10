@@ -21,7 +21,7 @@
             <p class="w3-left">Used for students to get permission to enroll into a class that is full.</p>
         </div>
         <div class="w3-right">
-            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="homeApp.logOut()">Start Form</button>
+            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="">Start Form</button>
         </div>
     </div>
 </div>
@@ -67,7 +67,18 @@
                 <br>
             </div>
             <div id = "second-page" style="display: none">
-                <div id = "confirm-courses" class="w3-container"></div>
+                <table id="confirmClassesTable" class="w3-table">
+                    <tr>
+                        <th>#</th>
+                        <th>CRN</th>
+                        <th>Prefix</th>
+                        <th>Course No.</th>
+                        <th>Sec.</th>
+                        <th>Course Title</th>
+                        <th>Audit</th>
+                    </tr>
+                    <!--continue() is responsible for adding the rows of the table it is inserted here-->
+                </table>
                 <div>Students are responsible for meeting all published prerequisite requirements for their registered courses to ensure they have the
                     background necessary for successful performance. A student who fails or drops a prerequisite course after registration for the following
                     term, must, in consultation with his/her adviser, submit a “Change in Registration Status” form to add the prerequisite course.
@@ -123,11 +134,54 @@
     function continueForm() {
         document.getElementById('first-page').style.display='none';
 
-        //set up next page.
-        if (document.getElementById('confirm-courses-table') == null) { //don't want multiple tables if someone hits back, continue may times.
-            $("#confirm-courses").append("<div id='confirm-courses-table'>Generate table...</div>");
-        }
+        //erase all old rows, if any, the user may have clicked the back and continue button multiple times.
+        $("#confirmClassesTable tr").each(function() {
+            let row = this.id.split('-')[2];
+            console.log(row);
+            if (row > 0) {
+                document.getElementById("c-row-" + row).remove();
+            }
+        });
+
+            //set up next page.
+        //if (document.getElementById('confirm-courses-table') == null) { //don't want multiple tables if someone hits back, continue many times.
+          //  $("#confirm-courses").append("<div id='confirm-courses-table'>Generate table...</div>");
+        //}
+
         document.getElementById('second-page').style.display='block';
+        let num = 0;
+        $("#classesTable tr").each(function() {
+            //nth row with course info.
+            let row = this.id.split('-')[1];
+            if (row > 0) {
+                num++;
+                const crn = document.getElementById("crn-" + row).value;
+                const prefix = document.getElementById("prefix-" + row).value;
+                const course_no = document.getElementById("course_no-" + row).value;
+                const sec = document.getElementById("sec-" + row).value;
+                const course_title = document.getElementById("course_title-" + row).value;
+                /*let audit;
+
+                if (document.getElementById("audit-" + row).checked == checked) {
+                    audit = true;
+                } else {
+                    audit = false;
+                }*/
+
+                $("#confirmClassesTable").append("<tr id=\"c-row-" + row + "\">\n" +
+                    "                        <td><id=\"c-crn-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + num + "</td>\n" +
+                    "                        <td><id=\"c-crn-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + crn + "</td>\n" +
+                    "                        <td><id=\"c-prefix-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + prefix + "</td>\n" +
+                    "                        <td><id=\"c-course_no-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + course_no + "</td>\n" +
+                    "                        <td><id=\"c-sec-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + sec + "</td>\n" +
+                    "                        <td><id=\"c-course_title-" + row + "\" class=\"\" size=\"20\" type=\"text\">" + course_title + "</td>\n" +
+                    "                        <td id=\"c-audit-" + row + "\" class=\"w3-center\"><input class=\"w3-check\" type=\"checkbox\"></td>\n" +
+                    "                    </tr>");
+
+                //todo: figure out value for checkbox.
+
+            }
+        });
     }
 
     /*
@@ -163,29 +217,19 @@
             todo: remove console log once data gets to where it is needed
             saved the form data in courses_list, print to console to show its representation.*/
             submitRegistrationForm(courses_list);
-        } else { //form information is already saved, we can retrieve it later, so just close the page
+        } else { //save the form information, we can retrieve it later, then just close the page
             document.getElementById('id01').style.display='none';
             console.log("Form was saved for later", courses_list);
 
-            createDraft(courses_list);
         }
-
-        //switch back to first page of the form.
         document.getElementById('second-page').style.display='none';
         document.getElementById('first-page').style.display='block';
+
     }
 
     function goBack() {
         document.getElementById('first-page').style.display='block';
         document.getElementById('second-page').style.display='none';
-    }
-
-    /*
-    When the form is saved, we will need to save it in the user's draft section.
-    Todo: when starting a form make sure the user does not already have a draft.
-    */
-    function createDraft(courses_list) {
-        console.log("Saved to drafts..");
     }
 
     function submitRegistrationForm(courses_list) {
@@ -202,7 +246,6 @@
             alert("Only up to 8 courses are allowed to be added to this form!");
         } else {
             courseUniqueID++;
-            console.log(courseUniqueID);
 
             $("#classesTable").append("                    <tr id=\"row-" + courseUniqueID + "\">\n" +
                 "                        <td><input id=\"crn-" + courseUniqueID + "\" class=\"w3-input\" size=\"4\" type=\"text\"></td>\n" +
