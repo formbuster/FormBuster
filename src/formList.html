@@ -44,6 +44,7 @@
                             <th>Course No.</th>
                             <th>Sec.</th>
                             <th>Course Title</th>
+                            <th>CRS.</th>
                             <th>Audit</th>
                         </tr>
                         <!--addCourseRow() is responsible for adding the rows of the table it is inserted here-->
@@ -75,6 +76,7 @@
                         <th>Course No.</th>
                         <th>Sec.</th>
                         <th>Course Title</th>
+                        <th>CRS.</th>
                         <th>Audit</th>
                     </tr>
                     <!--continue() is responsible for adding the rows of the table it is inserted here-->
@@ -106,12 +108,13 @@
     }
 
     class DesiredCourse {
-        constructor(crn, prefix, course_no, sec, course_title, audit) {
+        constructor(crn, prefix, course_no, sec, course_title, crs, audit) {
             this.crn = crn;
             this.prefix = prefix;
             this.course_no = course_no;
             this.sec = sec;
             this.course_title = course_title;
+            this.crs = crs;
             this.audit = audit;
         }
     }
@@ -138,17 +141,19 @@
         removeConfirmationTable();
 
         document.getElementById('second-page').style.display='block';
-        let num = 0;
+        let num = 1;
         $("#classesTable tr").each(function() {
             //nth row with course info.
             let row = this.id.split('-')[1];
             if (row > 0) {
-                num++;
                 const crn = document.getElementById("crn-" + row).value;
                 const prefix = document.getElementById("prefix-" + row).value;
                 const course_no = document.getElementById("course_no-" + row).value;
                 const sec = document.getElementById("sec-" + row).value;
+                const crs = document.getElementById("crs-" + row).value;
                 const course_title = document.getElementById("course_title-" + row).value;
+
+                //todo
                 /*let audit;
 
                 if (document.getElementById("audit-" + row).checked == checked) {
@@ -164,11 +169,12 @@
                     "                        <td><id=\"c-course_no-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + course_no + "</td>\n" +
                     "                        <td><id=\"c-sec-" + row + "\" class=\"\" size=\"4\" type=\"text\">" + sec + "</td>\n" +
                     "                        <td><id=\"c-course_title-" + row + "\" class=\"\" size=\"20\" type=\"text\">" + course_title + "</td>\n" +
+                    "                        <td><id=\"c-crs-" + row + "\" class=\"\" size=\"1\" type=\"text\">" + crs + "</td>\n" +
                     "                        <td id=\"c-audit-" + row + "\" class=\"w3-center\"><input class=\"w3-check\" type=\"checkbox\"></td>\n" +
                     "                    </tr>");
 
                 //todo: figure out value for checkbox.
-
+                num++;
             }
         });
     }
@@ -194,6 +200,7 @@
                         document.getElementById("course_no-" + row).value,
                         document.getElementById("sec-" + row).value,
                         document.getElementById("course_title-" + row).value,
+                        document.getElementById("crs-" + row).value,
                         document.getElementById("audit-" + row).checked) //todo: figure out value for checkbox.
                 );
 
@@ -243,6 +250,7 @@
                 "                        <td><input id=\"course_no-" + courseUniqueID + "\" class=\"w3-input\" size=\"4\" type=\"text\"></td>\n" +
                 "                        <td><input id=\"sec-" + courseUniqueID + "\" class=\"w3-input\" size=\"4\" type=\"text\"></td>\n" +
                 "                        <td><input id=\"course_title-" + courseUniqueID + "\" class=\"w3-input\" size=\"20\" type=\"text\"></td>\n" +
+                "                        <td><input id=\"crs-" + courseUniqueID + "\" class=\"w3-input\" size=\"1\" type=\"text\"></td>\n" +
                 "                        <td id=\"audit-" + courseUniqueID + "\" class=\"w3-center\"><input class=\"w3-check\" type=\"checkbox\"></td>\n" +
                 "                        <td class=><p class=\"w3-xlarge\" style=\"margin-top: -3px\" onclick=\"removeCourseRow('row-"+ courseUniqueID + "')\">x</p></td>\n" +
                 "                    </tr>");
