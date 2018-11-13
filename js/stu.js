@@ -43,7 +43,7 @@ function showHistoryList() {
 function setUpDashboard() {
     getInProgressForm();
     getNotifications();
-    //getCourse();
+    getCourse();
 
 }
 
@@ -211,8 +211,8 @@ function getNotifications() {
     const time = obj.time;
 
     for (i = 0; i < amountOfNotifications; i ++) {
-        $("#notifications-list").append(
-            '<div class="w3-container w3-white w3-margin-bottom">\n' +
+        $("#notification").append(
+            '<div class="w3-container w3-cell w3-white">\n' +
             '    <span onclick="this.parentElement.style.display=\'none\'" class="w3-button w3-white w3-large w3-right">&times;</span>\n' +
             '    <div id="message">\n' +
             '        <p>' + message + '</p>\n' +
@@ -220,7 +220,7 @@ function getNotifications() {
             '    <div class="time">\n' +
             '        <p>' + time + '</p>\n' +
             '    </div>\n' +
-            '</div>\n');
+            '</div><br>\n');
     }
 }
 
