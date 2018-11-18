@@ -29,7 +29,22 @@ function check () {
     }
 }
 
-// Due date will be computed from the formName
+// Get submission date from a Firebase "doc", in the format: MM/DD/YYYY
+function getSubmDate (doc) {
+    return getFormattedDate(getDateFromTimestamp(doc.id.toString().split('_')[1]));
+}
+
+// Get exact submission date and time from a Firebase "doc", in the format: MM/DD/YYYY at HH:MM:SS
+function getExactSubmDate (doc) {
+    return getExactDateAndTime(getDateFromTimestamp(doc.id.toString().split('_')[1]));
+}
+
+// Get the name of the form from a Firebase "doc"
+function getFormName (doc) {
+    return doc.id.toString().split('_')[0];
+}
+
+// Get a Promise containing the due date given the name of the form [actual due date will be computed later]
 function getFormDueDate (formName) {
     return pawsDB.collection("formDeadlines").doc(formName).get().then(function(doc) {
         if (doc.exists) {
@@ -44,6 +59,7 @@ function getFormDueDate (formName) {
     });
 }
 
+// Generate a Date object from a timestamp of the format: MMDDYYYYHHMMSS
 function getDateFromTimestamp (timestamp) {
     const month = timestamp.substring(0, 2);
     const day = timestamp.substring(2, 4);
@@ -56,6 +72,7 @@ function getDateFromTimestamp (timestamp) {
     return date;
 }
 
+// Get an exact date and time String representation of the Date object given
 function getExactDateAndTime (date) {
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -71,6 +88,7 @@ function getExactDateAndTime (date) {
     return formattedSubmDate;
 }
 
+// Get a formatted date String representation of a Date object, to show in the forms
 function getFormattedDate (date) {
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -78,4 +96,21 @@ function getFormattedDate (date) {
 
     const fullDate = month + "/" + day + "/" + year;
     return fullDate;
+}
+
+/* NOT BEING USED CURRENTLY, BUT MIGHT BE HELPFUL IN THE FUTURE */
+function capitalizeStrings (str) {
+    const strArray = str.split(" ");
+
+    let newStr = "";
+    for (let i = 0; i < strArray.length; i++) {
+        let temp = strArray[i].toLowerCase();
+        newStr += temp.charAt(0).toUpperCase() + temp.substring(1, temp.length);
+
+        if (i < strArray.length - 1) {
+            newStr += " ";
+        }
+    }
+
+    return newStr;
 }

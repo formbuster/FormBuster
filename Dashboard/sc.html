@@ -4,29 +4,47 @@
     <link href="styles.css" rel="stylesheet" type="text/css">
     <meta charset="UTF-8">
     <title>Form Buster</title>
-
 </head>
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link href="styles.css" rel="stylesheet" type="text/css">
 <script src="scripts.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="sc_styles.css" rel="stylesheet" type="text/css">
 
-<script>
-  $(function(){
-    $('#header').load('dashboard.html');
-  });
-  $(function(){
-      $('#forms').load('student_list.html');
-  });
-</script>
+<!-- Firebase Initialization scripts -->
+<script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+<script src="../js/firebase.js"></script>
+
+<script src="../js/coord.js"></script>
 
 <body onresize="check()">
-<header>
-    <div id="header"></div>
-</header>
+    <header>
+        <div id="header"></div>
+    </header>
+    <div id="pageGrid1" class="grid_page"></div>
+    <div id="pageGrid2" class="grid_page" style="display: none;">
+        <button class="switch_page_grids_button back_button_tooltip" type="button" onclick="displayStudentSearchListPage()" >
+            <img src="../img/left-arrow-transparent.png" style="width: 35px; height: 35px;" >
+        </button>
+        <h1 id="studentTitle" style="display: block" ></h1>
+        <div style="border-bottom: #9b9b9b; border-bottom: 1px solid; background-color: transparent; margin-bottom: 20px" >
+            <button id="completedFormsButton" class="forms_tab_button" onclick="completedFormsButtonPressed()" >Completed Forms</button>
+            <button id="inProgressFormsButton" class="forms_tab_button" onclick="inProgressFormsButtonPressed()" >In-Progress Forms</button>
+        </div>
 
-    <div id="forms"></div>
+        <div id="completedFormsDiv" ></div>
+        <div id="inProgressFormsDiv" ></div>
+    </div>
 
+    <script>
+        $(function(){
+            $('#header').load('dashboard.html');
+        });
+        $(function(){
+            $('#pageGrid1').load('student_list.html');
+        });
+    </script>
 </body>
