@@ -1,7 +1,8 @@
+
 <div id = "students-list">
     <input class="w3-button w3-block w3-grey w3-round-xlarge w3-large" style="display: block; margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search...">
 
-    <button onclick="document.getElementById('id01').style.display='block'" id = "a-student" style="display: block; margin-top: 10px; margin-left: auto; margin-right: auto; padding-left: 10px;" class="w3-button w3-block w3-white w3-round-xlarge w3-large">
+    <button id="a-student" onclick="document.getElementById('student-details').style.display='block'"  style="display: block; margin-top: 10px; margin-left: auto; margin-right: auto; padding-left: 10px;" class="w3-button w3-block w3-white w3-round-xlarge w3-large">
         <div class="w3-left">Adkins, Aliyah : Software Engineering</div>
         <div class="w3-right">900876846</div>
     </button>
@@ -11,48 +12,93 @@
     </button>
 </div>
 
-<div id="id01" class="w3-modal" onload="getCourse()">
+<!---todo: generate a student specific student details page-->
+<div id="student-details" class="w3-modal">
     <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
-        <div class="w3-container">
-            <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright w3-round-xlarge w3-padding">&times;</span>
-            <div class="w3-text-theme-red" style="display: block">
-                <p></p>
-                <H3 class="w3-left">Registration Form</H3>
-                <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
-            </div>
-            <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large" style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search to add a class...">
+        <div class="w3-container" style="display: block">
+            <span onclick="document.getElementById('student-details').style.display='none'" class="w3-button w3-display-topright w3-round-xlarge w3-padding">&times;</span>
+            <div class="w3-text-theme-red">
+                <H3 id="student-details-name" class=""></H3>
+                <H3 id="student-details-tracks" class="w3-left" style="clear: both;">TRACKS: </H3>
+                <H3 id="student-details-id" class="w3-left" style="clear: both;">Student ID: </H3>
+                <H3 id="student-details-majors" class="w3-left" style="clear: both;">Major(s): </H3>
+                <H3 id="student-details-minors" class="w3-left" style="clear: both;">Minor(s): </H3>
+                <H3 id="student-details-adviser" class="w3-left" style="clear: both;">Adviser: </H3>
+                <H3 id="student-details-level" class="w3-left" style="clear: both;">Level: </H3>
+                <H3 id="student-details-standing" class="w3-left" style="clear: both;">Class Standing: </H3>
 
-            <div class="w3-theme-red w3-panel w3-leftbar w3-border-theme w3-round-xlarge"><div id="class1" class="w3-left"></div>
-                <span onclick="document.getElementById('class1').style.display='none'" class="w3-button w3-right w3-round-xlarge">&times;</span>
+                <div style="clear: both">
+                    <button class="w3-button w3-theme-blue w3-round-xxlarge">Generate Pin</button> <!-- todo: only if faculty member -->
+                    <button class="w3-button w3-theme-blue w3-round-xxlarge">View Records</button>
+                    <!-- todo pass user info as a parameter -->
+                    <button onclick="startAFormForAStudent()" class="w3-button w3-theme-blue w3-round-xxlarge">Start Form</button> <!-- todo: only if faculty member -->
+                </div>
             </div>
-            <div>
-                <button class="w3-button w3-grey w3-round-xxlarge">Discard</button>
-                <button class="w3-button w3-grey w3-round-xxlarge">Save</button>
-                <button class="w3-button w3-green w3-round-xxlarge">Continue</button>
-            </div>
+            <br><br>
         </div>
     </div>
 </div>
 
-<div id="id02" class="w3-modal" onload="getCourse()">
-    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
-        <div class="w3-container">
-            <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright w3-round-xlarge w3-padding">&times;</span>
-            <div class="w3-text-theme-red" style="display: block">
-                <p></p>
-                <H3 class="w3-left">Registration Form</H3>
-                <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
-            </div>
-            <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large" style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search to add a class...">
 
-            <div class="w3-theme-red w3-panel w3-leftbar w3-border-theme w3-round-xlarge"><div id="class1" class="w3-left"></div>
-                <span onclick="document.getElementById('class1').style.display='none'" class="w3-button w3-right w3-round-xlarge">&times;</span>
-            </div>
-            <div>
-                <button class="w3-button w3-grey w3-round-xxlarge">Discard</button>
-                <button class="w3-button w3-grey w3-round-xxlarge">Save</button>
-                <button class="w3-button w3-green w3-round-xxlarge">Continue</button>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    //todo: generalize
+    /*fills the information from paws database into the student details which will be available for
+    sc, faculty, staff
+    */
+    pawsDB.collection("users").doc("aadkins2016").get().then(function(doc) {
+        if (doc.exists) {
+            const pawsDoc = doc.data();
+            const firstName = pawsDoc.name.first;
+            const lastName = pawsDoc.name.last;
+            const tracksId = "aadkins2016";
+
+            $("#student-details-name").append(firstName + " " + lastName);
+            $("#student-details-tracks").append(tracksId);
+            $("#student-details-id").append(pawsDoc.userID);
+            $("#student-details-majors").append(pawsDoc.major.majorTitle);
+            $("#student-details-minors").append();
+            $("#student-details-adviser").append(pawsDoc.advisor.advisorEmail);
+            $("#student-details-level").append();
+            $("#student-details-standing").append();
+
+            /*
+            Used to known which student a fac/sc/staff is tending to.
+             */
+            currentStudent(firstName, lastName, tracksId);
+        }
+    });
+
+    function startAFormForAStudent() {
+        //document.getElementById('student-details').style.display='none';
+        document.getElementById('students-list').style.display = 'none';
+
+        setUpFormsListView();
+        document.getElementById('forms-list').style.display = 'block';
+    }
+
+    /*
+    We are re using the formList.html code, but before using it we need to modify it
+    so that a faculty member can start a form to a student.
+     */
+    function setUpFormsListView(studentName) {
+        $("#forms-list-view").prepend(
+            "<div id = \"student-name\" class=\"w3-left w3-large w3-margin\">Start a form for: " + studentName + "</div>\n" +
+            "<br>");
+
+        //remove the original form options that don't apply for the faculty member.
+        $("#save-option-1").remove();
+        $("#enter-pin-2").remove();
+        $("#save-option-2").remove();
+        $("#submit-option-2").remove();
+
+        $("#forms-options-2").append(
+            //todo: change the onclick function, so it will send the form to the student, not submit it for faculty approval.
+            "<button id=\"send-form-2\" class=\"w3-button w3-theme-blue w3-round-xxlarge\" onclick=\"saveRegistrationForm(true)\">Send to Student Name</button>\n");
+    }
+
+    function currentStudent(firstName, lastName, tracksId) {
+        console.log(firstName, lastName, tracksId);
+    }
+
+</script>
+
