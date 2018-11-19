@@ -1,10 +1,50 @@
-<input class="w3-grey w3-round-xlarge" type="text" placeholder="Search..">
+<link href="../css/coord.css" rel="stylesheet" type="text/css">
+<script src="../js/coord.js"></script>
+<script src="../js/stu.js"></script>
+<script src="../js/general.js"></script>
 
-<button style="width: 50%; display: block; margin-top: 10px; margin-left: auto; margin-right: auto; padding-left: 10px;" class="w3-button w3-block w3-white w3-round-xlarge">
-    <div class="w3-left">Student, Test : Software Engineering</div>
-    <div class="w3-right">900876846</div>
-</button>
-<button style="width: 50%; text-align: left; display: block; margin-top: 10px; margin-left: auto; margin-right: auto; padding-left: 10px;" class="w3-button w3-block w3-white w3-round-xlarge">
-    <div class="w3-left">Student, Test : Electrical Engineering</div>
-    <div class="w3-right">900542478</div>
-</button>
+
+
+<!-- Tooltipster Libraries -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="../tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/tooltipster.bundle.min.css" />
+<link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
+<link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow-customized.min.css" />
+
+<div style="overflow: auto; display: block; margin-top: 3%">
+    <input id="searchInput" class="search_input" autofocus type="text" placeholder="Search for students..." onkeyup="keyPressed()" >
+    <script>
+        document.getElementById("searchInput").addEventListener("keypress", function(key) {
+            if (key.which == 13) {
+                searchButtonPressed();
+            }
+        });
+    </script>
+    <button id="searchButton" class="search_button button_properties" type="button" onclick="searchButtonPressed()">Search</button>
+</div>
+
+<button class="all_students_button button_properties all_button_tooltip" type="button" onclick="getAllStudents()">All</button>
+
+<script>
+    // Load "button_tooltip" class.
+    $(document).ready(function() {
+        $('.all_button_tooltip').tooltipster({
+            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+            side: "right",
+            animation: "grow",
+            content: "Get a list of all students"
+        });
+
+        $('.back_button_tooltip').tooltipster({
+            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+            side: "bottom",
+            animation: "grow",
+            content: "Go back to the previous page"
+        });
+    });
+</script>
+
+<div id="coord_students_list" style="margin-top: 3%; overflow: visible"></div>
+<div style="margin-top: 10%"></div>

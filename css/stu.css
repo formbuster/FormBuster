@@ -1,7 +1,13 @@
-#formsManagement{
+#formsManagement {
     display: none;
 }
 
-#students{
+#students {
     display: none;
+}
+
+/* Sets the style of the forms' contents text */
+.form_content_text {
+    font-family: serif;
+    font-size: 15px
 }

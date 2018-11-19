@@ -9,8 +9,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../tooltipster/dist/js/tooltipster.bundle.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow-customized.min.css" />
 </head>
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -34,7 +35,7 @@
     $(function(){
         $('#header').load('genDashboard.html', function() {
             document.getElementById("dashboard").addEventListener("click", showDashboard);
-            document.getElementById("forms").addEventListener("click", showFormsList);
+            document.getElementById("pageGrid1").addEventListener("click", showFormsList);
             document.getElementById("history").addEventListener("click", showHistoryList);
         });
         $('#forms-list').load('formList.html');
@@ -51,7 +52,7 @@
 
     <div class="w3-container w3-cell w3-threequarter">
         <div class="w3-text-theme-red"><H2>In-Progress Forms</H2></div>
-        <!-- this should be filled when getInProgressForm is called-->
+        <!-- this should be filled when getStudentForms is called-->
         <div id ="transit_form_list"></div>
     </div>
 
