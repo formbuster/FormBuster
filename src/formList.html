@@ -1,6 +1,6 @@
 <script src="../js/stu.js"></script>
 
-<div id = "forms-list">
+<div id = "forms-list-view">
     <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large" style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search...">
 
     <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">
@@ -60,10 +60,10 @@
                     will be permitted after the second week of classes.
                 </div>
                 <br>
-                <div class="">
-                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">Discard</button>
-                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
-                    <button id="save_registration_form" class="w3-button w3-blue w3-round-xxlarge" onclick="continueForm()">Continue</button>
+                <div id="form-options-1">
+                    <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">Discard</button>
+                    <button id="save-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
+                    <button id="continue-form-1" class="w3-button w3-theme-blue w3-round-xxlarge" onclick="continueForm()">Continue</button>
                 </div>
                 <br>
             </div>
@@ -86,12 +86,13 @@
                     term, must, in consultation with his/her adviser, submit a “Change in Registration Status” form to add the prerequisite course.
                 </div>
                 <br>
-                <div class="">
-                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="goBack()">Back</button>
-                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
-                    <button class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
-                    <button id="submit_registration_form" class="w3-button w3-blue w3-round-xxlarge" onclick="saveRegistrationForm(true)">Submit</button>
+                <div id="forms-options-2" class="">
+                    <button id="back-option-2" class="w3-button w3-grey w3-round-xxlarge" onclick="goBack()">Back</button>
+                    <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
+                    <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
+                    <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge" onclick="saveRegistrationForm(true)">Submit</button>
                 </div>
+                <br>
             </div>
         </div>
     </div>
@@ -229,6 +230,9 @@
     }
 
     function submitRegistrationForm(courses_list) {
+        console.log(moment().format('YYYYMMDD hh:mm:ss')); //20181116 12:42:58 <-- current time format
+        console.log(moment("20181116 01:30:00", "YYYYMMDD hh:mm:ss").fromNow());
+
         console.log("Form was submitted", courses_list);
         document.getElementById('id01').style.display='none';
         removeConfirmationTable();
