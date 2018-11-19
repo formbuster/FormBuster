@@ -509,27 +509,35 @@ This function's purpose is to generate the notifications view for a student on t
 Todo: Fix this so it works, or generate the html code using JS.
  */
 
-function getNotifications () {
-    var txt = '{"message":"David Lee has approved your Registration Form", "time":  "4 min ago"}';
-    var obj = JSON.parse(txt);
-    console.log(obj.message + " " + obj.time);
+function getNotifications() {
+    formDB.collection("users").doc(getUserName()).collection("notifications").orderBy("timestamp").get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(notification) {
+            const userNotification = notification.data();
+            const notificationMessage = userNotification.message;
+            const notificationDate = notification.id.toString().split('_')[1];
 
-    const amountOfNotifications = 2;
-    const message = obj.message;
-    const time = obj.time;
+            $("#notification").append(
+                '<div class="w3-container w3-cell w3-white">\n' +
+                '    <span onclick="this.parentElement.style.display=\'none\'" class="w3-button w3-white w3-large w3-right">&times;</span>\n' +
+                '    <div id="message">\n' +
+                '        <p>' + notificationMessage + '</p>\n' +
+                '    </div>\n' +
+                '    <div class="time">\n' +
+                /*todo: get formatted time of notification for each notification*/
+                '        <p>' + moment(notificationDate, "YYYYMMDD hh:mm:ss").fromNow() + '</p>\n' +
+                '    </div>\n' +
+                '</div><br>\n');
+        });
+    }).catch(function(error) {
+        console.log("Error getting documents (querySnapshot): ", error);
+    });
 
-    for (i = 0; i < amountOfNotifications; i ++) {
-        $("#notification").append(
-            '<div class="w3-container w3-cell w3-white">\n' +
-            '    <span onclick="this.parentElement.style.display=\'none\'" class="w3-button w3-white w3-large w3-right">&times;</span>\n' +
-            '    <div id="message">\n' +
-            '        <p>' + message + '</p>\n' +
-            '    </div>\n' +
-            '    <div class="time">\n' +
-            '        <p>' + time + '</p>\n' +
-            '    </div>\n' +
-            '</div><br>\n');
-    }
+    //var txt = '{"message":"David Lee has approved your Registration Form", "time":  "4 min ago"}';
+    //var obj = JSON.parse(txt);
+    //console.log(obj.message + " " + obj.time);
+
+    //const message = obj.message;
+    //const time = obj.time;
 }
 
 /*
