@@ -235,6 +235,14 @@
 
         console.log("Form was submitted", courses_list);
         document.getElementById('id01').style.display='none';
+
+        //--------will be removed later, but just used to show that we can generate notifications
+        formDB.collection("users").doc("aadkins2016").collection("notifications").doc("submitRegistration_" + moment().format('YYYYMMDD HH:mm:ss')).set({
+            message: "You have just submitted a form",
+            timestamp: new Date() //moment().format('YYYYMMDD HH:mm:ss')
+        });
+
+
         removeConfirmationTable();
     }
 
