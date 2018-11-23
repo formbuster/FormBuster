@@ -10,8 +10,8 @@ var homeApp = {};
         } else {
             // redirect to login page
             uid = null;
-            window.location.replace('https://auth.formbuster.me/');
-//             window.location.replace('../src/templogin.html');
+//             window.location.replace('https://auth.formbuster.me/');
+            window.location.replace('../src/templogin.html');
         }
     });
 
