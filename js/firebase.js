@@ -3,8 +3,6 @@ This file's purpose is to contain the initialization for the formbuster database
 It will also contain information of the logged in user, and will be accessed by all roles.
  */
 
-
-
 // Initialize FormBuster Firebase (DEFAULT)
 formBusterApp = firebase.initializeApp({
     apiKey: "AIzaSyD5gttM9fq--1BIbLtn79UbtXrMlf56oAA",
@@ -32,8 +30,3 @@ formDB.settings(formDBSettings);
 const pawsDB = pseudoPAWSApp.firestore();
 const pawsDBSettings = {/* your settings... */ timestampsInSnapshots: true};
 pawsDB.settings(pawsDBSettings);
-
-//Todo: return proper user name
-function getUserName() {
-    return "aadkins2016";
-}
