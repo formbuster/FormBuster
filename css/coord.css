@@ -1,95 +1,11 @@
-#mySidebar {
-    display: none;
-}
-
-#notificationPreferences {
-    display: none;
-}
-
 /* Sets the size of the main container of the page */
-.grid_page {
+.main_content_page {
     display: block;
     overflow: visible;
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
-}
-
-/* Sets the style for the search bar of student coordinators */
-.search_input {
-    margin-top: 0%;
-    width: 100%;
-    outline: none;
-    position: relative;
-    float: left;
-
-    padding: 6px;
-    border-style: solid;
-    border-width: thin;
-    border-color: #8d8d8d;
-    font-size: 17px;
-    color: #000;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: text;
-
-    transition: box-shadow, border-color 1.5s;
-}
-.search_input:hover {
-    border-color: rgba(0,149,255,0.5);
-    box-shadow: inset 0 0 2px #d3d6da, 0 0 2px rgba(0,149,255,0.2);
-}
-.search_input:focus {
-    border-color: #0095ff;
-    box-shadow: inset 0 2px 2px #fafafb, 0 0 5px rgba(0,119,204,0.4);
-}
-
-/* Sets the styles of the search button of the search bar that is used for student coordinators */
-.search_button {
-    width: 7%;
-    position: absolute;
-    z-index: 1;
-    left: 68%;
-    height: 39px;
-    border-radius: 5px;
-    background-color: #770000;
-    color: #fff;
-    visibility: hidden;
-    outline: none;
-    cursor: pointer;
-    border: none;
-}
-
-/* Sets the style for general buttons. For clicking and hovering */
-.button_properties:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-}
-.button_properties:active {
-    opacity: 0.5;
-}
-
-/* Sets the style for the button in which is used to show all students for the student coordinator screen */
-.all_students_button {
-    width: 4%;
-    position: absolute;
-    top: 64.59px;
-    z-index: 1;
-    left: 76%;
-    height: 39px;
-    border-radius: 5px;
-    background-color: #365880;
-    color: #fff;
-    outline: none;
-    cursor: pointer;
-    border: none;
-}
-
-/* Sets the style for each of the student's entry in the student coordinator page. All the entries will seem like a button */
-.student_entry_button {
-    position: relative;
-    margin-top: 10px;
-    padding-left: 10px;
-    outline: none
+    padding-top: 43px;
 }
 
 /* Sets the style for the button that is used to go back to the previous page on the student coordinator screen */
@@ -97,7 +13,6 @@
     align-items: center;
     position: absolute;
     top: 40%;
-    z-index: 2;
     left: 11%;
     border-radius: 100%;
     background-color: #f4eded;
@@ -106,37 +21,4 @@
     border: none;
     transition: background-color 0.8s;
     padding: 7px 7px 7px 7px;
-}
-.switch_page_grids_button:hover {
-    background-color: #d7d0d0;
-}
-.switch_page_grids_button:active {
-    background-color: #ada6a6;
-}
-
-/* Sets the style of the button used to switch between completed forms and in-progress forms */
-.forms_tab_button {
-    z-index: 2;
-    align-items: center;
-    display: inline-flex;
-    cursor: pointer;
-    border-left: 0px;
-    border-right: 0px;
-    border-bottom: 2px solid transparent;
-    border-top: 2px solid transparent;
-    color: #05307d;
-    background-color: transparent;
-    transition: color .2s;
-    outline: none;
-    text-transform: uppercase;
-    padding: 0;
-    margin-right: 24px;
-    margin-left: 0px;
-}
-.forms_tab_button:hover {
-    color: #054ee1 !important;
-}
-.forms_tab_button:active {
-    border-bottom-color: #054ee1 !important;
-    color: #054ee1 !important;
 }

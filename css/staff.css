@@ -1,7 +1,34 @@
-#notificationPreferences{
-    display: none;
+/* Defines the "container" size and position for the main elements of a Staff's page */
+.main_content_page {
+    margin-left: 15%;
+    margin-top: 43px;
+    width: 64%;
+    float: left;
 }
 
-#pageGrid1{
-    display: none;
+/* Sets the style for the button that is used to go back to the previous page on the staff screen */
+.switch_page_grids_button {
+    align-items: center;
+    position: absolute;
+    top: 40%;
+    left: 11%;
+    border-radius: 100%;
+    background-color: #f4eded;
+    outline: none;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.8s;
+    padding: 7px 7px 7px 7px;
+}
+
+/* Button used for the popups of the Staff */
+.staff_button {
+    width: 150px;
+    height: 30px;
+    border-radius: 16px;
+    background-color: #770000;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    border: none;
 }

@@ -1,13 +1,7 @@
-#formsManagement {
-    display: none;
-}
-
-#students {
-    display: none;
-}
-
-/* Sets the style of the forms' contents text */
-.form_content_text {
-    font-family: serif;
-    font-size: 15px
+/* Defines the "container" size and position for the main elements of a Student's page */
+.main_content_page {
+    margin-left: 15%;
+    margin-top: 43px;
+    width: 64%;
+    float: left;
 }
