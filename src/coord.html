@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Javascripts for the pages and tooltip -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <!-- Tooltipster CSS and JS -->
+        <script src="../libs/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/tooltipster.bundle.min.css">
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-borderless.min.css">
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css">
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow-customized.min.css">
+
+        <!-- Firebase Initialization scripts -->
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+        <script src="../js/firebase.js"></script>
+
+        <!-- FormBuster's scripts -->
+        <script src="../js/general.js"></script>
+        <script src="../js/coord.js"></script>
+
+        <!-- CSS Files -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" type="text/css" href="../css/general.css">
+        <link rel="stylesheet" type="text/css" href="../css/coord.css">
+
+        <meta charset="UTF-8">
+        <title>Students</title>
+    </head>
+
+
+    <body onload="loadPage()">
+        <div id="generalDashboard"></div>
+
+        <!-- This DIV contain the multiple pages -->
+        <div id="mainContent" class="main_content_page">
+            <div id="dashboardPage" style="display: none">
+                <div id="studentSearchView"></div>
+
+                <div id="studentFormsView" style="display: none">
+                    <button class="switch_page_grids_button back_button_tooltip" type="button" onclick="displayStudentSearchListPage()" >
+                        <img src="../img/left-arrow-transparent.png" style="width: 35px; height: 35px;" >
+                    </button>
+                    <h1 id="studentTitle" style="display: block" ></h1>
+                    <div style="border-bottom: #9b9b9b; border-bottom: 1px solid; background-color: transparent; margin-bottom: 20px" >
+                        <button id="completedFormsButton" class="forms_tab_button" onclick="completedFormsButtonPressed()" >Completed Forms</button>
+                        <button id="inProgressFormsButton" class="forms_tab_button" onclick="inProgressFormsButtonPressed()" >In-Progress Forms</button>
+                    </div>
+
+                    <div id="completedFormsList" ></div>
+                    <div id="inProgressFormsList" ></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

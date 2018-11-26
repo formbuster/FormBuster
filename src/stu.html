@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Javascripts for the pages and tooltip -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <!-- Tooltipster CSS and JS -->
+        <script src="../libs/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/tooltipster.bundle.min.css">
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css">
+        <link rel="stylesheet" type="text/css" href="../libs/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow-customized.min.css">
+
+        <!-- Firebase Initialization scripts -->
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+        <script src="../js/firebase.js"></script>
+
+        <!-- FormBuster's scripts -->
+        <script src="../js/general.js"></script>
+        <script src="../js/stu.js"></script>
+
+        <!-- CSS Files -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" type="text/css" href="../css/general.css">
+        <link rel="stylesheet" type="text/css"href="../css/stu.css">
+
+        <meta charset="UTF-8">
+        <title id="pageTitle"></title>
+
+        <!-- TEMPORARY -->
+        <!-- temp Initialization scripts -->
+        <!-- <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase.js"></script>
+        <script src="../js/tempfirebase.js"></script>
+        <script src="../js/temphome.js"></script> -->
+    </head>
+
+
+    <body onresize="checkWindowWidth()" onload="loadPage()">
+        <div id="generalDashboard"></div>
+
+        <!-- This DIV contain the multiple pages -->
+        <div id="mainContent" class="w3-container w3-cell main_content_page">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" style="display: none">
+                <div class="w3-text-theme-red"><H2>In-Progress Forms</H2></div>
+                <!-- this should be filled when getStudentForms is called-->
+                <div id="inProgressFormsList"></div>
+            </div>
+
+            <!-- Drafts Page -->
+            <div id="draftsPage" style="display: none">
+                <div class="w3-text-theme-red"><H2>Drafts</H2></div>
+                <!-- this should be filled when XXXXXXXXXXXXX is called-->
+                <div id="draftsList"></div>
+            </div>
+
+            <!-- Forms Page -->
+            <div id="formsPage" style="display: none">
+                <div class="w3-text-theme-red"><H2>University Forms</H2></div>
+                <!-- this should be filled when XXXXXXXXXXXXX is called-->
+                <div id="formsList"></div>
+            </div>
+
+            <!-- History Page -->
+            <div id="historyPage" style="display: none">
+                <div class="w3-text-theme-red"><H2>Forms History</H2></div>
+                <!-- this should be filled when XXXXXXXXXXXXX is called-->
+                <div id="formsHistoryList"></div>
+            </div>
+        </div>
+    </body>
+</html>

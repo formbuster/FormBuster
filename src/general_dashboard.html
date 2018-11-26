@@ -1,0 +1,45 @@
+<!-- CSS Files -->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" type="text/css" href="../css/general.css">
+<link rel="stylesheet" type="text/css" href="../css/dashboard.css">
+
+<div id = "general_dashboard">
+    <div id="generalTopBar" class="w3-bar w3-theme-red w3-top-bar" style="position: fixed; height: 43px; z-index: 1; overflow: visible">
+        <a href="#" id="openNav" class="w3-bar-item w3-button w3-left" style="display: none" onclick="openNavToggle()">&#9776;</a>
+        <a href="http://formbuster.me" class="w3-bar-item w3-button w3-large">FORMBUSTER</a>
+        <div class="w3-dropdown-hover w3-right">
+            <button id="display-name" class="w3-button w3-theme-red">
+                <script>
+                    getDisplayName();
+                </script>
+            </button>
+            <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+                <a href="#" id="notificationPreferences"class="w3-bar-item w3-button">Notification Preferences</a>
+                <a href="#" id="signOut" class="w3-bar-item w3-button" onclick="homeApp.logOut()">Sign out</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="mySidebar" class="w3-sidebar w3-left w3-bar-block w3-card w3-black w3-animate-left w3-onequarter" style="width:15%; margin-top: 43px; height: calc(100% - 50px)">
+        <a href="#" id="dashboardBtn" class="w3-bar-item w3-button w3-large w3-text-theme-red w3-background">Dashboard</a>
+        <a href="#" id="draftsBtn" class="w3-bar-item w3-button w3-large">Drafts</a>
+        <a href="#" id="formsBtn" class="w3-bar-item w3-button w3-large">Forms</a>
+        <a href="#" id="studentsBtn" class="w3-bar-item w3-button w3-large">Students</a>
+        <a href="#" id="historyBtn" class="w3-bar-item w3-button w3-large">History</a>
+        <a href="#" id="formsManagementBtn" class="w3-bar-item w3-button w3-large">Forms Management</a>
+    </div>
+
+    <div id="notifications" class="w3-container w3-cell w3-right w3-quarter" style="width: 22%; padding-left: 16px; padding-right: 16px; margin-top: 43px; position: absolute; right: 0px">
+        <div class="w3-text-theme-red"><H2>Notifications</H2></div>
+        <div id="notificationsList"></div>
+    </div>
+
+    <div id="footer" class="w3-bar w3-theme-red w3-bottom" style="position: fixed; bottom: 0; height: 30px">
+        <div class="w3-left" style="margin-left: 10px" >&#0169 2018 FORMBUSTER, All Rights Reserved</div>
+        <div class="w3-right">
+            <a href="#" class="w3-bar-item w3-button w3-hide-small">About</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small">Help</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small">Contact Us</a>
+        </div>
+    </div>
+</div>
