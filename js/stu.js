@@ -393,11 +393,18 @@ function submitRegistrationForm(courses_list) {
     document.getElementById('id01').style.display='none';
 
     //--------will be removed later, but just used to show that we can generate notifications
-    formDB.collection("users").doc("aadkins2016").collection("notifications").doc("submitRegistration_" + moment().format('YYYYMMDD HH:mm:ss')).set({
+    formDB.collection("users").doc(getUserName()).collection("notifications").doc("submitRegistration_" + moment().format('YYYYMMDD HH:mm:ss')).set({
         message: "You have just submitted a form",
         timestamp: new Date() //moment().format('YYYYMMDD HH:mm:ss')
     });
 
+    //--------will be removed later, but just used to show that we can add the submitted form
+    //to the user's db.
+    formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+        approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+        content: {"1_Courses": [{"1_CRN": courses_list[0].course_no, "2_Prefix": courses_list[0].prefix, "3_Course No.": courses_list[0].course_no, "4_Section": "1", "5_Course Title": courses_list[0].course_title,
+            "6_Days": "MWF", "7_Time": "13:00-13:50", "8_Credits":courses_list[0].crs, "Audit": false}]}
+    });
 
     removeConfirmationTable();
 }
@@ -453,4 +460,8 @@ function removeConfirmationTable() {
             document.getElementById("c-row-" + row).remove();
         }
     });
+}
+
+function getAdvisor(studentUsername) {
+    return "eshelton";
 }
