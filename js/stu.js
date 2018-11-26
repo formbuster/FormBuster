@@ -506,11 +506,13 @@ function createTableFromArray (array) {
 
 /*
 This function's purpose is to generate the notifications view for a student on their dashboard.
-Todo: Fix this so it works, or generate the html code using JS.
+The information comes from the student's notifications in database.
+Todo: Add it deleting a notification, which will delete from database.
+Use the registration form courses rows for guidance (it uses deleting)
  */
 
 function getNotifications() {
-    formDB.collection("users").doc(getUserName()).collection("notifications").orderBy("timestamp").get().then(function(querySnapshot) {
+    formDB.collection("users").doc(getUserName()).collection("notifications").orderBy("timestamp", 'desc').get().then(function(querySnapshot) {
         querySnapshot.forEach(function(notification) {
             const userNotification = notification.data();
             const notificationMessage = userNotification.message;
@@ -523,7 +525,6 @@ function getNotifications() {
                 '        <p>' + notificationMessage + '</p>\n' +
                 '    </div>\n' +
                 '    <div class="time">\n' +
-                /*todo: get formatted time of notification for each notification*/
                 '        <p>' + moment(notificationDate, "YYYYMMDD hh:mm:ss").fromNow() + '</p>\n' +
                 '    </div>\n' +
                 '</div><br>\n');
@@ -531,13 +532,6 @@ function getNotifications() {
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
     });
-
-    //var txt = '{"message":"David Lee has approved your Registration Form", "time":  "4 min ago"}';
-    //var obj = JSON.parse(txt);
-    //console.log(obj.message + " " + obj.time);
-
-    //const message = obj.message;
-    //const time = obj.time;
 }
 
 /*
