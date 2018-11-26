@@ -11,76 +11,7 @@ function loadPage () {
         document.getElementById("formsBtn").addEventListener("click", gotoForms);
         document.getElementById("historyBtn").addEventListener("click", gotoHistory);
 
-        // Load dashboard by default
-        gotoDashboard();
-    });
-}
-
-function gotoDashboard () {
-    // Highlight only the dashboard button, because it is selected
-    document.getElementById("dashboardBtn").className = btnHighlighted;
-    document.getElementById("draftsBtn").className = btnNotHighlighted;
-    document.getElementById("formsBtn").className = btnNotHighlighted;
-    document.getElementById("historyBtn").className = btnNotHighlighted;
-
-    // Clear "inProgressFormsList" and hide other pages
-    document.getElementById("inProgressFormsList").innerHTML = '';
-    document.getElementById("draftsPage").style.display = "none";
-    document.getElementById("formsPage").style.display = "none";
-    document.getElementById("historyPage").style.display = "none";
-
-    // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Dashboard";
-
-    // Populate inProgress forms to "inProgressFormsList"
-    const studentID = getUserName();
-    getStudentForms("dashboardPage", "inProgressFormsList", studentID, "inProgressForms", displayFormReadMode);
-
-    // Unhide "dashboardPage" and get the notifications
-    document.getElementById("dashboardPage").style.display = "block";
-    getNotifications();
-}
-
-function gotoDrafts () {
-    // Highlight only the drafts button, because it is selected
-    document.getElementById("dashboardBtn").className = btnNotHighlighted;
-    document.getElementById("draftsBtn").className = btnHighlighted;
-    document.getElementById("formsBtn").className = btnNotHighlighted;
-    document.getElementById("historyBtn").className = btnNotHighlighted;
-
-    // Clear "draftsList" and hide other pages
-    document.getElementById("draftsList").innerHTML = '';
-    document.getElementById("dashboardPage").style.display = "none";
-    document.getElementById("formsPage").style.display = "none";
-    document.getElementById("historyPage").style.display = "none";
-
-    // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Drafts";
-
-    /* Todo: Populate the drafts of this student into "draftsList" right below this */
-
-    // Unhide "draftsPage" and get the notifications
-    document.getElementById("draftsPage").style.display = "block";
-    getNotifications();
-}
-
-function gotoForms () {
-    // Highlight only the forms button, because it is selected
-    document.getElementById("dashboardBtn").className = btnNotHighlighted;
-    document.getElementById("draftsBtn").className = btnNotHighlighted;
-    document.getElementById("formsBtn").className = btnHighlighted;
-    document.getElementById("historyBtn").className = btnNotHighlighted;
-
-    // Clear "formsList" and hide other pages
-    document.getElementById("dashboardPage").style.display = "none";
-    document.getElementById("draftsPage").style.display = "none";
-    document.getElementById("formsList").innerHTML = '';
-    document.getElementById("historyPage").style.display = "none";
-
-    // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Forms";
-
-    /* Todo: Populate the forms list into "formsList" right below this */
+        //added this temporaily so that it could be added to page only one time.
         $("#formsPage").append('<div id = "forms-list-view">\n' +
             '    <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large" style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search...">\n' +
             '\n' +
@@ -179,6 +110,76 @@ function gotoForms () {
             '    </div>\n' +
             '</div>\n');
 
+        // Load dashboard by default
+        gotoDashboard();
+    });
+}
+
+function gotoDashboard () {
+    // Highlight only the dashboard button, because it is selected
+    document.getElementById("dashboardBtn").className = btnHighlighted;
+    document.getElementById("draftsBtn").className = btnNotHighlighted;
+    document.getElementById("formsBtn").className = btnNotHighlighted;
+    document.getElementById("historyBtn").className = btnNotHighlighted;
+
+    // Clear "inProgressFormsList" and hide other pages
+    document.getElementById("inProgressFormsList").innerHTML = '';
+    document.getElementById("draftsPage").style.display = "none";
+    document.getElementById("formsPage").style.display = "none";
+    document.getElementById("historyPage").style.display = "none";
+
+    // Update the page's title
+    document.getElementById("pageTitle").innerHTML = "Dashboard";
+
+    // Populate inProgress forms to "inProgressFormsList"
+    const studentID = getUserName();
+    getStudentForms("dashboardPage", "inProgressFormsList", studentID, "inProgressForms", displayFormReadMode);
+
+    // Unhide "dashboardPage" and get the notifications
+    document.getElementById("dashboardPage").style.display = "block";
+    getNotifications();
+}
+
+function gotoDrafts () {
+    // Highlight only the drafts button, because it is selected
+    document.getElementById("dashboardBtn").className = btnNotHighlighted;
+    document.getElementById("draftsBtn").className = btnHighlighted;
+    document.getElementById("formsBtn").className = btnNotHighlighted;
+    document.getElementById("historyBtn").className = btnNotHighlighted;
+
+    // Clear "draftsList" and hide other pages
+    document.getElementById("draftsList").innerHTML = '';
+    document.getElementById("dashboardPage").style.display = "none";
+    document.getElementById("formsPage").style.display = "none";
+    document.getElementById("historyPage").style.display = "none";
+
+    // Update the page's title
+    document.getElementById("pageTitle").innerHTML = "Drafts";
+
+    /* Todo: Populate the drafts of this student into "draftsList" right below this */
+
+    // Unhide "draftsPage" and get the notifications
+    document.getElementById("draftsPage").style.display = "block";
+    getNotifications();
+}
+
+function gotoForms () {
+    // Highlight only the forms button, because it is selected
+    document.getElementById("dashboardBtn").className = btnNotHighlighted;
+    document.getElementById("draftsBtn").className = btnNotHighlighted;
+    document.getElementById("formsBtn").className = btnHighlighted;
+    document.getElementById("historyBtn").className = btnNotHighlighted;
+
+    // Clear "formsList" and hide other pages
+    document.getElementById("dashboardPage").style.display = "none";
+    document.getElementById("draftsPage").style.display = "none";
+    document.getElementById("formsList").innerHTML = '';
+    document.getElementById("historyPage").style.display = "none";
+
+    // Update the page's title
+    document.getElementById("pageTitle").innerHTML = "Forms";
+
+    /* Todo: Populate the forms list into "formsList" right below this */
 
     // Unhide "formsPage" and get the notifications
     document.getElementById("formsPage").style.display = "block";
