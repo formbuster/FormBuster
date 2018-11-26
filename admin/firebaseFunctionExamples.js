@@ -132,4 +132,20 @@ function submitClick() {
     }).catch(function(error) {
         console.log("Error getting document:", error);
     });
+
+
+    formDB.collection("users").doc("aadkins2016").collection("inProgressForms").doc("Registration_06122018154300").get().then(function(doc) {
+        if (doc.exists) {
+            const docData = doc.data();
+            //formDB.collection("users").doc("aadkins2016").collection("completedForms").doc("Registration_11062018102537").set(docData);
+            formDB.collection("users").doc("aadkins2016").collection("inProgressForms").doc("Registration_08202018221600").set({
+                content: {"1_Courses": docData.content["1_Courses"]}
+            }, { merge: true }); // merge will replace data if data is already there, otherwise it will merge
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
 }
