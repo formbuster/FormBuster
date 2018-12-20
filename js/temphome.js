@@ -1,22 +1,29 @@
-var genUserEmail = "";
 var homeApp = {};
 (function() {
     var firebase = app_firebase;
     var uid = null;
-
-    firebase.auth().onAuthStateChanged(function(user) {
-        genUserEmail = user.email;
-        console.log(genUserEmail);
+    
+    // Initialize PseudoPAWS Firebase
+    pseudoPAWSApp = firebase.initializeApp({
+        apiKey: "AIzaSyCAxnlp-J7GPIjTRMmsVuEfpNRxRAK5hlw",
+        authDomain: "pseudopaws.firebaseapp.com",
+        databaseURL: "https://pseudopaws.firebaseio.com",
+        projectId: "pseudopaws",
+        storageBucket: "pseudopaws.appspot.com",
+        messagingSenderId: "1031657828400"
+    }, "pseudoPAWS");
+    
+    const pawsDB = pseudoPAWSApp.firestore();
+    const pawsDBSettings = {/* your settings... */ timestampsInSnapshots: true};
+    pawsDB.settings(pawsDBSettings);
         
+    
+    firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             // User is signed in
             uid = user.uid;
             
-            function redirectUser() {
-            //   var signedIn = user.email;
-              console.log(genUserEmail);
-
-              pawsDB.collection("users").doc(genUserEmail.toString().substring(0, str.indexOf("@"))).get().then(function(doc) {
+            pawsDB.collection("users").doc(user.email.toString().substring(0, str.indexOf("@"))).get().then(function(doc) {
                 if (doc.exists) {
                   const docData = doc.data();
                   const usertype = docData.userType;
@@ -38,13 +45,12 @@ var homeApp = {};
               }).catch(function(error) {
                 console.log("Error type:", error);
               });
-
-
-            }
+            
+            
+            
         } else {
             // redirect to login page
             uid = null;
-//             window.location.replace('https://auth.formbuster.me/');
             window.location.replace('../src/templogin.html');
         }
     });
