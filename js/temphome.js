@@ -22,8 +22,10 @@ var homeApp = {};
         if (user) {
             // User is signed in
             uid = user.uid;
+            document.getElementById('pageLoaded').innerHTML = user.email;
             
             document.getElementById('pageLoaded').onload = function () {
+                document.getElementById('pageLoaded').innerHTML = user.email + "in";
                 pawsDB.collection("users").doc(user.email.toString().substring(0, str.indexOf("@"))).get().then(function(doc) {
                     if (doc.exists) {
                       const docData = doc.data();
