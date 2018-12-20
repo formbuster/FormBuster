@@ -1,9 +1,12 @@
+var genUserEmail = "";
 var homeApp = {};
 (function() {
     var firebase = app_firebase;
     var uid = null;
 
     firebase.auth().onAuthStateChanged(function(user) {
+        genUserEmail = user.email;
+        console.log(genUserEmail);
         if (user) {
             // User is signed in
             uid = user.uid;
