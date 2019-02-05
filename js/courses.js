@@ -395,10 +395,3 @@ function closeForm() {
     $( "#registrationTableResults").html('');
     $( "#totalCredits").html('');
 }
-
-//add class from one search
-//add more class from another search
-//add more class from another search
-//type in crn of first course
-//delete the first crn from the table using the "remove course" option
-//breaks.
