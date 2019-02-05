@@ -332,17 +332,17 @@ function saveRegistrationForm (ifSubmit) {
         });
     }
 
-    // if (ifSubmit) {
-    //     formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-    //         approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-    //         content: {"1_Courses": courses_list}
-    //     });
-    // } else { //just save it for later
-    //     formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-    //         approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-    //         content: {"1_Courses": courses_list}
-    //     });
-    // }
+    if (ifSubmit) {
+        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+            approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+            content: {"1_Courses": courses_list}
+        });
+    } else { //just save it for later
+        formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+            approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+            content: {"1_Courses": courses_list}
+        });
+    }
     submitRegistrationForm();
 }
 
