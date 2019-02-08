@@ -23,7 +23,7 @@ function getCourse() {
         return;
     } else {
 
-        $('#animated-gif').toggle();
+        $('#animated-gif').show();
 
         if (/^\d+$/.test(document.getElementById("profileurl").value)) { //user only entered numbers, assume it is a CRN
             filterCRNResults = true;
@@ -39,7 +39,7 @@ function getCourse() {
             } else {
                 //todo: possibly do a prefix & course no combination.
                 document.getElementById("courseResultsMessage").innerText = "No results found";
-                $('#animated-gif').toggle(); //get rid of the loading gif.
+                $('#animated-gif').hide(); //get rid of the loading gif.
                 return;
             }
         }
@@ -53,7 +53,7 @@ function getCourse() {
     xmlhttp.onload = function () {
         if (this.responseText.includes("\"status\":\"fail\"")) {
             document.getElementById("courseResultsMessage").innerText = "No results found";
-            $('#animated-gif').toggle(); //get rid of the loading gif.
+            $('#animated-gif').hide(); //get rid of the loading gif.
         } else if (this.readyState === 4 && this.status === 200) {
             var myObj;
 
@@ -69,7 +69,7 @@ function getCourse() {
                 }
                 if (filtered_results.records.length == 0) { //the query didn't match any results once we filtered the original results.
                     document.getElementById("courseResultsMessage").innerText = "No results found";
-                    $('#animated-gif').toggle(); //get rid of the loading gif.
+                    $('#animated-gif').hide(); //get rid of the loading gif.
                     return;
                 }
                 myObj = filtered_results; //display these results instead of using the original results given from the api.
@@ -99,7 +99,7 @@ function getCourse() {
                 //after filtering results, there may not be any matches.
                 if (document.getElementById("url").innerText == "") {
                     document.getElementById("courseResultsMessage").innerText = "No results found";
-                    $('#animated-gif').toggle(); //get rid of the loading gif.
+                    $('#animated-gif').hide(); //get rid of the loading gif.
                 } else {
                     $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
                         "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
@@ -108,7 +108,7 @@ function getCourse() {
                 }
             }
 
-            $('#animated-gif').toggle(); //get rid of the loading gif.
+            $('#animated-gif').hide(); //get rid of the loading gif.
         }
     };
 }
@@ -192,6 +192,10 @@ let coursesCount = 0;
 let creditsCount = 0;
 var crns = [];
 function register(isAudit, course, title, prefix, course_no) {
+
+    //get rid of search results.
+    $("#courseResultsMessage").html('');
+
     //disable register button
     // document.getElementById("regButton" + courseId).disabled = true;
 
@@ -246,6 +250,8 @@ function register(isAudit, course, title, prefix, course_no) {
         crns.push(document.getElementById("crn" + course).innerText);
 
         coursesCount++;
+
+        document.getElementById("url").innerText = "";
     } else { //user selected to remove that particular course.
         remove(course);
     }
@@ -256,12 +262,14 @@ function remove (course) {
         document.getElementById("regButton" + course).innerText = "Add Course"; //user still has this search result still up.
     } //if not, no need to change the element because it doesn't exist, when it exists, it will appear correct.
 
-    if (!document.getElementById("registeredCrs" + course).innerHTML.includes("<s>")){
-        creditsCount -= parseInt(document.getElementById("registeredCrs" + course).innerText);
+    if (document.getElementById("registeredCrs" + course) != null) {
+        if (!document.getElementById("registeredCrs" + course).innerHTML.includes("<s>")) {
+            creditsCount -= parseInt(document.getElementById("registeredCrs" + course).innerText);
+        }
     }
 
     document.getElementById('registeredCourse' + course).remove();
-    crns.splice(course,1);
+    crns.splice(crns.indexOf(course.toString()),1);
 
     coursesCount--;
 
