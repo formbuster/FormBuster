@@ -38,7 +38,15 @@
         <!-- This DIV contain the multiple pages -->
         <div id="mainContent" class="main_content_page">
             <div id="dashboardPage" style="display: none">
+                <!-- add tabs on student coordinator dashboard -->
+                <div style="border-bottom: #9b9b9b; border-bottom: 1px solid; background-color: transparent; margin-bottom: 20px" >
+                    <button id="studentRecordsButton" class="forms_tab_button" onclick="studentRecordsButtonPressed()" >Look Up Student Records</button>
+                    <button id="startFormButton" class="forms_tab_button" onclick="startFormButtonPressed()" >Start a Form</button>
+                </div>
+
+                <!-- containers for the student search view and start form view -->
                 <div id="studentSearchView"></div>
+                <div id="startFormView"></div>
 
                 <div id="studentFormsView" style="display: none">
                     <button class="switch_page_grids_button back_button_tooltip" type="button" onclick="displayStudentSearchListPage()" >

@@ -15,11 +15,6 @@ function loadPage () {
     });
 }
 
-
-
-
-
-
 // Hides inProgressForms page and displays (unhide) the completedForms page
 function completedFormsButtonPressed () {
     const completedFormsButton = document.getElementById("completedFormsButton");
@@ -64,10 +59,51 @@ function inProgressFormsButtonPressed () {
     completedFormsList.style.display = "none";
 }
 
+// Hides "start a form" page and displays the "student records" page
+function studentRecordsButtonPressed () {
+    const studentRecordsButton = document.getElementById("studentRecordsButton");
+    const startFormButton = document.getElementById("startFormButton");
+
+    startFormButton.style.pointerEvents = "all";
+    startFormButton.style.cursor = "pointer";
+    startFormButton.style.borderBottomColor = "transparent";
+    startFormButton.style.color = "#05307d";
+
+    studentRecordsButton.style.pointerEvents = "none";
+    studentRecordsButton.style.cursor = "default";
+    studentRecordsButton.style.borderBottomColor = "#054ee1";
+    studentRecordsButton.style.color = "#054ee1";
+
+    document.getElementById("studentSearchView").style.display = "block";
+    document.getElementById("startFormView").style.display = "none";
+}
+
+// Hides "student records" page and displays the "start a form" page
+function startFormButtonPressed () {
+    const studentRecordsButton = document.getElementById("studentRecordsButton");
+    const startFormButton = document.getElementById("startFormButton");
+
+    studentRecordsButton.style.pointerEvents = "all";
+    studentRecordsButton.style.cursor = "pointer";
+    studentRecordsButton.style.borderBottomColor = "transparent";
+    studentRecordsButton.style.color = "#05307d";
+
+    startFormButton.style.pointerEvents = "none";
+    startFormButton.style.cursor = "default";
+    startFormButton.style.borderBottomColor = "#054ee1";
+    startFormButton.style.color = "#054ee1";
+
+    document.getElementById("startFormView").style.display = "block";
+    document.getElementById("studentSearchView").style.display = "none";
+}
+
 // Populate the completedForms and the inProgressForms into this page
 function displayStudentForms (studentID) {
     const completedFormsList = document.getElementById("completedFormsList");
     const inProgressFormsList = document.getElementById("inProgressFormsList");
+
+    // document.getElementById("startFormButton").style.display = "none";
+    // document.getElementById("studentRecordsButton").style.display = "none";
 
     // Clear old displayed Student forms.
     completedFormsList.innerHTML = '';
@@ -85,6 +121,9 @@ function studentEntryClicked (event) {
     const studentSearchView = document.getElementById("studentSearchView");
     const studentFormsView = document.getElementById("studentFormsView");
 
+    document.getElementById("startFormButton").style.display = "none";
+    document.getElementById("studentRecordsButton").style.display = "none";
+
     studentSearchView.style.display = "none";
     studentFormsView.style.display = "block";
 
@@ -99,6 +138,9 @@ function studentEntryClicked (event) {
 function displayStudentSearchListPage () {
     const studentSearchView = document.getElementById("studentSearchView");
     const studentFormsView = document.getElementById("studentFormsView");
+
+    document.getElementById("studentRecordsButton").style.display = "block";
+    document.getElementById("startFormButton").style.display = "block";
 
     studentSearchView.style.display = "block";
     studentFormsView.style.display = "none";
