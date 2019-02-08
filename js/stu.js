@@ -5,6 +5,10 @@ function loadPage () {
         document.getElementById("studentsBtn").remove();
         document.getElementById("formsManagementBtn").remove();
 
+        document.getElementById("display-name").classList.add('w3-theme-red');
+        document.getElementById("generalTopBar").classList.add('w3-theme-red');
+        document.getElementById("footer").classList.add('w3-theme-red');
+
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
         document.getElementById("draftsBtn").addEventListener("click", gotoDrafts);

@@ -8,6 +8,10 @@ function loadPage () {
         document.getElementById("notifications").remove();
         document.getElementById("notificationPreferences").remove();
 
+        document.getElementById("display-name").classList.add('w3-theme-purple');
+        document.getElementById("generalTopBar").classList.add('w3-theme-purple');
+        document.getElementById("footer").classList.add('w3-theme-purple');
+
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
         document.getElementById("studentsBtn").addEventListener("click", gotoStudents);

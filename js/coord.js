@@ -7,6 +7,10 @@ function loadPage () {
         document.getElementById("notifications").remove();
         document.getElementById("notificationPreferences").remove();
 
+        document.getElementById("display-name").classList.add('w3-theme-orange');
+        document.getElementById("generalTopBar").classList.add('w3-theme-orange');
+        document.getElementById("footer").classList.add('w3-theme-orange');
+
         // Load "studentSearchView" only once
         $('#studentSearchView').load('student_list.html');
 
