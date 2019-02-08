@@ -22,6 +22,9 @@ function getCourse() {
     if (document.getElementById("profileurl").value.length < 3) {
         return;
     } else {
+
+        $('#animated-gif').toggle();
+
         if (/^\d+$/.test(document.getElementById("profileurl").value)) { //user only entered numbers, assume it is a CRN
             filterCRNResults = true;
             xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
@@ -36,6 +39,7 @@ function getCourse() {
             } else {
                 //todo: possibly do a prefix & course no combination.
                 document.getElementById("courseResultsMessage").innerText = "No results found";
+                $('#animated-gif').toggle(); //get rid of the loading gif.
                 return;
             }
         }
@@ -49,6 +53,7 @@ function getCourse() {
     xmlhttp.onload = function () {
         if (this.responseText.includes("\"status\":\"fail\"")) {
             document.getElementById("courseResultsMessage").innerText = "No results found";
+            $('#animated-gif').toggle(); //get rid of the loading gif.
         } else if (this.readyState === 4 && this.status === 200) {
             var myObj;
 
@@ -64,6 +69,7 @@ function getCourse() {
                 }
                 if (filtered_results.records.length == 0) { //the query didn't match any results once we filtered the original results.
                     document.getElementById("courseResultsMessage").innerText = "No results found";
+                    $('#animated-gif').toggle(); //get rid of the loading gif.
                     return;
                 }
                 myObj = filtered_results; //display these results instead of using the original results given from the api.
@@ -93,6 +99,7 @@ function getCourse() {
                 //after filtering results, there may not be any matches.
                 if (document.getElementById("url").innerText == "") {
                     document.getElementById("courseResultsMessage").innerText = "No results found";
+                    $('#animated-gif').toggle(); //get rid of the loading gif.
                 } else {
                     $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
                         "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
@@ -100,6 +107,8 @@ function getCourse() {
                         "                                    <br>");
                 }
             }
+
+            $('#animated-gif').toggle(); //get rid of the loading gif.
         }
     };
 }
@@ -333,10 +342,16 @@ function saveRegistrationForm (ifSubmit) {
     }
 
     if (ifSubmit) {
-        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+        let currentTime = moment().format('MMDDYYYYHHmmss');
+        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
             approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
             content: {"1_Courses": courses_list}
         });
+
+        formDB.collection("users").doc(getAdvisor(getUserName)).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+            formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
+        });
+
     } else { //just save it for later
         formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
             approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
