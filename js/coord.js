@@ -9,6 +9,9 @@ function loadPage () {
 
         // Load "studentSearchView" only once
         $('#studentSearchView').load('student_list.html');
+        //Load forms page once.
+        //todo: rely on signed in user credentials instead.
+        getFormsPage("coord");
 
         // Unhide "dashboardPage"
         document.getElementById("dashboardPage").style.display = "block";
@@ -95,6 +98,8 @@ function startFormButtonPressed () {
 
     document.getElementById("startFormView").style.display = "block";
     document.getElementById("studentSearchView").style.display = "none";
+
+
 }
 
 // Populate the completedForms and the inProgressForms into this page

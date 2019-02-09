@@ -82,7 +82,8 @@ function gotoForms () {
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms";
 
-    /* Todo: Populate the forms list into "formsList" right below this */
+    //todo: rely on signed in user credentials instead.
+    getFormsPage("student");
 
     // Unhide "formsPage" and get the notifications
     document.getElementById("formsPage").style.display = "block";
@@ -157,15 +158,6 @@ function retractForm() {
 
 function chooseDifferentApprover() {
 
-}
-
-//this is used to generate unique id's for the rows, so we can use the id to get the information from the fields.
-let courseUniqueID = 0;
-
-function startRegistrationForm() {
-    courseUniqueID = 0; //reset the ids when we restart a form to keep the number low.
-    //addCourseRow();
-    document.getElementById('id01').style.display='block';
 }
 
 class DesiredCourse {
