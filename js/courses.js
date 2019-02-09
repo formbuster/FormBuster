@@ -22,6 +22,9 @@ function getCourse() {
     if (document.getElementById("profileurl").value.length < 3) {
         return;
     } else {
+
+        $('#animated-gif').show();
+
         if (/^\d+$/.test(document.getElementById("profileurl").value)) { //user only entered numbers, assume it is a CRN
             filterCRNResults = true;
             xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
@@ -36,6 +39,7 @@ function getCourse() {
             } else {
                 //todo: possibly do a prefix & course no combination.
                 document.getElementById("courseResultsMessage").innerText = "No results found";
+                $('#animated-gif').hide(); //get rid of the loading gif.
                 return;
             }
         }
@@ -49,6 +53,7 @@ function getCourse() {
     xmlhttp.onload = function () {
         if (this.responseText.includes("\"status\":\"fail\"")) {
             document.getElementById("courseResultsMessage").innerText = "No results found";
+            $('#animated-gif').hide(); //get rid of the loading gif.
         } else if (this.readyState === 4 && this.status === 200) {
             var myObj;
 
@@ -64,6 +69,7 @@ function getCourse() {
                 }
                 if (filtered_results.records.length == 0) { //the query didn't match any results once we filtered the original results.
                     document.getElementById("courseResultsMessage").innerText = "No results found";
+                    $('#animated-gif').hide(); //get rid of the loading gif.
                     return;
                 }
                 myObj = filtered_results; //display these results instead of using the original results given from the api.
@@ -93,6 +99,7 @@ function getCourse() {
                 //after filtering results, there may not be any matches.
                 if (document.getElementById("url").innerText == "") {
                     document.getElementById("courseResultsMessage").innerText = "No results found";
+                    $('#animated-gif').hide(); //get rid of the loading gif.
                 } else {
                     $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
                         "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
@@ -100,6 +107,8 @@ function getCourse() {
                         "                                    <br>");
                 }
             }
+
+            $('#animated-gif').hide(); //get rid of the loading gif.
         }
     };
 }
@@ -183,6 +192,9 @@ let coursesCount = 0;
 let creditsCount = 0;
 var crns = [];
 function register(isAudit, course, title, prefix, course_no) {
+
+
+
     //disable register button
     // document.getElementById("regButton" + courseId).disabled = true;
 
@@ -237,6 +249,12 @@ function register(isAudit, course, title, prefix, course_no) {
         crns.push(document.getElementById("crn" + course).innerText);
 
         coursesCount++;
+
+        //get rid of search results.
+        $("#courseResultsMessage").html('');
+        document.getElementById("url").innerText = "";
+        //empty the text field of any input, reset it so it shows the placeholder text.
+        document.getElementById('profileurl').value = '';
     } else { //user selected to remove that particular course.
         remove(course);
     }
@@ -247,12 +265,14 @@ function remove (course) {
         document.getElementById("regButton" + course).innerText = "Add Course"; //user still has this search result still up.
     } //if not, no need to change the element because it doesn't exist, when it exists, it will appear correct.
 
-    if (!document.getElementById("registeredCrs" + course).innerHTML.includes("<s>")){
-        creditsCount -= parseInt(document.getElementById("registeredCrs" + course).innerText);
+    if (document.getElementById("registeredCrs" + course) != null) {
+        if (!document.getElementById("registeredCrs" + course).innerHTML.includes("<s>")) {
+            creditsCount -= parseInt(document.getElementById("registeredCrs" + course).innerText);
+        }
     }
 
     document.getElementById('registeredCourse' + course).remove();
-    crns.splice(course,1);
+    crns.splice(crns.indexOf(course.toString()),1);
 
     coursesCount--;
 
@@ -278,7 +298,7 @@ function adjustCreditsForCEU (course) {
         document.getElementById("audit" + course).disabled = true;
 
         //strike out credits, because taking a CEU course means no credits will be awared.
-        document.getElementById("registeredCrs" + course).innerHTML = "<s>" + document.getElementById("crs" + course).innerText +"</s>";
+        document.getElementById("registeredCrs" + course).innerHTML = "<s>" + document.getElementById("registeredCrs" + course).innerText +"</s>";
 
         creditsCount -= parseInt(document.getElementById("registeredCrs" + course).innerText);
 
@@ -288,7 +308,7 @@ function adjustCreditsForCEU (course) {
         document.getElementById("audit" + course).disabled = false;
 
         //add back the credits in
-        document.getElementById("registeredCrs" + course).innerHTML = document.getElementById("crs" + course).innerText;
+        document.getElementById("registeredCrs" + course).innerHTML = document.getElementById("registeredCrs" + course).innerText;
 
         creditsCount += parseInt(document.getElementById("registeredCrs" + course).innerText);
 
@@ -333,9 +353,14 @@ function saveRegistrationForm (ifSubmit) {
     }
 
     if (ifSubmit) {
-        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+        let currentTime = moment().format('MMDDYYYYHHmmss');
+        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
             approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
             content: {"1_Courses": courses_list}
+        });
+
+        formDB.collection("users").doc(getAdvisor(getUserName)).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+            formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
         });
     } else { //just save it for later
         formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
@@ -351,8 +376,6 @@ STU
 The form will be saved if the user presses save or if the form is submitted. Use ifSubmit to know,
 if we need to send out form, send notifications update dashboards....
 But no matter if you save or submit it, the page needs to be reset.
-Todo: don't save/submit empty forms.
-
  */
 function submitRegistrationForm () {
     closeForm();
@@ -370,11 +393,6 @@ function submitRegistrationForm () {
         $('#submissionConfirmationMessage').fadeOut('slow');
     }, 5000);
 
-    document.getElementById("termSelecter").disabled = false;
-
-    crns.splice(0,crns.length);
-    coursesCount = 0;
-    creditsCount = 0;
 }
 
 /*
@@ -386,8 +404,16 @@ function closeForm() {
 
     //reset the term selecter in the form to the default value option.
     document.getElementById('termSelecter').selectedIndex = 0;
+
+    //re enable to term selecter
+    document.getElementById("termSelecter").disabled = false;
+
     //empty the text field of any input, reset it so it shows the placeholder text.
     document.getElementById('profileurl').value = '';
+
+    crns.splice(0,crns.length);
+    coursesCount = 0;
+    creditsCount = 0;
 
     //get rid of messages, results and credit total, it will be regenerated later when user starts another form.
     $( "#courseResultsMessage" ).html('');

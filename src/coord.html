@@ -21,6 +21,8 @@
         <!-- FormBuster's scripts -->
         <script src="../js/general.js"></script>
         <script src="../js/coord.js"></script>
+        <script src="../js/courses.js"></script>
+        <script src="../js/setUpFormsPage.js"></script>
 
         <!-- CSS Files -->
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -46,7 +48,9 @@
 
                 <!-- containers for the student search view and start form view -->
                 <div id="studentSearchView"></div>
-                <div id="startFormView"></div>
+                <div id="startFormView" style="display: none">
+                    <div id="formsList"></div>
+                </div>
 
                 <div id="studentFormsView" style="display: none">
                     <button class="switch_page_grids_button back_button_tooltip" type="button" onclick="displayStudentSearchListPage()" >

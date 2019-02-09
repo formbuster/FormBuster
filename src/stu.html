@@ -22,6 +22,7 @@
         <script src="../js/general.js"></script>
         <script src="../js/stu.js"></script>
         <script src="../js/courses.js"></script>
+        <script src="../js/setUpFormsPage.js"></script>
 
         <!-- CSS Files -->
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -63,85 +64,6 @@
                 <div class="w3-text-theme-red"><H2>University Forms</H2></div>
                 <!-- this should be filled when XXXXXXXXXXXXX is called-->
                 <div id="formsList"></div>
-                <div id="forms-list-view">
-                    <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large" style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search...">
-
-                    <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">
-                        <div class="w3-left">
-                            <h3 class="w3-left">Registration Form</h3>
-                            <p></p>
-                            <p class="w3-left">Used for students to add or drop classes.</p>
-                        </div>
-                        <div class="w3-right">
-                            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="startRegistrationForm()">Start Form</button>
-                        </div>
-                    </div>
-
-                    <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">
-                        <div class="w3-left">
-                            <h3 class="w3-left">Closed Class Form</h3>
-                            <p></p>
-                            <p class="w3-left">Used for students to get permission to enroll into a class that is full.</p>
-                        </div>
-                        <div class="w3-right">
-                            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="">Start Form</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="id01" class="w3-modal">
-                    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
-                        <div class="w3-container">
-                            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge w3-padding">×</span>
-                            <div class="w3-text-theme-red" style="display: block">
-                                <p></p>
-                                <h3 class="w3-left">Registration Form</h3>
-                                <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
-                            </div>
-                            <div id="first-page"> <!-- changing anything in this div needs to be updated in the closeForm() todo: call a method instead to avoid this issue-->
-                                <div class="w3-container">
-                                    <div class="w3-container w3-theme-red">
-                                        <p>Select a semester term, then search for courses using CRN, Title or Prefix.</p>
-                                    </div>
-                                    <br>
-                                    <select id="termSelecter" autofocus="" class="w3-select w3-quarter" onchange="getCourse()">
-                                        <option value="" disabled selected>Select a term:</option>
-                                        <option value="spring">Spring</option>
-                                        <option value="summer">Summer</option>
-                                        <option value="fall">Fall</option>
-                                    </select>
-
-                                    <input id="profileurl" class="w3-input w3-threequarter" type="text" placeholder="Search for courses using CRN, Title or Prefix">
-
-                                    <br><br>
-
-                                    <div id="courseResultsMessage"></div>
-                                    <div id="url"></div>
-                                    <div id="registrationTableResults"></div>
-                                    <p id="totalCredits"></p>
-                                </div>
-                                <br>
-                                <div>
-                                    * A student may audit a course with the permission of his or her advisor and payment (if applicable) of an audit fee. An auditor does not receive a grade; an AU is recorded
-                                    on the transcript in place of the grade if the auditor has, in general, maintained a satisfactory course attendance (usually 75 percent class attendance) and completed the
-                                    appropriate assignments. If the student does not meet requirements, a final grade of F may be awarded. No changes in registration from credit to audit or from audit to credit
-                                    will be permitted after the second week of classes.
-                                </div>
-                                <br>
-                                <div id='emptyFormMessage' class="w3-panel w3-red" style="display: none;">
-                                    <p>The form is empty. Select a term and search for courses above!</p>
-                                </div>
-                                <div id="form-options-1">
-                                    <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">Discard</button>
-                                    <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
-                                    <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>
-                                    <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge" onclick="saveRegistrationForm(true)">Submit</button>
-                                </div>
-                                <br>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- History Page -->
@@ -154,10 +76,5 @@
     </body>
 </html>
 
-<script>
-    $('#profileurl').keyup(function(e) {
-        getCourse();
-    });
-</script>
 
 
