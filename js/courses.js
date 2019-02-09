@@ -298,7 +298,7 @@ function adjustCreditsForCEU (course) {
         document.getElementById("audit" + course).disabled = true;
 
         //strike out credits, because taking a CEU course means no credits will be awared.
-        document.getElementById("registeredCrs" + course).innerHTML = "<s>" + document.getElementById("crs" + course).innerText +"</s>";
+        document.getElementById("registeredCrs" + course).innerHTML = "<s>" + document.getElementById("registeredCrs" + course).innerText +"</s>";
 
         creditsCount -= parseInt(document.getElementById("registeredCrs" + course).innerText);
 
@@ -308,7 +308,7 @@ function adjustCreditsForCEU (course) {
         document.getElementById("audit" + course).disabled = false;
 
         //add back the credits in
-        document.getElementById("registeredCrs" + course).innerHTML = document.getElementById("crs" + course).innerText;
+        document.getElementById("registeredCrs" + course).innerHTML = document.getElementById("registeredCrs" + course).innerText;
 
         creditsCount += parseInt(document.getElementById("registeredCrs" + course).innerText);
 
