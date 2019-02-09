@@ -193,8 +193,7 @@ let creditsCount = 0;
 var crns = [];
 function register(isAudit, course, title, prefix, course_no) {
 
-    //get rid of search results.
-    $("#courseResultsMessage").html('');
+
 
     //disable register button
     // document.getElementById("regButton" + courseId).disabled = true;
@@ -251,7 +250,11 @@ function register(isAudit, course, title, prefix, course_no) {
 
         coursesCount++;
 
+        //get rid of search results.
+        $("#courseResultsMessage").html('');
         document.getElementById("url").innerText = "";
+        //empty the text field of any input, reset it so it shows the placeholder text.
+        document.getElementById('profileurl').value = '';
     } else { //user selected to remove that particular course.
         remove(course);
     }
