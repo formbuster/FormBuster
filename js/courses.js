@@ -390,11 +390,6 @@ function submitRegistrationForm () {
         $('#submissionConfirmationMessage').fadeOut('slow');
     }, 5000);
 
-    document.getElementById("termSelecter").disabled = false;
-
-    crns.splice(0,crns.length);
-    coursesCount = 0;
-    creditsCount = 0;
 }
 
 /*
@@ -406,8 +401,16 @@ function closeForm() {
 
     //reset the term selecter in the form to the default value option.
     document.getElementById('termSelecter').selectedIndex = 0;
+
+    //re enable to term selecter
+    document.getElementById("termSelecter").disabled = false;
+
     //empty the text field of any input, reset it so it shows the placeholder text.
     document.getElementById('profileurl').value = '';
+
+    crns.splice(0,crns.length);
+    coursesCount = 0;
+    creditsCount = 0;
 
     //get rid of messages, results and credit total, it will be regenerated later when user starts another form.
     $( "#courseResultsMessage" ).html('');
