@@ -1,103 +1,82 @@
-function getFormsPage(role){
-    $('#formsList').append('<div id="forms-list-view">\n' +
-        '                    <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large" style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text" placeholder="Search...">\n' +
-        '\n' +
-        '                    <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">\n' +
-        '                        <div class="w3-left">\n' +
-        '                            <h3 class="w3-left">Registration Form</h3>\n' +
-        '                            <p></p>\n' +
-        '                            <p class="w3-left">Used for students to add or drop classes.</p>\n' +
-        '                        </div>\n' +
-        '                        <div class="w3-right">\n' +
-        '                            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="startRegistrationForm()">Start Form</button>\n' +
-        '                        </div>\n' +
-        '                    </div>\n' +
-        '\n' +
-        '                    <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">\n' +
-        '                        <div class="w3-left">\n' +
-        '                            <h3 class="w3-left">Closed Class Form</h3>\n' +
-        '                            <p></p>\n' +
-        '                            <p class="w3-left">Used for students to get permission to enroll into a class that is full.</p>\n' +
-        '                        </div>\n' +
-        '                        <div class="w3-right">\n' +
-        '                            <button class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="">Start Form</button>\n' +
-        '                        </div>\n' +
-        '                    </div>\n' +
-        '                </div>\n' +
-        '\n' +
-        '                <div id="id01" class="w3-modal">\n' +
-        '                    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
-        '                        <div class="w3-container">\n' +
-        '                            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge w3-padding">×</span>\n' +
-        '                            <div class="w3-text-theme-red" style="display: block">\n' +
-        '                                <p></p>\n' +
-        '                                <h3 class="w3-left">Registration Form</h3>\n' +
-        '                                <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>\n' +
-        '                            </div>\n' +
-        '                            <div id="first-page">\n' +
-        '                                <div id = "student-search" class="w3-container"></div>\n' +
-        '                                <div class="w3-container">\n' +
-        '                                    <div class="w3-container w3-theme-red">\n' +
-        '                                        <p>Select a semester term, then search for courses using CRN, Title or Prefix.</p>\n' +
-        '                                    </div>\n' +
-        '                                    <br>\n' +
-        '                                    <select id="termSelecter" autofocus="" class="w3-select w3-quarter" onchange="getCourse()">\n' +
-        '                                        <option value="" disabled selected>Select a term:</option>\n' +
-        '                                        <option value="spring">Spring</option>\n' +
-        '                                        <option value="summer">Summer</option>\n' +
-        '                                        <option value="fall">Fall</option>\n' +
-        '                                    </select>\n' +
-        '\n' +
-        '                                    <input id="profileurl" class="w3-input w3-threequarter" type="text" placeholder="Search for courses using CRN, Title or Prefix">\n' +
-        '\n' +
-        '                                    <br><br>' +
-        ' <img src="../img/loadinfo.net.gif" id="animated-gif" style="display:none;" justify-content="center"/>' +
-        '                                    <div id="courseResultsMessage"></div>\n' +
-        '                                    <div id="url"></div>\n' +
-        '                                    <div id="registrationTableResults"></div>\n' +
-        '                                    <p id="totalCredits"></p>\n' +
-        '                                </div>\n' +
-        '                                <br>\n' +
-        '                                <div>\n' +
-        '                                    * A student may audit a course with the permission of his or her advisor and payment (if applicable) of an audit fee. An auditor does not receive a grade; an AU is recorded\n' +
-        '                                    on the transcript in place of the grade if the auditor has, in general, maintained a satisfactory course attendance (usually 75 percent class attendance) and completed the\n' +
-        '                                    appropriate assignments. If the student does not meet requirements, a final grade of F may be awarded. No changes in registration from credit to audit or from audit to credit\n' +
-        '                                    will be permitted after the second week of classes.\n' +
-        '                                </div>\n' +
-        '                                <br>\n' +
-        '                                <div id=\'emptyFormMessage\' class="w3-panel w3-red" style="display: none;">\n' +
-        '                                    <p>The form is empty. Select a term and search for courses above!</p>\n' +
-        '                                </div>\n' +
-        '                                <div id="form-options-1">\n' +
-        '                                    <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">Discard</button>\n' +
-        '                                    <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>\n' +
-        '                                    <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge" onclick="saveRegistrationForm(false)">Save</button>\n' +
-        '                                    <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge" onclick="saveRegistrationForm(true)">Submit</button>\n' +
-        '                                </div>\n' +
-        '                                <br>\n' +
-        '                            </div>\n' +
-        '                        </div>\n' +
-        '                    </div>\n' +
-        '                </div>\n' +
-        '            </div>\n');
+let searchDiv;
+function startRegistrationForm(role) {
+    if (role == "coord/staff") {
+        if (currentUserOfStudentList != "student-search") { //some other form or the dashboard has the student-list.html loaded.
+            removePreviousStudentListUser();
 
-    $('#profileurl').keyup(function(e) {
-        getCourse();
-    });
-    $(function() {
-        $('#search-id').on("submit", function() {
-            $('#animated-gif').toggle();
-        });
-    });
+            $("#registration-form").find("#student-search").load('student_list.html', function () {
+                document.getElementById("searchInput").placeholder = "Enter a student's name to start a form for";
+                currentUserOfStudentList = "student-search";
+                document.getElementById("allStudentsButton").remove();
 
-    if (role === "coord") {
-        $("#student-search").load('student_list.html');
-        // $('#student-search #searchInput').id("searchInputForForm");
+                /*
+                Once the students results have been returned, and a student has been selected, we start the form process..
+                 */
+                function nameSelected(event) {
+                    // let element = document.getElementById(currentUserOfStudentList);
+                    //searchDiv = document.getElementById(currentUserOfStudentList).innerHTML.toString();
+                    // while (element.firstChild) { //remove all student list results, but keep the parent div to use it to store the selected student.
+                    //     element.removeChild(element.firstChild);
+                    // }
+                    document.getElementById(currentUserOfStudentList).style.display = "none";
 
-        $('#student-search .search_input').attr("id", "rgfdsfrtgrfd");
+                    let name = event.currentTarget.studentFullName;
+                    let username = event.currentTarget.studentID;
+                    document.getElementById("startAFormMessage").innerHTML = "<h4>Starting a form for: <b>" + name + "</b></h4>";
+
+                    //name was selected, so when the user selects the send to student parameter, we use their username as the parameter.
+                    document.getElementById("send-option-2").addEventListener("click", function () {
+                        sendRegistrationForm(username); //pass the student username to the send to s
+                    });
+
+                    //show the rest of the form.
+                    document.getElementById("form-body").style.display = "block";
+                }
+
+
+                //student results will be populated in the studentsList, watch as each one is populated, and update the event listener
+                $('#studentsList').on("DOMNodeInserted", function () {
+                    let content = document.getElementsByClassName("w3-button w3-block w3-white w3-round-xlarge button_properties student_entry_button");
+                    content[content.length - 1].removeEventListener("click", studentEntryClicked);
+                    content[content.length - 1].addEventListener("click", nameSelected);
+                });
+                return;
+            });
+
+            currentUserOfStudentList = "registration-form";
+
+            //hide the form, so that the coordinator/faculty will search and select for the student first. We will reveal the reset of the
+            //form after they make a selection.
+            document.getElementById("form-body").style.display = "none";
+
+            //hide buttons "enter pin" and save, as these are not needed for the student coordinator or faculty, these are student features.
+            document.getElementById("enter-pin-2").remove();
+            document.getElementById("save-option-2").remove();
+            document.getElementById("submit-option-2").remove();
+
+            //add new button for sending to student
+            $("#form-options-1").append('<button id="send-option-2" class="w3-button w3-theme-blue w3-round-xxlarge">Send to Student</button>');
+        } else { //starting another register form after just completing one (the student-list.html was already loaded for the registration form).
+            document.getElementById(currentUserOfStudentList).style.display = "block";
+            document.getElementById("searchInput").value = "";
+            document.getElementById("studentsList").innerHTML = "";
+
+            document.getElementById("form-body").style.display = "none";
+
+            document.getElementById('registration-form').style.display='block';
+        }
     }
+    document.getElementById('registration-form').style.display='block';
+
 }
 
-function startRegistrationForm() {
-    document.getElementById('id01').style.display='block';
+function removePreviousStudentListUser() {
+    if (document.getElementById(currentUserOfStudentList) != null) { // the home page, or another form has loaded the html for student-list.html.
+        //empty the div that contains the loaded html from student-list.html before loading it into a different div.
+        let studentListUser = document.getElementById(currentUserOfStudentList);
+        while (studentListUser.firstChild) {
+            studentListUser.removeChild(studentListUser.firstChild);
+        }
+    } //free to use student-list.html
+
 }

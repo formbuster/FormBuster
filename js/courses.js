@@ -192,9 +192,6 @@ let coursesCount = 0;
 let creditsCount = 0;
 var crns = [];
 function register(isAudit, course, title, prefix, course_no) {
-
-
-
     //disable register button
     // document.getElementById("regButton" + courseId).disabled = true;
 
@@ -327,6 +324,57 @@ function auditCourse (course) {
 }
 
 /*
+currently only used by stu coord/faculty only
+ */
+function saveFormAsDraft(studentUsername, courses_list){
+    formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+        approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+        content: {"1_Courses": courses_list}
+    });
+}
+
+/*
+currently only used by Stu coord/faculty only
+ */
+function sendRegistrationForm(studentUsername) {
+    let courses_list = [];
+    for (i = 0; i < crns.length; i++) {
+        courses_list.push({
+            "1_CRN": document.getElementById("registeredCrn" + crns[i]).innerText.toString(),
+            "2_Prefix": document.getElementById("registeredPrefix" + crns[i]).innerText.toString(),
+            "3_Course No.": document.getElementById("registeredCourseNo" + crns[i]).innerText,
+            "4_Section": document.getElementById("registeredSec" + crns[i]).innerText,
+            "5_Course Title": document.getElementById("registeredTitle" + crns[i]).innerText,
+            "6_Days": document.getElementById("registeredDays" + crns[i]).innerText,
+            "7_Time": document.getElementById("registeredTime" + crns[i]).innerText,
+            "8_Credits": document.getElementById("registeredCrs" + crns[i]).innerText,
+            "9_Audit": document.getElementById("audit" + crns[i]).checked == true,
+        });
+    }
+
+    saveFormAsDraft(studentUsername, courses_list);
+    removePreviousStudentListUser();
+
+    closeForm();
+    //hide the form, so that the coordinator/faculty will search and select for the student first the next time. We will reveal the reset of the
+    //form after they make a selection.
+    document.getElementById("form-body").style.display = "none";
+
+    //show submission confirmation message, for student.
+    $("#formsList").prepend("                <div id='submissionConfirmationMessage' class=\"w3-panel w3-green\">\n" +
+        "                    <p>Your form has been sent!</p>\n" +
+        "                </div>");
+
+    //make sure user can see the confirmation message at the top of the page, by scrolling up.
+    window.scrollTo(0, 0);
+
+    //only show the confirmation message for 5 seconds.
+    setTimeout(function () {
+        $('#submissionConfirmationMessage').fadeOut('slow');
+    }, 5000);
+}
+
+/*
 The form will be saved if the user presses save or if the form is submitted. Use ifSubmit to know,
 if we need to send out form, send notifications update dashboards....
 But no matter if you save or submit it, the table needs to be deleted.
@@ -400,7 +448,12 @@ Close the form, don't save any of the information that may have been added into 
 the used ids for reuse.
  */
 function closeForm() {
-    document.getElementById('id01').style.display='none';
+    /*
+    fac/staff
+     */
+    document.getElementById("startAFormMessage").innerText = "";
+
+    document.getElementById('registration-form').style.display='none';
 
     //reset the term selecter in the form to the default value option.
     document.getElementById('termSelecter').selectedIndex = 0;

@@ -86,8 +86,12 @@ function gotoForms () {
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms";
 
-    //todo: rely on signed in user credentials instead.
-    getFormsPage("student");
+    $('#formsList').load('registration_forms.html', function() {
+        //add event listeners for each form.
+        document.getElementById("registration-form-button").addEventListener("click", function() {
+            startRegistrationForm("student");
+        });
+    });
 
     // Unhide "formsPage" and get the notifications
     document.getElementById("formsPage").style.display = "block";
