@@ -4,7 +4,6 @@ function loadPage () {
         // Remove elements that don't apply for a Staff
         document.getElementById("draftsBtn").remove();
         document.getElementById("formsBtn").remove();
-        document.getElementById("historyBtn").remove();
         document.getElementById("notifications").remove();
         document.getElementById("notificationPreferences").remove();
 
