@@ -3,10 +3,10 @@
 <div id="holder" style="overflow: auto; display: block; margin-top: 20px">
     <input id="searchInput" class="search_input" autofocus type="text" placeholder="Search for students..." onkeyup="keyPressed(event)" >
     <button id="searchButton" class="search_button button_properties" type="button" onclick="searchButtonPressed()">Search</button>
-    <button class="all_students_button button_properties all_button_tooltip" type="button" onclick="getAllStudents()">All</button>
+    <button id="allStudentsButton" class="all_students_button button_properties all_button_tooltip" type="button" onclick="getAllStudents()">All</button>
 </div>
 
-<div id="studentsList" style="margin-top: 20px; margin-bottom: 70px; overflow: visible"></div>
+<div id="studentsList" class="students_list" style="margin-top: 20px; margin-bottom: 70px; overflow: visible"></div>
 
 <script>
     // Load "button_tooltip" class.

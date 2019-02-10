@@ -1,3 +1,5 @@
+var currentUserOfStudentList; // only one div can have student_list.html loaded. will be used to empty the element stored here before loading.
+
 function loadPage () {
     // Load "general_dashboard.html" and the rest of the page
     $('#generalDashboard').load("general_dashboard.html", function () {
@@ -18,18 +20,36 @@ function loadPage () {
         document.getElementById("formsBtn").addEventListener("click", gotoForms);
 
         // Load "studentSearchView" only once
-        $('#studentSearchView').load('student_list.html');
+        $('#studentSearchView').load('student_list.html', function(){
+            currentUserOfStudentList = "studentSearchView";
+
+            // Load look up student by default
+            gotoStudents();
+        });
 
         //Load forms page once.
-        // rely on signed in user credentials instead.
-        getFormsPage("coord");
+        $('#formsList').load('registration_forms.html', function() {
+            //add event listeners for each form.
+            document.getElementById("registration-form-button").addEventListener("click", function() {
+                startRegistrationForm("coord/staff");
+            });
+        });
 
-        // Load look up student by default
-        gotoStudents();
+
     });
 }
 
 function gotoStudents () {
+    /*
+    Going back to the students page, we need to reload the student-list.html since it is not present.
+    No need to reload it again when the user is on the student's page and clicks on the student's page again.
+    */
+    if (currentUserOfStudentList != "studentSearchView") {
+        $('#studentSearchView').load('student_list.html', function () {
+            currentUserOfStudentList = "studentSearchView";
+        });
+    }
+
     // Highlight only the students button, because it is selected
     document.getElementById("studentsBtn").className = btnHighlighted;
     document.getElementById("formsBtn").className = btnNotHighlighted;
@@ -56,7 +76,6 @@ function gotoForms () {
 
     // Clear "formsList" and hide other pages
     document.getElementById("studentsPage").style.display = "none";
-    document.getElementById("formsList").innerHTML = '';
 
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms";
