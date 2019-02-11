@@ -1,3 +1,4 @@
+
 // Constants for when a button in the sidebar is highlighted or not
 const btnHighlighted = "w3-bar-item w3-button w3-hover-theme w3-large w3-text-theme-red w3-background";
 const btnNotHighlighted = "w3-bar-item w3-button w3-hover-theme w3-large";
@@ -35,12 +36,12 @@ function checkWindowWidth () {
     }
 }
 
-//Todo: dynamically return userName
 function getUserName() {
+    return window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5);
     // "aadkins2016"
     // "eshelton"
     // "bpetty"
-    return "aadkins2016";
+    //return "aadkins2016";
 }
 
 // Get the user's full name
