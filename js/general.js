@@ -1485,7 +1485,7 @@ function getApproverNotificationMessage(approved, userID_userType) {
         if (approved) {
             message = 'The form has been successfully processed!';
         } else {
-            message = 'The form ' + "haven't" + 'been processed.';
+            message = 'The form ' + "haven't" + ' been processed.';
         }
     }
 
