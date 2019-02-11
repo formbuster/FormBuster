@@ -137,8 +137,8 @@ function displayStudentForms (studentID) {
     completedFormsList.innerHTML = '';
     inProgressFormsList.innerHTML = '';
 
-    getStudentForms("dashboardPage", "completedFormsList", studentID, "completedForms", displayFormReadMode);
-    getStudentForms("dashboardPage", "inProgressFormsList", studentID, "inProgressForms", displayFormReadMode);
+    getStudentForms("studentsPage", "completedFormsList", studentID, "completedForms", displayFormReadMode);
+    getStudentForms("studentsPage", "inProgressFormsList", studentID, "inProgressForms", displayFormReadMode);
 
     // Load completed forms of the student by default
     completedFormsButtonPressed();
