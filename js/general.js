@@ -988,7 +988,7 @@ function displayFormApproveMode (event) {
                             `   <h5 style="text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
                             '</div>\n';
 
-                        // User later to distinguish if the current approver is a Faculty or a Staff
+                        // Used later to distinguish if the current approver is a Faculty or a Staff
                         let userID_userType = "";
 
                         for (let i = 0; i < approvals.length; i++) {
@@ -1010,6 +1010,8 @@ function displayFormApproveMode (event) {
                                     if (approvalID === userID) {
                                         approvalName = '<span>' + approvalName + " " + '<span style="color: #ff0000;">'
                                             + "(" +  '<u>' + "YOU" + '</u>' + ")" + '<span>' +  '<span/>';
+
+                                        userID_userType = pawsDoc2.userType;
                                     }
 
                                     // Initialize table and its titles
