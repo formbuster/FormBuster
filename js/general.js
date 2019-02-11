@@ -37,7 +37,13 @@ function checkWindowWidth () {
 }
 
 function getUserName() {
-    return window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5);
+    let username = window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5).toString();
+
+    if (username.endsWith('#')) {
+        let length = username.length;
+        return username.substring(0, parseInt(length)-1).toString();
+    }
+    return window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5).toString();
     // "aadkins2016"
     // "eshelton"
     // "bpetty"
