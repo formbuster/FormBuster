@@ -15,11 +15,6 @@ function loadPage () {
     });
 }
 
-
-
-
-
-
 // Hides inProgressForms page and displays (unhide) the completedForms page
 function completedFormsButtonPressed () {
     const completedFormsButton = document.getElementById("completedFormsButton");
