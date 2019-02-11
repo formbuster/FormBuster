@@ -231,7 +231,7 @@ function register(isAudit, course, title, prefix, course_no) {
             "<td id='registeredCrs"+ course + "'>" + document.getElementById("crs" + course).innerText +"</td>\n"+
             "<td><input class=\"w3-check\" onclick='auditCourse(" + course + ")' id=\"audit" + course + "\"type=\"checkbox\"></td>\n"+
             "<td><input class=\"w3-check\" onclick='adjustCreditsForCEU(" + course + ")' id=\"ceu" + course + "\"type=\"checkbox\"></td>\n"+
-            "<td onclick='remove(" + course +")'>X</td>\n"+
+            `<td><span onclick="remove(${course})" class="w3-button w3-round-xlarge" style="padding: 3px 8px">&times;</span></td>\n`+
             "</tr>"
         );
 
