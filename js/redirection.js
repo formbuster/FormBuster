@@ -1,3 +1,4 @@
+
 function redirectUser() {
 //   var signedIn = user.email;
   console.log(genUserEmail);
