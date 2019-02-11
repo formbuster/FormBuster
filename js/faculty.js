@@ -36,7 +36,7 @@ function gotoDashboard () {
     document.getElementById("pageTitle").innerHTML = "Dashboard";
 
     const facultyID = getUserName();
-    /* Todo: call a function to populate all the pending forms of this facultyID into "pendingFormsList" */
+    getStudentFormsByReferenceList("dashboardPage", "pendingFormsList", facultyID, "pendingForms", displayFormApproveMode);
 
     // Unhide "dashboardPage"
     document.getElementById("dashboardPage").style.display = "block";
@@ -79,6 +79,7 @@ function gotoHistory () {
 
     const facultyID = getUserName();
     /* Todo: call a function to populate all the forms in which this facultyID has signed into "formsHistoryList" */
+    getStudentFormsByReferenceList("historyPage", "formsHistoryList", facultyID, "completedForms", displayFormReadModeByReference);
 
     // Unhide "historyPage"
     document.getElementById("historyPage").style.display = "block";

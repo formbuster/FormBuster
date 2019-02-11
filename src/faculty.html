@@ -4,6 +4,7 @@
         <!-- Javascripts for the pages and tooltip -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="../js/moment.js"></script>
 
         <!-- Tooltipster CSS and JS -->
         <script src="../libs/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
@@ -36,11 +37,11 @@
         <div id="generalDashboard"></div>
 
         <!-- This DIV contain the multiple pages -->
-        <div id="mainContent" class="w3-container w3-cell main_content_page">
+        <div id="mainContent" class="w3-container w3-cell main_content_page" style="margin-bottom: 70px;">
             <!-- Dashboard Page -->
             <div id="dashboardPage" style="display: none">
                 <div class="w3-text-theme-red"><H2>Pending Forms</H2></div>
-                <!-- this should be filled when XXXXXXXXXXXXXX is called-->
+                <!-- this should be filled when "getStudentFormsByReferenceList()" is called-->
                 <div id="pendingFormsList"></div>
             </div>
 
@@ -68,7 +69,7 @@
             <!-- History Page -->
             <div id="historyPage" style="display: none">
                 <div class="w3-text-theme-red"><H2>Signed Forms</H2></div>
-                <!-- this should be filled when XXXXXXXXXXXXXX is called-->
+                <!-- this should be filled when "getStudentFormsByReferenceList()" is called-->
                 <div id="formsHistoryList"></div>
             </div>
         </div>

@@ -129,3 +129,77 @@ body {
 .switch_page_grids_button:active {
     background-color: #ada6a6;
 }
+
+/* Button used for the popups of the Faculty and Staff, when approving or declining forms */
+.approval_button {
+    width: 150px;
+    height: 30px;
+    border-radius: 6px;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    border: none;
+}
+
+/* Sets the style of the "div" tag of the "textarea" tags of Faculty and Staff approval processing of forms */
+.declined_text_box_div {
+    margin-left: 16px;
+    margin-right: 16px;
+    overflow: auto;
+    display: block;
+    width: calc(100% - 32px);
+}
+
+/* Sets the style of the "textarea" tags of Faculty and Staff approval processing of forms */
+.declined_text_box {
+    width: 100%;
+    float: left;
+    height: 60px;
+    resize: vertical;
+    max-height: 150px;
+    min-height: 60px;
+
+    outline: none;
+    position: relative;
+    padding: 6px;
+    border-style: solid;
+    border-width: thin;
+    border-color: #8d8d8d;
+    font-size: 17px;
+    color: #000;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: text;
+    transition: box-shadow, border-color 1.5s;
+}
+.declined_text_box:hover {
+    border-color: rgba(0,149,255,0.5);
+    box-shadow: inset 0 0 2px #d3d6da, 0 0 2px rgba(0,149,255,0.2);
+}
+.declined_text_box:focus {
+    border-color: #0095ff;
+    box-shadow: inset 0 2px 2px #fafafb, 0 0 5px rgba(0,119,204,0.4);
+}
+
+/* Button used for the popups of the Faculty and Staff, when submitting their final decision on either approving or not forms */
+.submit_approval_button {
+    float: right;
+    margin-right: 20px;
+    background-color: #6897bb;
+    margin-top: 10px;
+    width: 200px;
+    height: 30px;
+    border-radius: 6px;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    border: none;
+}
+
+/* Sets the style for when a button is pressed/active and when a button is inactive */
+.button_active {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.button_inactive {
+    opacity: 0.2;
+}
