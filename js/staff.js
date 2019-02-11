@@ -4,7 +4,6 @@ function loadPage () {
         // Remove elements that don't apply for a Staff
         document.getElementById("draftsBtn").remove();
         document.getElementById("formsBtn").remove();
-        document.getElementById("historyBtn").remove();
         document.getElementById("notifications").remove();
         document.getElementById("notificationPreferences").remove();
 
@@ -15,6 +14,7 @@ function loadPage () {
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
         document.getElementById("studentsBtn").addEventListener("click", gotoStudents);
+        document.getElementById("historyBtn").addEventListener("click", gotoHistory);
         document.getElementById("formsManagementBtn").addEventListener("click", gotoFormsManagement);
 
         // Load "studentSearchView" only once
@@ -29,18 +29,20 @@ function gotoDashboard () {
     // Highlight only the dashboard button, because it is selected
     document.getElementById("dashboardBtn").className = btnHighlighted;
     document.getElementById("studentsBtn").className = btnNotHighlighted;
+    document.getElementById("historyBtn").className = btnNotHighlighted;
     document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "pendingFormsList" and hide other pages
     document.getElementById("pendingFormsList").innerHTML = '';
     document.getElementById("studentsPage").style.display = "none";
+    document.getElementById("historyPage").style.display = "none";
     document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Dashboard";
 
     const staffID = getUserName();
-    /* Todo: call a function to populate all the pending forms of this staffID into "pendingFormsList" */
+    getStudentFormsByReferenceList("dashboardPage", "pendingFormsList", staffID, "pendingForms", displayFormApproveMode);
 
     // Unhide "dashboardPage"
     document.getElementById("dashboardPage").style.display = "block";
@@ -50,6 +52,7 @@ function gotoStudents () {
     // Highlight only the students button, because it is selected
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
     document.getElementById("studentsBtn").className = btnHighlighted;
+    document.getElementById("historyBtn").className = btnNotHighlighted;
     document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "searchInput" and "studentsList" and hide other pages
@@ -57,6 +60,7 @@ function gotoStudents () {
     document.getElementById("searchInput").value = '';
     document.getElementById("searchButton").style.visibility = "hidden";
     document.getElementById("studentsList").innerHTML = '';
+    document.getElementById("historyPage").style.display = "none";
     document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
@@ -67,16 +71,41 @@ function gotoStudents () {
     document.getElementById("searchInput").focus();
 }
 
+function gotoHistory () {
+    // Highlight only the history button, because it is selected
+    document.getElementById("dashboardBtn").className = btnNotHighlighted;
+    document.getElementById("studentsBtn").className = btnNotHighlighted;
+    document.getElementById("historyBtn").className = btnHighlighted;
+    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
+
+    // Clear "formsHistoryList" and hide other pages
+    document.getElementById("dashboardPage").style.display = "none";
+    document.getElementById("studentsPage").style.display = "none";
+    document.getElementById("formsHistoryList").innerHTML = '';
+    document.getElementById("formsManagementPage").style.display = "none";
+
+    // Update the page's title
+    document.getElementById("pageTitle").innerHTML = "History";
+
+    const staffID = getUserName();
+    getStudentFormsByReferenceList("historyPage", "formsHistoryList", staffID, "completedForms", displayFormReadModeByReference);
+
+    // Unhide "historyPage"
+    document.getElementById("historyPage").style.display = "block";
+}
+
 function gotoFormsManagement () {
     // Highlight only the forms management button, because it is selected
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
     document.getElementById("studentsBtn").className = btnNotHighlighted;
+    document.getElementById("historyBtn").className = btnNotHighlighted;
     document.getElementById("formsManagementBtn").className = btnHighlighted;
 
     // Clear "formsManagementView" and hide other pages
     document.getElementById("formsManagementView").innerHTML = '';
     document.getElementById("dashboardPage").style.display = "none";
     document.getElementById("studentsPage").style.display = "none";
+    document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms Management";

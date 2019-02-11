@@ -124,32 +124,59 @@ function gotoHistory () {
 }
 
 // Get the notifications of the student
-/* Todo: make this method dynamic */
+function getNotifications () {
+    const notificationsList = document.getElementById("notificationsList");
+    const studentID = getUserName();
 
+    // Clear previous notifications
+    notificationsList.innerHTML = '';
 
-function getNotifications() {
-    document.getElementById("notificationsList").innerHTML = '';
-
-    formDB.collection("users").doc(getUserName()).collection("notifications").orderBy("timestamp", 'desc').get().then(function(querySnapshot) {
+    let wholeHTML = '';
+    let forEachIteration = 0;
+    formDB.collection("users").doc(studentID).collection("notifications").orderBy("timestamp", 'desc').get().then(function(querySnapshot) {
         querySnapshot.forEach(function(notification) {
             const userNotification = notification.data();
             const notificationMessage = userNotification.message;
             const notificationDate = notification.id.toString().split('_')[1];
 
-            $("#notificationsList").append(
-                '<div class="w3-container w3-white w3-margin-bottom">\n' +
-                '    <span onclick="this.parentElement.style.display=\'none\'" class="w3-button w3-white w3-large w3-right">&times;</span>\n' +
+            wholeHTML +=
+                `<div class="w3-container w3-white w3-margin-bottom" data-studentid="${studentID}"
+                    data-notificationid="${notification.id}" style="padding-right: 0">\n` +
+                '    <span onclick="deleteNotification(event)" class="notification_button w3-large w3-right">&times;</span>\n' +
                 '    <div id="message">\n' +
                 '        <p>' + notificationMessage + '</p>\n' +
                 '    </div>\n' +
                 '    <div class="time">\n' +
-                '        <p>' + moment(notificationDate, "YYYYMMDD hh:mm:ss").fromNow() + '</p>\n' +
+                '        <p>' + moment(notificationDate, "MMDDYYYYHHmmss").fromNow() + '</p>\n' +
                 '    </div>\n' +
-                '</div>\n');
+                '</div>\n';
+
+            // Insert all the notifications into "notificationsList"
+            if (forEachIteration == querySnapshot.size - 1) {
+                notificationsList.innerHTML = wholeHTML;
+            }
+
+            forEachIteration++;
         });
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
     });
+}
+
+function deleteNotification (event) {
+    const studentID = event.currentTarget.parentElement.dataset.studentid;
+    const notificationID = event.currentTarget.parentElement.dataset.notificationid;
+
+    formDB.collection("users").doc(studentID).collection("notifications").doc(notificationID).delete().then(function() {
+        //console.log("Document successfully deleted!");
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+
+    // Remove element from the page
+    event.currentTarget.parentElement.remove();
+
+    displayConfirmationMessage("mainContent", "You deleted your notification.");
 }
 
 function logOut() {

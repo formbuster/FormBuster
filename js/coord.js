@@ -167,4 +167,3 @@ function displayStudentSearchListPage () {
     studentSearchView.style.display = "block";
     studentFormsView.style.display = "none";
 }
-
