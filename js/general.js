@@ -146,6 +146,8 @@ function capitalizeStrings (str) {
     return newStr;
 }
 
+
+
 // Populates all the forms from "formsFolder" of student "studentID", into "targetDiv".
 // Each of those forms will call "mainButtonFunction" when the user clicks on them.
 // Once the the user clicks on the form, the form contents will be populated in the "pageDiv"
@@ -1625,6 +1627,7 @@ function searchButtonPressed () {
 // Also, if "Enter" is pressed, call "searchButtonPressed()"
 function keyPressed (event) {
     const txt = document.getElementById("searchInput").value;
+    console.log(txt); //they share the same id, so one needs to change.
 
     if (txt.length == 0) {
         document.getElementById("searchButton").style.visibility = "hidden";

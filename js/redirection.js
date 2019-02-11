@@ -1,8 +1,8 @@
 function redirectUser() {
-  var signedIn = user.email;
-  console.log(signedIn);
+//   var signedIn = user.email;
+  console.log(genUserEmail);
 
-  pawsDB.collection("users").doc(signedIn.toString().substring(0, str.indexOf("@"))).get().then(function(doc) {
+  pawsDB.collection("users").doc(genUserEmail.toString().substring(0, str.indexOf("@"))).get().then(function(doc) {
     if (doc.exists) {
       const docData = doc.data();
       const usertype = docData.userType;
