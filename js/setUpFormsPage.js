@@ -29,17 +29,22 @@ function startRegistrationForm(role) {
                         sendRegistrationForm(username); //pass the student username to the send to s
                     });
 
+                    document.getElementById("send-option-2").style.display = "inline";
+
                     //show the rest of the form.
                     document.getElementById("form-body").style.display = "block";
                 }
-
 
                 //student results will be populated in the studentsList, watch as each one is populated, and update the event listener
                 $('#studentsList').on("DOMNodeInserted", function () {
                     let content = document.getElementsByClassName("w3-button w3-block w3-white w3-round-xlarge button_properties student_entry_button");
                     content[content.length - 1].removeEventListener("click", studentEntryClicked);
                     content[content.length - 1].addEventListener("click", nameSelected);
+
+                    //change the element to the light red color, instead of the original white.
+                    content[content.length - 1].className = "w3-border-theme w3-background w3-button w3-block w3-round-xlarge button_properties student_entry_button";
                 });
+
                 return;
             });
 
@@ -55,9 +60,10 @@ function startRegistrationForm(role) {
             document.getElementById("submit-option-2").remove();
 
             //add new button for sending to student
-            $("#form-options-1").append('<button id="send-option-2" class="w3-button w3-theme-blue w3-round-xxlarge">Send to Student</button>');
+            $("#form-options-1").append('<button id="send-option-2" class="w3-button w3-theme-blue w3-round-xxlarge" style="display: none">Send to Student</button>');
         } else { //starting another register form after just completing one (the student-list.html was already loaded for the registration form).
             document.getElementById(currentUserOfStudentList).style.display = "block";
+            document.getElementById("send-option-2").style.display = "none"; //rehide the button for new registration form
             document.getElementById("searchInput").value = "";
             document.getElementById("studentsList").innerHTML = "";
 
