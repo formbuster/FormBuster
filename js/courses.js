@@ -328,7 +328,7 @@ currently only used by stu coord/faculty only
  */
 function saveFormAsDraft(studentUsername, courses_list){
     formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-        approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+        approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(studentUsername)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
         content: {"1_Courses": courses_list}
     });
 }
