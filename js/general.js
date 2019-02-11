@@ -191,10 +191,11 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                 pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
                     if (doc.exists) {
                         const pawsDoc = doc.data();
+                        const userType = pawsDoc.userType;
 
                         var span_check_mark = document.createElement('span');
 
-                        var userInfo = pawsDoc.userType;
+                        var userInfo = userType;
                         if (userInfo != "Staff") { // then it means it's a Faculty member
                             userInfo = pawsDoc.facultyRole;
                         }
@@ -202,9 +203,12 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                         let dateInfo;
                         if (approvals[i].date != null) {
                             dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                        } else {
+                        } else if (userType === "Faculty") {
                             dateInfo = "Waiting for approval."
+                        } else if (userType === "Staff") {
+                            dateInfo = "Waiting for processing."
                         }
+
                         const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
                             + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
                         span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
@@ -407,19 +411,10 @@ function displayFormReadMode (event) {
                                     const approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
                                     const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
-                                    const approvalExactDate = (approvalObj.date == null) ? '<span>' + "Waiting to be approved or declined" + '</span>'
-                                        : '<span>' + getExactDateAndTime(approvalObj.date.toDate())  + '</span>';
-                                    const approvalStatus = getWrittenApprovalStatus(approvalObj.status);
+                                    const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
 
-                                    let declinedReasonTooltip = '';
-                                    if (approvalObj.status === true) {
-                                        declinedReasonTooltip = '<span>' + "It is not applicable since it is approved" + '</span>';
-                                    } else if (approvalObj.status === false) {
-                                        declinedReasonTooltip = '<span>' + "Reason for not approving (declining) the form" + '</span>';
-                                    } else if (approvalObj.status === null) {
-                                        declinedReasonTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
-                                    }
+                                    const declinedReasonTooltip = getDeclinedReasonTooltipText(approvalObj.status, pawsDoc2.userType);
 
                                     // Initialize table and its titles
                                     if (i == 0) {
@@ -439,13 +434,7 @@ function displayFormReadMode (event) {
                                     // Insert table data
                                     wholeHTML += '        <tr>\n';
                                     wholeHTML += `            <td class="approval_tooltip" data-tooltip-content="${approvalEmail}" >${approvalName}<td>\n`;
-                                    if (approvalObj.status === null) {
-                                        const approvalTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
-                                        wholeHTML += `            <td class="approval_tooltip" 
-                                            data-tooltip-content="${approvalTooltip}" >${approvalStatus}<td>\n`;
-                                    } else {
-                                        wholeHTML += `            <td>${approvalStatus}<td>\n`;
-                                    }
+                                    wholeHTML += getApprovalStatusHTML(approvalObj.status, pawsDoc2.userType);
                                     wholeHTML += `            <td class="approval_tooltip" 
                                             data-tooltip-content="${approvalExactDate}" >${approvalDate}<td>\n`;
                                     wholeHTML += `            <td class="approval_tooltip" 
@@ -564,10 +553,11 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
                         if (doc.exists) {
                             const pawsDoc = doc.data();
+                            const userType = pawsDoc.userType;
 
                             var span_check_mark = document.createElement('span');
 
-                            var userInfo = pawsDoc.userType;
+                            var userInfo = userType;
                             if (userInfo != "Staff") { // then it means it's a Faculty member
                                 userInfo = pawsDoc.facultyRole;
                             }
@@ -575,11 +565,21 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                             let dateInfo;
                             if (approvals[i].date != null) {
                                 dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                            } else {
+                            } else if (userType === "Faculty") {
                                 dateInfo = "Waiting for approval."
+                            } else if (userType === "Staff") {
+                                dateInfo = "Waiting for processing."
                             }
-                            const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                                + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+
+                            let tooltipTitle;
+                            if (userID === approvals[i].tracksID) {
+                                tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last +
+                                    " " + '<span style="color: #ff0000;">' + "(" +  '<u>' + "YOU" + '</u>' + ")" +  '</span>' +
+                                    '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                            } else {
+                                tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
+                                    + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                            }
                             span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
 
                             if (approvals.length > 0) {
@@ -779,24 +779,15 @@ function displayFormReadModeByReference (event) {
                                     let approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
                                     const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
-                                    const approvalExactDate = (approvalObj.date == null) ? '<span>' + "Waiting to be approved or declined" + '</span>'
-                                        : '<span>' + getExactDateAndTime(approvalObj.date.toDate())  + '</span>';
-                                    const approvalStatus = getWrittenApprovalStatus(approvalObj.status);
+                                    const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
+
+                                    const declinedReasonTooltip = getDeclinedReasonTooltipText(approvalObj.status, pawsDoc2.userType);
 
                                     // Check to see if the person who is taking an action now is the same person of the row in the table
                                     if (approvalID === userID) {
                                         approvalName = '<span>' + approvalName + " " + '<span style="color: #ff0000;">'
-                                            + "(" +  '<u>' + "YOU" + '</u>' + ")" + '<span>' +  '<span/>';
-                                    }
-
-                                    let declinedReasonTooltip = '';
-                                    if (approvalObj.status === true) {
-                                        declinedReasonTooltip = '<span>' + "It is not applicable since it is approved" + '</span>';
-                                    } else if (approvalObj.status === false) {
-                                        declinedReasonTooltip = '<span>' + "Reason for not approving (declining) the form" + '</span>';
-                                    } else if (approvalObj.status === null) {
-                                        declinedReasonTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
+                                            + "(" +  '<u>' + "YOU" + '</u>' + ")" + '</span>' +  '</span>';
                                     }
 
                                     // Initialize table and its titles
@@ -817,13 +808,7 @@ function displayFormReadModeByReference (event) {
                                     // Insert table data
                                     wholeHTML += '        <tr>\n';
                                     wholeHTML += `            <td class="approval_tooltip" data-tooltip-content="${approvalEmail}" >${approvalName}<td>\n`;
-                                    if (approvalObj.status === null) {
-                                        const approvalTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
-                                        wholeHTML += `            <td class="approval_tooltip" 
-                                            data-tooltip-content="${approvalTooltip}" >${approvalStatus}<td>\n`;
-                                    } else {
-                                        wholeHTML += `            <td>${approvalStatus}<td>\n`;
-                                    }
+                                    wholeHTML += getApprovalStatusHTML(approvalObj.status, pawsDoc2.userType);
                                     wholeHTML += `            <td class="approval_tooltip" 
                                             data-tooltip-content="${approvalExactDate}" >${approvalDate}<td>\n`;
                                     wholeHTML += `            <td class="approval_tooltip" 
@@ -1009,26 +994,15 @@ function displayFormApproveMode (event) {
                                     let approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
                                     const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
-                                    const approvalExactDate = (approvalObj.date == null) ? '<span>' + "Waiting to be approved or declined" + '</span>'
-                                        : '<span>' + getExactDateAndTime(approvalObj.date.toDate())  + '</span>';
-                                    const approvalStatus = getWrittenApprovalStatus(approvalObj.status);
+                                    const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
+
+                                    const declinedReasonTooltip = getDeclinedReasonTooltipText(approvalObj.status, pawsDoc2.userType);
 
                                     // Check to see if the person who is taking an action now is the same person of the row in the table
                                     if (approvalID === userID) {
                                         approvalName = '<span>' + approvalName + " " + '<span style="color: #ff0000;">'
                                             + "(" +  '<u>' + "YOU" + '</u>' + ")" + '<span>' +  '<span/>';
-
-                                        userID_userType = pawsDoc2.userType;
-                                    }
-
-                                    let declinedReasonTooltip = '';
-                                    if (approvalObj.status === true) {
-                                        declinedReasonTooltip = '<span>' + "It is not applicable since it is approved" + '</span>';
-                                    } else if (approvalObj.status === false) {
-                                        declinedReasonTooltip = '<span>' + "Reason for not approving (declining) the form" + '</span>';
-                                    } else if (approvalObj.status === null) {
-                                        declinedReasonTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
                                     }
 
                                     // Initialize table and its titles
@@ -1049,13 +1023,7 @@ function displayFormApproveMode (event) {
                                     // Insert table data
                                     wholeHTML += '        <tr>\n';
                                     wholeHTML += `            <td class="approval_tooltip" data-tooltip-content="${approvalEmail}" >${approvalName}<td>\n`;
-                                    if (approvalObj.status === null) {
-                                        const approvalTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
-                                        wholeHTML += `            <td class="approval_tooltip" 
-                                            data-tooltip-content="${approvalTooltip}" >${approvalStatus}<td>\n`;
-                                    } else {
-                                        wholeHTML += `            <td>${approvalStatus}<td>\n`;
-                                    }
+                                    wholeHTML += getApprovalStatusHTML(approvalObj.status, pawsDoc2.userType);
                                     wholeHTML += `            <td class="approval_tooltip" 
                                             data-tooltip-content="${approvalExactDate}" >${approvalDate}<td>\n`;
                                     wholeHTML += `            <td class="approval_tooltip" 
@@ -1478,7 +1446,7 @@ function getStudentNotificationMessage (approved, userID_userType, fullName, for
     let message = "";
     if (userID_userType === "Faculty") {
         if (approved) {
-            message = `${fullName} has approved your "${formName}" form. You can view it in your "My Completed Forms" page.`;
+            message = `${fullName} has approved your "${formName}" form. You can view the progress of it in your "Dashboard" page.`;
         } else {
             message = `${fullName} has declined your "${formName}" form. You can view the reason of why they declined in your "My Completed Forms" page.`;
         }
@@ -1538,15 +1506,87 @@ function closeFormModal (mainModal) {
     mainModal.remove();
 }
 
-// Return approval status based on boolean value
-function getWrittenApprovalStatus (status) {
+// Return approval status based on boolean value and userType (Faculty or Staff)
+function getWrittenApprovalStatus (status, userType) {
     let str = '';
     if (status === true) {
-        str = "Approved";
+        if (userType === "Faculty") {
+            str = "Approved";
+        } else if (userType === "Staff") {
+            str = "Processed";
+        }
     } else if (status === false) {
-        str = "Declined";
+        if (userType === "Faculty") {
+            str = "Declined";
+        } else if (userType === "Staff") {
+            str = "Not Processed";
+        }
     } else if (status === null) {
         str = "N/A"
+    }
+
+    return str;
+}
+
+// Return approval status in HTML form based on boolean value and userType (Faculty or Staff)
+function getApprovalStatusHTML (status, userType) {
+    const approvalStatus = getWrittenApprovalStatus(status, userType);
+
+    let str = '';
+    if (status === null) {
+        let approvalTooltip;
+        if (userType === "Faculty") {
+            approvalTooltip = '<span>' + "Waiting to be approved or declined" + '</span>';
+
+        } else if (userType === "Staff") {
+            approvalTooltip = '<span>' + "Waiting to be processed or not processed" + '</span>';
+        }
+        str = `            <td class="approval_tooltip" data-tooltip-content="${approvalTooltip}" >${approvalStatus}<td>\n`;
+
+    } else {
+        str = `            <td>${approvalStatus}<td>\n`;
+    }
+
+    return str;
+}
+
+// Return declined reason based on boolean value and userType (Faculty or Staff)
+function getDeclinedReasonTooltipText (status, userType) {
+    let str = '';
+    if (status === true) {
+        if (userType === "Faculty") {
+            str = '<span>' + "It is not applicable since it is approved" + '</span>';
+        } else if (userType === "Staff") {
+            str = '<span>' + "It is not applicable since it is processed" + '</span>';
+        }
+    } else if (status === false) {
+        if (userType === "Faculty") {
+            str = '<span>' + "Reason for not approving (declining) the form" + '</span>';
+        } else if (userType === "Staff") {
+            str = '<span>' + "Reason for not processing the form" + '</span>';
+        }
+    } else if (status === null) {
+        if (userType === "Faculty") {
+            str = '<span>' + "Waiting to be approved or declined" + '</span>';
+        } else if (userType === "Staff") {
+            str = '<span>' + "Waiting to be processed or not processed" + '</span>';
+        }
+    }
+
+    return str;
+}
+
+// Return exact day of approval based on date object and userType (Faculty or Staff)
+function getApprovalExactDayTooltipText (date, userType) {
+    let str = '';
+    if (date === null) {
+        if (userType === "Faculty") {
+            str = '<span>' + "Waiting to be approved or declined" + '</span>';
+        } else if (userType === "Staff") {
+            str = '<span>' + "Waiting to be processed or not processed" + '</span>';
+        }
+    } else {
+        str = '<span>' + getExactDateAndTime(date.toDate())  + '</span>';
     }
 
     return str;
