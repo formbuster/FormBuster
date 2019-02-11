@@ -1856,3 +1856,7 @@ function getAllStudents () {
         });
     });
 }
+
+function getAdvisor(studentUsername) {
+    return "eshelton";
+}
