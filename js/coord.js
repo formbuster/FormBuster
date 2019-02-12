@@ -34,9 +34,6 @@ function loadPage () {
                 startRegistrationForm("coord/staff");
             });
         });
-
-        // Update the page's title
-        document.getElementById("pageTitle").innerHTML = "Dashboard";
     });
 }
 
@@ -66,7 +63,8 @@ function gotoStudents () {
     document.getElementById("formsPage").style.display = "none";
 
     // Update the page's title
-    // document.getElementById("pageTitle").innerHTML = "Students";
+    document.getElementById("pageTitle").innerHTML = "Students Records";
+
     const coordID = getUserName();
 }
 
