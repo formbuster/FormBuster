@@ -1,13 +1,3 @@
-/* Sets the size of the main container of the page */
-.main_content_page {
-    display: block;
-    overflow: visible;
-    width: 50%;
-    margin-left: 25%;
-    margin-right: 25%;
-    padding-top: 43px;
-}
-
 /* Sets the style for the button that is used to go back to the previous page on the student coordinator screen */
 .switch_page_grids_button {
     align-items: center;
