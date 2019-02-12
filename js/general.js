@@ -1455,16 +1455,16 @@ function getStudentNotificationMessage (approved, userID_userType, fullName, for
     let message = "";
     if (userID_userType === "Faculty") {
         if (approved) {
-            message = `${fullName} has approved your "${formName}" form. You can view the progress of it in your "Dashboard" page.`;
+            message = `<i>${fullName}</i> has <b>approved</b> your "${formName}" form. You can view the progress of it in your "Dashboard" page.`;
         } else {
-            message = `${fullName} has declined your "${formName}" form. You can view the reason of why they declined in your "My Completed Forms" page.`;
+            message = `<i>${fullName}</i> has <b>declined</b> your "${formName}" form. You can view the reason of why they declined in your "My Completed Forms" page.`;
         }
 
     } else if (userID_userType === "Staff") {
         if (approved) {
-            message = `${fullName} has processed your "${formName}" form. You can view it in your "My Completed Forms" page.`;
+            message = `<i>${fullName}</i> has <b>processed</b> your "${formName}" form. You can view it in your "My Completed Forms" page.`;
         } else {
-            message = `${fullName} hasn't processed your "${formName}" form. You can view the reason of why they didn't process in your "My Completed Forms" page.`;
+            message = `<i>${fullName}</i> has <b>not processed</b> your "${formName}" form. You can view the reason of why they didn't process in your "My Completed Forms" page.`;
         }
     }
 
