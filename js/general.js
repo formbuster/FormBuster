@@ -1464,7 +1464,7 @@ function getStudentNotificationMessage (approved, userID_userType, fullName, for
         if (approved) {
             message = `${fullName} has processed your "${formName}" form. You can view it in your "My Completed Forms" page.`;
         } else {
-            message = `${fullName} has declined your "${formName}" form. You can view the reason of why they didn't process in your "My Completed Forms" page.`;
+            message = `${fullName} hasn't processed your "${formName}" form. You can view the reason of why they didn't process in your "My Completed Forms" page.`;
         }
     }
 
@@ -1857,6 +1857,7 @@ function getAllStudents () {
     });
 }
 
+// Todo: Make this dynamic instead of hardcoded
 function getAdvisor(studentUsername) {
     return "eshelton";
 }
