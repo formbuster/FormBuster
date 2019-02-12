@@ -35,7 +35,8 @@ function loadPage () {
             });
         });
 
-
+        // Update the page's title
+        document.getElementById("pageTitle").innerHTML = "Dashboard";
     });
 }
 
