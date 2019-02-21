@@ -78,11 +78,11 @@ let globalUsername;
 
                     });
 
-                    function logOut(){
-                        window.location.replace('../src/templogin.html');
-
-                        firebase.auth().signOut();
-                    }
+                    // function logOut(){
+                    //     window.location.replace('../src/templogin.html');
+                    //
+                    //     firebase.auth().signOut();
+                    // }
 
                     // homeApp.logOut = logOut;
                 })();

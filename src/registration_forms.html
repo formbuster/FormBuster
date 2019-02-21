@@ -30,8 +30,8 @@
 <div id="registration-form" class="w3-modal">
     <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
         <div class="w3-container">
-            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge w3-padding">×</span>
-            <div class="w3-text-theme-red" style="display: block">
+            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px;">×</span>
+            <div class="w3-text-theme-red w3-container" style="display: block">
                 <p></p>
                 <h3 class="w3-left">Registration Form</h3>
                 <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
@@ -40,7 +40,7 @@
                 <div id="startAFormMessage" class="w3-container"></div>
                 <div id="student-search" class="w3-container"></div>
                 <div id = "form-body" class="w3-container">
-                    <div class="w3-container">
+                    <div>
                         <div class="w3-container w3-theme-red">
                             <p>Select a semester term, then search for courses using CRN, Title or Prefix.</p>
                         </div>
@@ -78,7 +78,7 @@
                         <p>The form is empty. Select a term and search for courses above!</p>
                     </div>
                 </div>
-                <div id="form-options-1">
+                <div id="form-options-1" class="w3-container">
                     <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">
                         Discard
                     </button>

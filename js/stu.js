@@ -141,13 +141,14 @@ function getNotifications () {
 
             wholeHTML +=
                 `<div class="w3-container w3-white w3-margin-bottom" data-studentid="${studentID}"
-                    data-notificationid="${notification.id}" style="padding-right: 0">\n` +
+                    data-notificationid="${notification.id}" style="padding-right: 0; border: #770000; border-width: 1px; border-style: dashed;
+                    box-shadow: 5px 10px 20px #888888;">\n` +
                 '    <span onclick="deleteNotification(event)" class="notification_button w3-large w3-right">&times;</span>\n' +
                 '    <div id="message">\n' +
                 '        <p>' + notificationMessage + '</p>\n' +
                 '    </div>\n' +
                 '    <div class="time">\n' +
-                '        <p>' + moment(notificationDate, "MMDDYYYYHHmmss").fromNow() + '</p>\n' +
+                '        <p style="font-style: italic; color: #8e8e8e;">' + moment(notificationDate, "MMDDYYYYHHmmss").fromNow() + '</p>\n' +
                 '    </div>\n' +
                 '</div>\n';
 
