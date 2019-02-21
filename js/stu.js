@@ -207,8 +207,3 @@ class DesiredCourse {
         this.audit = audit;
     }
 }
-
-
-function getAdvisor(studentUsername) {
-    return "eshelton";
-}

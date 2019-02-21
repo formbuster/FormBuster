@@ -327,9 +327,17 @@ function auditCourse (course) {
 currently only used by stu coord/faculty only
  */
 function saveFormAsDraft(studentUsername, courses_list){
-    formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-        approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(studentUsername)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-        content: {"1_Courses": courses_list}
+    pawsDB.collection("users").doc(getUserName()).get().then(function(userDoc) {
+        if (userDoc.exists) {
+            const userDocData = userDoc.data();
+            let advisor = userDocData.advisor.advisorUsername;
+
+            formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+                approvals: [{
+                    date: null, declinedReason: null, status: null, tracksID: advisor}, {date: null, declinedReason: null, status: null, tracksID: "bpetty"}],
+                    content: {"1_Courses": courses_list}
+            });
+        }
     });
 }
 
@@ -400,22 +408,29 @@ function saveRegistrationForm (ifSubmit) {
         });
     }
 
-    if (ifSubmit) {
-        let currentTime = moment().format('MMDDYYYYHHmmss');
-        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
-            approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-            content: {"1_Courses": courses_list}
-        });
+    pawsDB.collection("users").doc(getUserName()).get().then(function(userDoc) {
+        if (userDoc.exists) {
+            const userDocData = userDoc.data();
+            let advisor = userDocData.advisor.advisorUsername;
 
-        formDB.collection("users").doc(getAdvisor(getUserName)).collection("pendingForms").doc("pendingForm_" + currentTime).set({
-            formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
-        });
-    } else { //just save it for later
-        formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-            approvals: [{date: null, declinedReason: null, status:null, tracksID: getAdvisor(getUserName)},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-            content: {"1_Courses": courses_list}
-        });
-    }
+            if (ifSubmit) {
+                let currentTime = moment().format('MMDDYYYYHHmmss');
+                formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
+                    approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+                    content: {"1_Courses": courses_list}
+                });
+
+                formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+                    formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
+                });
+            } else { //just save it for later
+                formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
+                    approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+                    content: {"1_Courses": courses_list}
+                });
+            }
+        }
+    });
     submitRegistrationForm();
 }
 
