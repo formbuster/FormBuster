@@ -19,6 +19,15 @@ body {
     background-color: #F4EDED;
 }
 
+/* Defines the "container" size and position for the main elements of a Student, Faculty, Faculty, and Staff's page */
+.main_content_page {
+    margin-left: 15%;
+    margin-top: 43px;
+    margin-bottom: 80px;
+    width: 64%;
+    float: left;
+}
+
 /* Sets the style of the forms' contents text */
 .form_content_text {
     font-family: serif;

@@ -15,6 +15,7 @@ function startRegistrationForm(role) {
 
             $("#registration-form").find("#student-search").load('student_list.html', function () {
                 document.getElementById("searchInput").placeholder = "Enter a student's name to start a form for";
+                document.getElementById("student-search").style.marginBottom = "20px";
                 currentUserOfStudentList = "student-search";
                 document.getElementById("allStudentsButton").remove();
 

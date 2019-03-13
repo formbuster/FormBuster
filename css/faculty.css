@@ -1,11 +1,3 @@
-/* Defines the "container" size and position for the main elements of a Faculty's page */
-.main_content_page {
-    margin-left: 15%;
-    margin-top: 43px;
-    width: 64%;
-    float: left;
-}
-
 /* Sets the style for the button that is used to go back to the previous page on the faculty screen */
 .switch_page_grids_button {
     align-items: center;
