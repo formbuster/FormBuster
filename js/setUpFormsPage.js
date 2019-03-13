@@ -71,14 +71,11 @@ function startRegistrationForm(role) {
             document.getElementById("send-option-2").style.display = "none"; //rehide the button for new registration form
             document.getElementById("searchInput").value = "";
             document.getElementById("studentsList").innerHTML = "";
-
             document.getElementById("form-body").style.display = "none";
-
             document.getElementById('registration-form').style.display='block';
         }
     }
     document.getElementById('registration-form').style.display='block';
-
 }
 
 function removePreviousStudentListUser() {
