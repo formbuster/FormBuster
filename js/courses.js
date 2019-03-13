@@ -420,7 +420,7 @@ The form will be saved if the user presses save or if the form is submitted. Use
 if we need to send out form, send notifications update dashboards....
 But no matter if you save or submit it, the table needs to be deleted.
  */
-function saveRegistrationForm (ifSubmit) {
+function saveRegistrationForm (ifSubmit, page) {
     let term = document.getElementById("termSelecter").value;
 
     if (crns.length == 0) { //no forms will be submitted.
@@ -458,38 +458,16 @@ function saveRegistrationForm (ifSubmit) {
                 formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
                     formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
                 });
+                displayConfirmationMessage(page, "Your form has been submitted! Check your dashboard for form progress.");
             } else { //just save it for later
                 formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
                     content: {"1_Courses": courses_list, "2_Term": term}
                 });
+                displayConfirmationMessage(page, "Your form has been saved! Go to drafts to revise and submit your form.");
             }
         }
     });
-    submitRegistrationForm();
-}
-
-/*
-STU
-The form will be saved if the user presses save or if the form is submitted. Use ifSubmit to know,
-if we need to send out form, send notifications update dashboards....
-But no matter if you save or submit it, the page needs to be reset.
- */
-function submitRegistrationForm () {
     closeForm();
-
-    //show submission confirmation message, for student.
-    $("#formsPage").prepend("                <div id='submissionConfirmationMessage' class=\"w3-panel w3-green\">\n" +
-        "                    <p>Your form has been submitted! Check your dashboard for form progress.</p>\n" +
-        "                </div>");
-
-    //make sure user can see the confirmation message at the top of the page, by scrolling up.
-    window.scrollTo(0,0);
-
-    //only show the confirmation message for 5 seconds.
-    setTimeout(function() {
-        $('#submissionConfirmationMessage').fadeOut('slow');
-    }, 5000);
-
 }
 
 /*

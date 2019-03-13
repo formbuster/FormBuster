@@ -137,7 +137,7 @@ function displayDraftMode (event) {
 
         document.getElementById("save-option-2").setAttribute("onclick", null);
         document.getElementById("save-option-2").addEventListener("click", function saveForm() {
-            saveRegistrationForm(false); //todo: this is not making a copy.
+            saveRegistrationForm(false, "draftsPage");
             deleteDbEntry();
         });
 
@@ -153,7 +153,7 @@ function displayDraftMode (event) {
 
         document.getElementById("submit-option-2").setAttribute("onclick", null);
         document.getElementById("submit-option-2").addEventListener("click", function submit() {
-            saveRegistrationForm(true);
+            saveRegistrationForm(true, "draftsPage");
             deleteDbEntry();
         })
 
