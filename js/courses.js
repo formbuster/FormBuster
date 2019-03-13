@@ -364,7 +364,6 @@ function saveFormAsDraft(studentUsername, courses_list, term){
     pawsDB.collection("users").doc(getUserName()).get().then(function(userDoc) {
         if (userDoc.exists) {
             const userDocData = userDoc.data();
-            let advisor = userDocData.advisor.advisorUsername;
 
             formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
                 content: {"1_Courses": courses_list, "2_Term": term}
@@ -394,7 +393,6 @@ function sendRegistrationForm(studentUsername) {
     }
 
     saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
-    removePreviousStudentListUser();
 
     closeForm();
     //hide the form, so that the coordinator/faculty will search and select for the student first the next time. We will reveal the reset of the
