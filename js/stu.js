@@ -144,7 +144,8 @@ function displayDraftMode (event) {
         function deleteDbEntry () {
             formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function() {
                 closeDraftForm();
-                gotoDrafts(); //refresh pg
+                document.getElementById("draftsList").innerHTML = "";
+                getDrafts(); //refresh pg
             }).catch(function(error) {
                 console.error("Error removing document: ", error);
             });
