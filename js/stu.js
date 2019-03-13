@@ -137,25 +137,23 @@ function displayDraftMode (event) {
 
         document.getElementById("save-option-2").setAttribute("onclick", null);
         document.getElementById("save-option-2").addEventListener("click", function saveForm() {
-            saveRegistrationForm(false); //todo: this is not making a copy.
+            saveRegistrationForm(false, "draftsPage");
             deleteDbEntry();
         });
 
         function deleteDbEntry () {
             formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function() {
-                //todo: Remove element from the page
-
+                closeDraftForm();
+                document.getElementById("draftsList").innerHTML = "";
+                getDrafts(); //refresh pg
             }).catch(function(error) {
                 console.error("Error removing document: ", error);
             });
-            closeDraftForm();
-
-            gotoDrafts(); //refresh pg
         }
 
         document.getElementById("submit-option-2").setAttribute("onclick", null);
         document.getElementById("submit-option-2").addEventListener("click", function submit() {
-            saveRegistrationForm(true);
+            saveRegistrationForm(true, "draftsPage");
             deleteDbEntry();
         })
 
