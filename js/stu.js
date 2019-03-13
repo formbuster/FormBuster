@@ -143,14 +143,11 @@ function displayDraftMode (event) {
 
         function deleteDbEntry () {
             formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function() {
-                //todo: Remove element from the page
-
+                closeDraftForm();
+                gotoDrafts(); //refresh pg
             }).catch(function(error) {
                 console.error("Error removing document: ", error);
             });
-            closeDraftForm();
-
-            gotoDrafts(); //refresh pg
         }
 
         document.getElementById("submit-option-2").setAttribute("onclick", null);
