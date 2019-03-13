@@ -280,7 +280,7 @@ function register(isAudit, course, title, prefix, course_no) {
         addResultToCoursesTable(course, prefix, course_no, document.getElementById("sec" + course).innerText, title,
             document.getElementById("days" + course).innerText, document.getElementById("time" + course).innerText,
             document.getElementById("crs" + course).innerText);
-
+        
         //get rid of search results.
         $("#courseResultsMessage").html('');
         document.getElementById("url").innerText = "";

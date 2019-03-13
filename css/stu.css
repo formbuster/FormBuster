@@ -9,7 +9,7 @@
 /* Button used to close single notifications in Student's view */
 .notification_button {
     float: right;
-    padding: 3px 8px;
+    padding: 1px 8px;
     cursor: pointer;
     color: #000;
     background-color: #fff;
