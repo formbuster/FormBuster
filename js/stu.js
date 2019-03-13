@@ -45,6 +45,129 @@ function gotoDashboard () {
     getNotifications();
 }
 
+function getDrafts() {
+    formDB.collection("users").doc(getUserName()).collection("drafts").get().then(function(querySnapshot) {
+        if (querySnapshot.size == 0) {
+            let result_h4 = document.createElement('h4');
+            result_h4.innerHTML = "No forms were found.";
+            result_h4.style.textAlign = "left";
+            document.getElementById("draftsList").appendChild(result_h4);
+        }
+
+        querySnapshot.forEach(function(doc) {
+            const formDoc = doc.data();
+            const formName = getFormName(doc);
+            const exactSubmDate = getExactSubmDate(doc);
+
+            var main_div = document.createElement("div");
+            main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
+            main_div.style.display = "block";
+
+            var first_nested_div = document.createElement("div");
+            first_nested_div.className = "w3-left";
+            main_div.appendChild(first_nested_div);
+
+            //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
+            var h3_form_name = document.createElement('h3');
+            h3_form_name.appendChild(document.createTextNode(formName));
+            first_nested_div.appendChild(h3_form_name);
+
+            var second_nested_div = document.createElement("div");
+            second_nested_div.className = "w3-right";
+            main_div.appendChild(second_nested_div);
+
+            //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
+            var h3_form_name = document.createElement('h3');
+            h3_form_name.appendChild(document.createTextNode("Started on " + exactSubmDate));
+            second_nested_div.appendChild(h3_form_name);
+
+            document.getElementById("draftsList").appendChild(main_div);
+
+            if (formName === "Registration") {
+                main_div.addEventListener("click", displayDraftMode);
+            }
+
+            main_div.pageDiv = "draftsPage";
+            main_div.studentID = getUserName();
+            main_div.formsFolder = "drafts";
+            main_div.formID = doc.id;
+        });
+    }).catch(function(error) {
+        console.log("Error getting documents (querySnapshot): ", error);
+    });
+}
+
+function displayDraftMode (event) {
+    const pageDiv = document.getElementById(event.currentTarget.pageDiv);
+    const studentID = event.currentTarget.studentID;
+    const formsFolder = event.currentTarget.formsFolder;
+    const formID = event.currentTarget.formID;
+
+    $('#editDraft').load('registration_forms.html #registration-form', function() {
+        startRegistrationForm("student");
+
+        //modify the registration-form with info from the db.
+        formDB.collection("users").doc(getUserName()).collection("drafts").doc(formID).get().then(function(doc) {
+            if (doc.exists) {
+                const formDoc = doc.data();
+
+                //select the correct term, based on what was saved in the db.
+                if (formDoc.content["2_Term"] === "spring") {
+                    $("#termSelecter").val('spring');
+                } else if (formDoc.content["2_Term"] === "summer") {
+                    $("#termSelecter").val('summer');
+                } else {
+                    $("#termSelecter").val('fall');
+                }
+
+                const content = formDoc.content;
+                setUpDraft(content);
+            };
+        });
+
+        //change the onclick because the start a form feature loads the same code, once we are done making a draft, get rid of the code.
+        document.getElementById("close-registration-form").setAttribute("onclick", null);
+        document.getElementById("close-registration-form").onclick = closeDraftForm;
+
+        document.getElementById("discard-option-1").setAttribute("onclick", null);
+        //document.getElementById("discard-option-1").onclick = deleteDbEntry;
+        document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
+
+        //when user saves the form, we will delete the current form, and make new one.
+
+        document.getElementById("save-option-2").setAttribute("onclick", null);
+        document.getElementById("save-option-2").addEventListener("click", function saveForm() {
+            saveRegistrationForm(false); //todo: this is not making a copy.
+            deleteDbEntry();
+        });
+
+        function deleteDbEntry () {
+            formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function() {
+                //todo: Remove element from the page
+
+            }).catch(function(error) {
+                console.error("Error removing document: ", error);
+            });
+            closeDraftForm();
+
+            gotoDrafts(); //refresh pg
+        }
+
+        document.getElementById("submit-option-2").setAttribute("onclick", null);
+        document.getElementById("submit-option-2").addEventListener("click", function submit() {
+            saveRegistrationForm(true);
+            deleteDbEntry();
+        })
+
+    });
+}
+
+function closeDraftForm() {
+    closeForm();
+    document.getElementById("editDraft").innerHTML = "";
+}
+
+
 function gotoDrafts () {
     // Highlight only the drafts button, because it is selected
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
@@ -61,9 +184,8 @@ function gotoDrafts () {
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Drafts";
 
-    /* Todo: Populate the drafts of this student into "draftsList" right below this */
     const studentID = getUserName();
-    getStudentForms("draftsPage", "draftsList", studentID, "drafts", displayFormReadMode);
+    getDrafts();
 
     // Unhide "draftsPage" and get the notifications
     document.getElementById("draftsPage").style.display = "block";
@@ -206,3 +328,4 @@ class DesiredCourse {
         this.audit = audit;
     }
 }
+

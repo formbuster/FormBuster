@@ -30,7 +30,7 @@
 <div id="registration-form" class="w3-modal">
     <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
         <div class="w3-container">
-            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge w3-padding">×</span>
+            <span id="close-registration-form" onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge w3-padding">×</span>
             <div class="w3-text-theme-red" style="display: block">
                 <p></p>
                 <h3 class="w3-left">Registration Form</h3>
@@ -94,15 +94,5 @@
             </div>
         </div>
     </div>
-</div>
 
-<script> //for registration form.
-    $('#profileurl').keyup(function(e) {
-        getCourse();
-    });
-    $(function() {
-        $('#search-id').on("submit", function() {
-            $('#animated-gif').toggle();
-        });
-    });
-</script>
+</div>
