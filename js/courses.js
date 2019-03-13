@@ -22,7 +22,6 @@ function getCourse() {
     if (document.getElementById("profileurl").value.length < 3) {
         return;
     } else {
-
         $('#animated-gif').show();
 
         if (/^\d+$/.test(document.getElementById("profileurl").value)) { //user only entered numbers, assume it is a CRN
@@ -78,7 +77,7 @@ function getCourse() {
             }
 
             i = 0;//next course incrementer, and used to id the courses
-            let accordionId = 0; //
+            let accordionId = 0;
 
             if (myObj.records[i] != null) {
                 var currentTitle = "";
@@ -87,8 +86,8 @@ function getCourse() {
                         myObj.records[i].title,  myObj.records[i].credit_hours, myObj.records[i].days, myObj.records[i].begin_time, myObj.records[i].end_time, myObj.records[i].instructor);
 
                     if (currentTitle != courseResult.title) { //new title, create a new accordion.
-                            generateNewCourseRowAccordion(i, courseResult);
-                            accordionId = i; //there was a new accoridon row created at ith course, the current course needs to be added into the accordion, it will use the same accordion.
+                        generateNewCourseRowAccordion(i, courseResult);
+                        accordionId = i; //there was a new accoridon row created at ith course, the current course needs to be added into the accordion, it will use the same accordion.
                     }
 
                     addCourseToAccordion(i, accordionId, courseResult , "", "");
@@ -131,11 +130,11 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
     "                                                <td id = \'crs" + course.crn + "\'>" + course.crs + "</td>\n" +
     "                                                <td>" + course.instructor + "</td>\n" +
     // "                                                <td><button onclick='register(false," + prefix + "," + courseNo + "," + section + ",\"" + title + "\"," + days + "," + beginTime + "," + endTime + "," + credits +")'>Register</button></td>\n"
-    "                                                <td><button id=\'regButton" + course.crn +"\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 +")'>Add Course</button></td>\n" + //todo: switch add course button to delete button
+    "                                                <td><button id=\'regButton" + course.crn +"\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 +")'>Add Course</button></td>\n" +
     "                                            </tr>\n";
 
     //check to see if the user already added the course, if so, they shouldn't be able to add the same course again.
-    if (crns.indexOf(course.crn +"") != -1) {
+    if (crns.indexOf(course.crn.toString()) >= 0 || crns.indexOf(course.crn) >= 0) {
         document.getElementById("regButton" + course.crn).innerText = "Remove Course";
     }
     //todo: figure out how to get the lab times for a class.
@@ -186,67 +185,102 @@ function myFunc(id) {
     }
 }
 
-//array
+function addCourseTableHeader() {
+    $("#registrationTableResults").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
+        "                                       <p>Select the corresponding check boxes if any courses will be added as an Audit or Continuing Education Unit (CEU). Review table before submitting. Delete added courses using the 'X', if needed.</p>\n" +
+        "                                    </div>\n" +
+        "                                    <br>   " +
+        "<table id=\"registrationResults\" class=\"w3-table\">\n" +
+        "                                            <tr>\n" +
+        "                                                <th>CRN</th>\n" +
+        "                                                <th>Prefix</th>\n" +
+        "                                                <th>Course No</th>\n" +
+        "                                                <th>Sec.</th>\n" +
+        "                                                <th>Course Title</th>\n" +
+        "                                                <th>Days</th>\n" +
+        "                                                <th>Time</th>\n" +
+        "                                                <th>CRS.</th>\n" +
+        "                                                <th>Audit</th>" +
+        "                                                <th>CEU</th>" +
+        "                                                <th></th>"+
+        "                                            </tr>\n" +
+        "                                        </table>\n");
+}
+
+
+function setUpDraft(content) {
+    let headerAdded = false;
+
+    for (var formSection in content) {
+        if (Array.isArray(content[formSection])) {
+            let array = content[formSection];
+            for (let i = 0; i < array.length; i++) {
+                if (!headerAdded) { //only add table header once.
+                    headerAdded = true;
+                    addCourseTableHeader();
+                }
+                addResultToCoursesTable(array[i]['1_CRN'], array[i]['2_Prefix'], array[i]['3_Course No.'],
+                    array[i]['4_Section'], array[i]['5_Course Title'], array[i]['6_Days'], array[i]['7_Time'],
+                    array[i]['8_Credits'], array[i]['9_Audit']);
+                /*
+               todo: implement ceu and ceu db spot
+                */
+            }
+        }
+    }
+}
 
 let coursesCount = 0;
 let creditsCount = 0;
 var crns = [];
-function register(isAudit, course, title, prefix, course_no) {
-    //disable register button
-    // document.getElementById("regButton" + courseId).disabled = true;
 
+function addResultToCoursesTable(course, prefix, course_no, sec, title, days, time, crs, auditIsChecked, ceuIsChecked) {
+    $("#registrationResults").append("<tr id='registeredCourse"+ course + "'><td id='registeredCrn"+ course + "'>" + course +"</td>\n" +
+        "<td id='registeredPrefix"+ course + "'>" + prefix +"</td>\n" +
+        "<td id='registeredCourseNo"+ course + "'>" + course_no +"</td>\n"+
+        "<td id='registeredSec"+ course + "'>" + sec +"</td>\n" +
+        "<td id='registeredTitle"+ course + "'>" + title +"</td>\n" +
+        "<td id='registeredDays"+ course + "'>" + days +"</td>\n"+
+        "<td id='registeredTime"+ course + "'>" + time +"</td>\n"+
+        "<td id='registeredCrs"+ course + "'>" + crs +"</td>\n"+
+        "<td><input class=\"w3-check\" onclick='auditCourse(" + course + ")' id=\"audit" + course + "\"type=\"checkbox\"></td>\n"+
+        "<td><input class=\"w3-check\" onclick='adjustCreditsForCEU(" + course + ")' id=\"ceu" + course + "\"type=\"checkbox\"></td>\n"+
+        "<td onclick='remove(" + course +")'>X</td>\n"+
+        "</tr>"
+    );
+
+    if (auditIsChecked) {
+        document.getElementById("audit"+course).checked = true;
+    }
+
+    //todo: call method here, to look through each row of the registrationResults and update to row colors to alternate.
+
+    creditsCount += parseInt(crs);
+
+    document.getElementById("termSelecter").disabled = true;
+    document.getElementById("totalCredits").innerText = "Total credits: " + creditsCount;
+    document.getElementById("emptyFormMessage").style.display = "none";
+
+    crns.push(course);
+
+    coursesCount++;
+
+
+}
+
+function register(isAudit, course, title, prefix, course_no) {
     //the user selected add course, and the course was not already in the form.
     if (document.getElementById("regButton" + course).innerText == "Add Course" && crns.indexOf((document.getElementById("crn" + course)).innerText) == -1) {
         document.getElementById("regButton" + course).innerText = "Remove Course"; //course was added to the form, all them to be able to remove it later
 
         if (coursesCount == 0) { //the form was empty, so there is no table, give instructions and start the table by adding the top row.
-            $("#registrationTableResults").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
-                "                                       <p>Select the corresponding check boxes if any courses will be added as an Audit or Continuing Education Unit (CEU). Review table before submitting. Delete added courses using the 'X', if needed.</p>\n" +
-                "                                    </div>\n" +
-                "                                    <br>   " +
-                "<table id=\"registrationResults\" class=\"w3-table\">\n" +
-                "                                            <tr>\n" +
-                "                                                <th>CRN</th>\n" +
-                "                                                <th>Prefix</th>\n" +
-                "                                                <th>Course No</th>\n" +
-                "                                                <th>Sec.</th>\n" +
-                "                                                <th>Course Title</th>\n" +
-                "                                                <th>Days</th>\n" +
-                "                                                <th>Time</th>\n" +
-                "                                                <th>CRS.</th>\n" +
-                "                                                <th>Audit</th>" +
-                "                                                <th>CEU</th>" +
-                "                                                <th></th>"+
-                "                                            </tr>\n" +
-                "                                        </table>\n");
+            addCourseTableHeader();
         }
 
-        $("#registrationResults").append("<tr id='registeredCourse"+ course + "'><td id='registeredCrn"+ course + "'>" + document.getElementById("crn" + course).innerText +"</td>\n" +
-            "<td id='registeredPrefix"+ course + "'>" + prefix +"</td>\n" +
-            "<td id='registeredCourseNo"+ course + "'>" + course_no +"</td>\n"+
-            "<td id='registeredSec"+ course + "'>" + document.getElementById("sec" + course).innerText +"</td>\n" +
-            "<td id='registeredTitle"+ course + "'>" + title +"</td>\n" +
-            "<td id='registeredDays"+ course + "'>" + document.getElementById("days" + course).innerText +"</td>\n"+
-            "<td id='registeredTime"+ course + "'>" + document.getElementById("time" + course).innerText +"</td>\n"+
-            "<td id='registeredCrs"+ course + "'>" + document.getElementById("crs" + course).innerText +"</td>\n"+
-            "<td><input class=\"w3-check\" onclick='auditCourse(" + course + ")' id=\"audit" + course + "\"type=\"checkbox\"></td>\n"+
-            "<td><input class=\"w3-check\" onclick='adjustCreditsForCEU(" + course + ")' id=\"ceu" + course + "\"type=\"checkbox\"></td>\n"+
-            `<td><span onclick="remove(${course})" class="w3-button w3-round-xlarge" style="padding: 3px 8px">&times;</span></td>\n`+
-            "</tr>"
-        );
-
-        //todo: call method here, to look through each row of the registrationResults and update to row colors to alternate.
-
-        creditsCount += parseInt(document.getElementById("crs" + course).innerText);
-
-        document.getElementById("termSelecter").disabled = true;
-        document.getElementById("totalCredits").innerText = "Total credits: " + creditsCount;
-        document.getElementById("emptyFormMessage").style.display = "none";
-
-        crns.push(document.getElementById("crn" + course).innerText);
-
-        coursesCount++;
-
+        addResultToCoursesTable(course, prefix, course_no, document.getElementById("sec" + course).innerText, title,
+            document.getElementById("days" + course).innerText, document.getElementById("time" + course).innerText,
+            document.getElementById("crs" + course).innerText);
+        
         //get rid of search results.
         $("#courseResultsMessage").html('');
         document.getElementById("url").innerText = "";
@@ -326,16 +360,15 @@ function auditCourse (course) {
 /*
 currently only used by stu coord/faculty only
  */
-function saveFormAsDraft(studentUsername, courses_list){
+function saveFormAsDraft(studentUsername, courses_list, term){
     pawsDB.collection("users").doc(getUserName()).get().then(function(userDoc) {
         if (userDoc.exists) {
             const userDocData = userDoc.data();
             let advisor = userDocData.advisor.advisorUsername;
 
             formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-                approvals: [{
-                    date: null, declinedReason: null, status: null, tracksID: advisor}, {date: null, declinedReason: null, status: null, tracksID: "bpetty"}],
-                    content: {"1_Courses": courses_list}
+                content: {"1_Courses": courses_list, "2_Term": term}
+                //todo: term isn't working.
             });
         }
     });
@@ -360,7 +393,7 @@ function sendRegistrationForm(studentUsername) {
         });
     }
 
-    saveFormAsDraft(studentUsername, courses_list);
+    saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
     removePreviousStudentListUser();
 
     closeForm();
@@ -388,6 +421,8 @@ if we need to send out form, send notifications update dashboards....
 But no matter if you save or submit it, the table needs to be deleted.
  */
 function saveRegistrationForm (ifSubmit) {
+    let term = document.getElementById("termSelecter").value;
+
     if (crns.length == 0) { //no forms will be submitted.
         document.getElementById("emptyFormMessage").style.display = "block";
         return;
@@ -417,7 +452,7 @@ function saveRegistrationForm (ifSubmit) {
                 let currentTime = moment().format('MMDDYYYYHHmmss');
                 formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
                     approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-                    content: {"1_Courses": courses_list}
+                    content: {"1_Courses": courses_list} //todo: save the term to the db
                 });
 
                 formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
@@ -425,8 +460,7 @@ function saveRegistrationForm (ifSubmit) {
                 });
             } else { //just save it for later
                 formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-                    approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
-                    content: {"1_Courses": courses_list}
+                    content: {"1_Courses": courses_list, "2_Term": term}
                 });
             }
         }
