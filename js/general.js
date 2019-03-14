@@ -192,6 +192,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
             h3_form_name.className = "form_name_tooltip";
             first_nested_div.appendChild(h3_form_name);
+            var progressTrackerStart = document.createElement("ul"); // new
 
             //generate check marks
             for (let i = 0; i < approvals.length; i++) {
@@ -200,7 +201,9 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                         const pawsDoc = doc.data();
                         const userType = pawsDoc.userType;
 
-                        var span_check_mark = document.createElement('span');
+                        // Progress bar creation
+                        var progressElement = document.createElement("li");
+
 
                         var userInfo = userType;
                         if (userInfo != "Staff") { // then it means it's a Faculty member
@@ -218,29 +221,31 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
 
                         const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
                             + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                        span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+                        progressElement.setAttribute("data-tooltip-content", tooltipTitle);
 
                         if (approvals.length > 0) {
-                            span_check_mark.classList.add("w3-margin-left");
+                            progressTrackerStart.className = "progress-meter";
                         }
                         if (approvals[i].status == null) {
                             // Has not been approved so use the grey checkWindowWidth mark style
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
-                            span_check_mark.appendChild(document.createTextNode("✓"));
+                            progressTrackerStart.appendChild(progressElement);
+                            progressElement.className = "bubble_tooltip todo";
+
                         } else if (approvals[i].status == true) {
                             // Green checkWindowWidth mark since it has already been approved
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
-                            span_check_mark.appendChild(document.createTextNode("✓"));
-                        } else if (approvals[i].status == false) {
+                            progressTrackerStart.appendChild(progressElement);
+                            progressElement.className = "bubble_tooltip done";
+                                                    } else if (approvals[i].status == false) {
                             // Red checkWindowWidth mark since it has been declined
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
-                            span_check_mark.appendChild(document.createTextNode("x"));
+                            progressTrackerStart.appendChild(progressElement);
+                            progressElement.className = "bubble_tooltip denied";
+
                         }
                         if (i > 0) {
                             span_check_mark.classList.add("w3-margin-left");
                         }
-                        span_check_mark.style.width = "30px";
-                        first_nested_div.appendChild(span_check_mark);
+
+                        first_nested_div.appendChild(progressTrackerStart);
                     } else {
                         // doc.data() will be undefined in this case
                         console.log("No such document!");
@@ -1384,6 +1389,10 @@ function submitFormApproval (event) {
                                 timestamp: dateToday
                             });
 
+                            // Send email to student
+                            //sendEmail("Aliyah Adkins", "something here", "aadkins2016");
+                            sendEmail(getDisplayName(), notificationMessage, studentID);
+
                             // There are still more people in the approvals list to approve this form, but only send this form's reference to the first/next one if
                             // the person who just signed the form has approved it
                         } else if (approvalUpdated && (nullCount == 0) && approved) {
@@ -1860,4 +1869,57 @@ function getAllStudents () {
 // Todo: Make this dynamic instead of hardcoded
 function getAdvisor(studentUsername) {
     return "eshelton";
+}
+
+function sendEmail(studentName, message, tracks) {
+    //var email = tracks + "@my.fit.edu";
+    var data = JSON.stringify({
+        "personalizations": [
+            {
+                "to": [
+                    {
+                        "email": "mcnspa@gmail.com",
+                        "name": "McNels"
+                    }
+                ],
+                "dynamic_template_data": {
+                    "firstName": studentName,
+                    "notification": message
+                },
+                "subject": "You have a new notification!"
+            }
+        ],
+        "from": {
+            "email": "mcnspa@gmail.com",
+            "name": "Form Buster"
+        },
+        "reply_to": {
+            "email": "noreply@formbuster.me",
+            "name": "Form Buster"
+        },
+        "content": [
+            {
+                "type": "text/html",
+                "value": " "
+            }
+        ],
+        "template_id": "d-ddecfdb62fbf440cad3b971a9ddc597b"
+    });
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === this.DONE) {
+            console.log(this.responseText);
+        }
+    });
+
+    xhr.open("POST", "https://api.sendgrid.com/v3/mail/send");
+    xhr.setRequestHeader("authorization", "Bearer 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");
+    xhr.setRequestHeader("content-type", "application/json");
+
+    xhr.send(data);
+    // console.log("email sent!");
+    //alert("email sent!");
 }
