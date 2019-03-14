@@ -7,7 +7,7 @@
         <div class="w3-left">
             <h3 class="w3-left">Registration Form</h3>
             <p></p>
-            <p class="w3-left">Used for students to add or drop classes.</p>
+            <p class="w3-left">Used for students to register for classes for an upcoming term.</p>
         </div>
         <div class="w3-right">
             <button id="registration-form-button" class="w3-margin w3-theme-red w3-btn w3-round-xlarge">Start Form
@@ -30,7 +30,7 @@
 <div id="registration-form" class="w3-modal">
     <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
         <div class="w3-container">
-            <span onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px;">×</span>
+            <span id = "close-registration-form" onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px;">×</span>
             <div class="w3-text-theme-red w3-container" style="display: block">
                 <p></p>
                 <h3 class="w3-left">Registration Form</h3>
@@ -84,10 +84,10 @@
                     </button>
                     <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
                     <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge"
-                            onclick="saveRegistrationForm(false)">Save
+                            onclick="saveRegistrationForm(false, 'formsPage')">Save
                     </button>
                     <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge"
-                            onclick="saveRegistrationForm(true)">Submit
+                            onclick="saveRegistrationForm(true, 'formsPage')">Submit
                     </button>
                 </div>
                 <br>
@@ -95,14 +95,3 @@
         </div>
     </div>
 </div>
-
-<script> //for registration form.
-    $('#profileurl').keyup(function(e) {
-        getCourse();
-    });
-    $(function() {
-        $('#search-id').on("submit", function() {
-            $('#animated-gif').toggle();
-        });
-    });
-</script>

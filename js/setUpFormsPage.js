@@ -1,5 +1,14 @@
 let searchDiv;
 function startRegistrationForm(role) {
+    $('#profileurl').keyup(function(e) {
+        getCourse();
+    });
+    $(function() {
+        $('#search-id').on("submit", function() {
+            $('#animated-gif').toggle();
+        });
+    });
+
     if (role == "coord/staff") {
         if (currentUserOfStudentList != "student-search") { //some other form or the dashboard has the student-list.html loaded.
             removePreviousStudentListUser();
@@ -14,11 +23,6 @@ function startRegistrationForm(role) {
                 Once the students results have been returned, and a student has been selected, we start the form process..
                  */
                 function nameSelected(event) {
-                    // let element = document.getElementById(currentUserOfStudentList);
-                    //searchDiv = document.getElementById(currentUserOfStudentList).innerHTML.toString();
-                    // while (element.firstChild) { //remove all student list results, but keep the parent div to use it to store the selected student.
-                    //     element.removeChild(element.firstChild);
-                    // }
                     document.getElementById(currentUserOfStudentList).style.display = "none";
 
                     let name = event.currentTarget.studentFullName;
@@ -67,14 +71,11 @@ function startRegistrationForm(role) {
             document.getElementById("send-option-2").style.display = "none"; //rehide the button for new registration form
             document.getElementById("searchInput").value = "";
             document.getElementById("studentsList").innerHTML = "";
-
             document.getElementById("form-body").style.display = "none";
-
             document.getElementById('registration-form').style.display='block';
         }
     }
     document.getElementById('registration-form').style.display='block';
-
 }
 
 function removePreviousStudentListUser() {
