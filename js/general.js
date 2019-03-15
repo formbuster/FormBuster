@@ -1701,6 +1701,10 @@ function createTableFromArray (array) {
 
 /********* Don't delete the code below! (Just separating the code for now) **********/
 
+// Sort "Date" objects in descending order (newer Dates first)
+function sortDescending (a, b) {
+    return (a.date < b.date) ? 1 : -1;
+}
 
 // Search whatever is in input box for the student's name or ID. This function is called for both "click" and "enter" pressed
 function searchButtonPressed () {
