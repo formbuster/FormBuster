@@ -241,9 +241,9 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                             progressElement.className = "bubble_tooltip denied";
 
                         }
-                        if (i > 0) {
-                            span_check_mark.classList.add("w3-margin-left");
-                        }
+                        // if (i > 0) {
+                        //     //span_check_mark.classList.add("w3-margin-left");
+                        // }
 
                         first_nested_div.appendChild(progressTrackerStart);
                     } else {
@@ -559,6 +559,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                 h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
                 h3_form_name.className = "form_name_tooltip";
                 first_nested_div.appendChild(h3_form_name);
+                var progressTrackerStart = document.createElement("ul"); // new
 
                 //generate check marks
                 for (let i = 0; i < approvals.length; i++) {
@@ -567,7 +568,8 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                             const pawsDoc = doc.data();
                             const userType = pawsDoc.userType;
 
-                            var span_check_mark = document.createElement('span');
+                            // Progress bar creation
+                            var progressElement = document.createElement("li");
 
                             var userInfo = userType;
                             if (userInfo != "Staff") { // then it means it's a Faculty member
@@ -592,29 +594,29 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                 tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
                                     + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
                             }
-                            span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+                            //span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+                            progressElement.setAttribute("data-tooltip-content", tooltipTitle);
 
                             if (approvals.length > 0) {
-                                span_check_mark.classList.add("w3-margin-left");
+                                // span_check_mark.classList.add("w3-margin-left");
+                                progressTrackerStart.className = "progress-meter";
                             }
+
                             if (approvals[i].status == null) {
                                 // Has not been approved so use the grey checkWindowWidth mark style
-                                span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
-                                span_check_mark.appendChild(document.createTextNode("✓"));
+                                progressTrackerStart.appendChild(progressElement);
+                                progressElement.className = "bubble_tooltip todo";
                             } else if (approvals[i].status == true) {
                                 // Green checkWindowWidth mark since it has already been approved
-                                span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
-                                span_check_mark.appendChild(document.createTextNode("✓"));
+                                progressTrackerStart.appendChild(progressElement);
+                                progressElement.className = "bubble_tooltip done";
                             } else if (approvals[i].status == false) {
                                 // Red checkWindowWidth mark since it has been declined
-                                span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
-                                span_check_mark.appendChild(document.createTextNode("x"));
+                                progressTrackerStart.appendChild(progressElement);
+                                progressElement.className = "bubble_tooltip denied";
                             }
-                            if (i > 0) {
-                                span_check_mark.classList.add("w3-margin-left");
-                            }
-                            span_check_mark.style.width = "30px";
-                            first_nested_div.appendChild(span_check_mark);
+
+                            first_nested_div.appendChild(progressTrackerStart);
                         } else {
                             // doc.data() will be undefined in this case
                             console.log("No such document!");
