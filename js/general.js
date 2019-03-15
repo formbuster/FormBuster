@@ -241,9 +241,9 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                             progressElement.className = "bubble_tooltip denied";
 
                         }
-                        // if (i > 0) {
-                        //     //span_check_mark.classList.add("w3-margin-left");
-                        // }
+                        if (i > 0) {
+                            span_check_mark.classList.add("w3-margin-left");
+                        }
 
                         first_nested_div.appendChild(progressTrackerStart);
                     } else {
@@ -527,6 +527,9 @@ function displayFormReadMode (event) {
 function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder, mainButtonFunction) {
     let forEachIteration = 0;
 
+    // Hide "targetDiv" while we populate it
+    document.getElementById(targetDiv).style.display = "none";
+
     formDB.collection("users").doc(userID).collection(formsFolder).get().then(function(querySnapshot) {
         if (querySnapshot.size == 0) {
             let result_h4 = document.createElement('h4');
@@ -537,21 +540,23 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
 
         querySnapshot.forEach(function(formReference) {
             formReference.data().formRef.get().then(function(doc) {
-                const formDoc = doc.data();
-                const formName = getFormName(doc);
-                const submDate = getSubmDate(doc);
-                const exactSubmDate = getExactSubmDate(doc);
-                const dueDatePromise = getFormDueDate(formName);
-                const approvals = formDoc.approvals;
+                if (doc.exists) {
+                    const formDoc = doc.data();
+                    const formName = getFormName(doc);
+                    const submDate = getSubmDate(doc);
+                    const exactSubmDate = getExactSubmDate(doc);
+                    const dueDatePromise = getFormDueDate(formName);
+                    const approvals = formDoc.approvals;
 
-                var main_div = document.createElement("div");
-                main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
-                main_div.style.display = "none"; // Make main button hidden while we are populating it
+                    var main_div = document.createElement("div");
+                    main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
+                    main_div.className = "divs-to-sort w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
+                    main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
-                //make a new div with class name, and append it to main div
-                var first_nested_div = document.createElement("div");
-                first_nested_div.className = "w3-left";
-                main_div.appendChild(first_nested_div);
+                    //make a new div with class name, and append it to main div
+                    var first_nested_div = document.createElement("div");
+                    first_nested_div.className = "w3-left";
+                    main_div.appendChild(first_nested_div);
 
                 //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
                 var h3_form_name = document.createElement('h3');
@@ -561,29 +566,29 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                 first_nested_div.appendChild(h3_form_name);
                 var progressTrackerStart = document.createElement("ul"); // new
 
-                //generate check marks
-                for (let i = 0; i < approvals.length; i++) {
-                    pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
-                        if (doc.exists) {
-                            const pawsDoc = doc.data();
-                            const userType = pawsDoc.userType;
+                    //generate check marks
+                    for (let i = 0; i < approvals.length; i++) {
+                        pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
+                            if (doc.exists) {
+                                const pawsDoc = doc.data();
+                                const userType = pawsDoc.userType;
 
                             // Progress bar creation
                             var progressElement = document.createElement("li");
 
-                            var userInfo = userType;
-                            if (userInfo != "Staff") { // then it means it's a Faculty member
-                                userInfo = pawsDoc.facultyRole;
-                            }
+                                var userInfo = userType;
+                                if (userInfo != "Staff") { // then it means it's a Faculty member
+                                    userInfo = pawsDoc.facultyRole;
+                                }
 
-                            let dateInfo;
-                            if (approvals[i].date != null) {
-                                dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                            } else if (userType === "Faculty") {
-                                dateInfo = "Waiting for approval."
-                            } else if (userType === "Staff") {
-                                dateInfo = "Waiting for processing."
-                            }
+                                let dateInfo;
+                                if (approvals[i].date != null) {
+                                    dateInfo = getExactDateAndTime(approvals[i].date.toDate());
+                                } else if (userType === "Faculty") {
+                                    dateInfo = "Waiting for approval."
+                                } else if (userType === "Staff") {
+                                    dateInfo = "Waiting for processing."
+                                }
 
                             let tooltipTitle;
                             if (userID === approvals[i].tracksID) {
@@ -626,67 +631,100 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     });
                 }
 
-                // Second nested div (right side)
-                var second_nested_div = document.createElement("div");
-                second_nested_div.className = "w3-right";
+                    // Middle nested element (middle part)
+                    pawsDB.collection("users").doc(userID).get().then(function(doc) {
+                        if (doc.exists) {
+                            const pawsDoc = doc.data();
+                            const userType = pawsDoc.userType;
 
-                var h4_submission_date = document.createElement('h3');
-                h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
-                h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
-                h4_submission_date.className = "form_date_tooltip";
+                            if (userType === "Faculty" || userType === "Staff") {
+                                var middle_nested_element = document.createElement("h4");
+                                middle_nested_element.className = "bubble_tooltip";
+                                middle_nested_element.style.position = "relative";
+                                middle_nested_element.style.display = "inline-block";
+                                middle_nested_element.style.color = "#8e8e8e";
+
+                                const formReferencePath = formReference.data().formRef.path;
+                                pawsDB.collection(formReferencePath.split("/")[0]).doc(formReferencePath.split("/")[1]).get().then(function(doc) {
+                                    if (doc.exists) {
+                                        const pawsDoc = doc.data();
+                                        const studentName = pawsDoc.name.first + " " + pawsDoc.name.last;
+                                        const tooltipStudentEmail = '<span>' + pawsDoc.email + '</span>';
+
+                                        middle_nested_element.innerHTML = studentName;
+                                        middle_nested_element.setAttribute("data-tooltip-content", tooltipStudentEmail);
+                                        main_div.appendChild(middle_nested_element);
 
 
-                second_nested_div.appendChild(h4_submission_date);
-                var h4_due_date = document.createElement('h3');
+                                        // Second nested div (right side)
+                                        var second_nested_div = document.createElement("div");
+                                        second_nested_div.className = "w3-right";
 
-                dueDatePromise.then(function(result) {
-                    h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
-                    h4_due_date.style.textAlign = "left";
-                    h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
-                    h4_due_date.className = "form_date_tooltip";
+                                        var h4_submission_date = document.createElement('h3');
+                                        h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
+                                        h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
+                                        h4_submission_date.className = "form_date_tooltip";
 
-                    second_nested_div.appendChild(h4_due_date);
-                    main_div.appendChild(second_nested_div);
+                                        second_nested_div.appendChild(h4_submission_date);
+                                        var h4_due_date = document.createElement('h3');
 
-                    if (forEachIteration == querySnapshot.size - 1) {
-                        // Initialize tooltips after all the elements have been created
-                        $(document).ready(function() {
-                            $('.form_name_tooltip').tooltipster({
-                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                side: "top",
-                                animation: "grow",
-                                functionPosition: function(instance, helper, position){
-                                    position.coord.top += 10;
-                                    return position;
-                                }
-                            });
+                                        dueDatePromise.then(function(result) {
+                                            h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
+                                            h4_due_date.style.textAlign = "left";
+                                            h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
+                                            h4_due_date.className = "form_date_tooltip";
 
-                            $('.bubble_tooltip').tooltipster({
-                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                side: "bottom",
-                                animation: "grow",
-                            });
+                                            second_nested_div.appendChild(h4_due_date);
+                                            main_div.appendChild(second_nested_div);
 
-                            $('.form_date_tooltip').tooltipster({
-                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                position: "left",
-                                animation: "grow",
-                            });
-                        });
-                    }
+                                            // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
+                                            main_div.addEventListener("click", mainButtonFunction);
+                                            main_div.pageDiv = pageDiv;
+                                            main_div.formReference = formReference.data().formRef;
+                                            main_div.userID = userID;
+                                            document.getElementById(targetDiv).appendChild(main_div);
 
-                    // Make main button visible again
-                    main_div.style.display = "block";
+                                            if (forEachIteration == querySnapshot.size - 1) {
+                                                // Initialize tooltips after all the elements have been created
+                                                $(document).ready(function() {
+                                                    $('.form_name_tooltip').tooltipster({
+                                                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                                        side: "top",
+                                                        animation: "grow",
+                                                        functionPosition: function(instance, helper, position){
+                                                            position.coord.top += 10;
+                                                            return position;
+                                                        }
+                                                    });
 
-                    forEachIteration++;
-                });
+                                                    $('.bubble_tooltip').tooltipster({
+                                                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                                        side: "bottom",
+                                                        animation: "grow",
+                                                    });
 
-                // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
-                main_div.addEventListener("click", mainButtonFunction);
-                main_div.pageDiv = pageDiv;
-                main_div.formReference = formReference.data().formRef;
-                main_div.userID = userID;
-                document.getElementById(targetDiv).appendChild(main_div);
+                                                    $('.form_date_tooltip').tooltipster({
+                                                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                                        position: "left",
+                                                        animation: "grow",
+                                                    });
+                                                });
+
+                                                // Sort all the "divs-to-sort" in descending order (newer submitted forms first)
+                                                $('.divs-to-sort').sort(sortDescending).appendTo(document.getElementById(targetDiv));
+
+                                                // Unhide "targetDiv" after we have populated it
+                                                document.getElementById(targetDiv).style.display = "block";
+                                            }
+
+                                            forEachIteration++;
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
             });
         });
     }).catch(function(error) {
