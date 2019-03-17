@@ -42,7 +42,7 @@ ul.progress-meter li.todo {
   font-size: 12px;
 }
 ul.progress-meter li.todo:before {
-  content: "\2713";
+  content: "?";
   height: 19px;
   width: 19px;
   line-height: 21.85px;
