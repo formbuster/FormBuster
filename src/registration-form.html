@@ -1,33 +1,4 @@
-<div id="forms-list-view">
-    <input class="w3-button w3-block w3-search-bar-grey w3-round-xlarge w3-large"
-           style="margin-top: 20px; margin-left: auto; margin-right: auto; padding-left: 10px;" type="text"
-           placeholder="Search...">
-
-    <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">
-        <div class="w3-left">
-            <h3 class="w3-left">Registration Form</h3>
-            <p></p>
-            <p class="w3-left">Used for students to register for classes for an upcoming term.</p>
-        </div>
-        <div class="w3-right">
-            <button id="registration-form-button" class="w3-margin w3-theme-red w3-btn w3-round-xlarge">Start Form
-            </button>
-        </div>
-    </div>
-
-    <div class="w3-white w3-panel w3-leftbar w3-border-theme w3-round-xlarge">
-        <div class="w3-left">
-            <h3 class="w3-left">Closed Class Form</h3>
-            <p></p>
-            <p class="w3-left">Used for students to get permission to enroll into a class that is full.</p>
-        </div>
-        <div class="w3-right">
-            <button id="closed-class-form-button" class="w3-margin w3-theme-red w3-btn w3-round-xlarge" onclick="">Start Form</button>
-        </div>
-    </div>
-</div>
-
-<div id="registration-form" class="w3-modal">
+<div id="registration-form" class="w3-modal" style="display: block">
     <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
         <div class="w3-container">
             <span id = "close-registration-form" onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px;">×</span>
@@ -95,3 +66,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    $('#profileurl').keyup(function(e) {
+        getCourse();
+    });
+    $(function() {
+        $('#search-id').on("submit", function() {
+            $('#animated-gif').toggle();
+        });
+    });
+</script>

@@ -1,0 +1,103 @@
+<div id="co-prerequisite-form" class="w3-modal" style="display: block">
+    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
+        <div class="w3-container">
+            <span id = "close-registration-form" onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px;">×</span>
+            <div class="w3-text-theme-red w3-container" style="display: block">
+                <p></p>
+                <h3 class="w3-left">Co/Prerequisite Waiver Form</h3>
+                <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
+            </div>
+            <div id="first-page">
+                <div id="startAFormMessage" class="w3-container"></div>
+                <div id="student-search" class="w3-container"></div>
+                <div id = "form-body" class="w3-container">
+                    <div>
+                        <div class="w3-container w3-theme-red">
+                            <p>Select a semester term, then search for one course using CRN, Title or Prefix.</p>
+                        </div>
+                        <br>
+                        <div id ="first-part-of-form">
+                            <select id="termSelecter" autofocus="" class="w3-select w3-quarter" onchange="getCourse()">
+                                <option value="" disabled selected>Select a term:</option>
+                                <option value="spring">Spring</option>
+                                <option value="summer">Summer</option>
+                                <option value="fall">Fall</option>
+                            </select>
+
+                            <input id="profileurl" class="w3-input w3-threequarter" type="text"
+                                   placeholder="Search for courses using CRN, Title or Prefix">
+
+                            <br><br>
+                            <img src="../img/loadinfo.net.gif" id="animated-gif" style="display:none;"
+                                 justify-content="center"/>
+                        </div>
+                        <div id="courseResultsMessage"></div>
+                        <div id="url"></div>
+                        <div id="registrationTableResults"></div>
+                        <p id="totalCredits"></p>
+                    </div>
+                    <br>
+                    <div>
+
+                    </div>
+                    <br>
+                    <div id=emptyFormMessage class="w3-panel w3-red" style="display: none;">
+                        <p>The form is empty. Select a term and search for courses above!</p>
+                    </div>
+                </div>
+                <div id="form-options-1" class="w3-container">
+                    <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">
+                        Discard
+                    </button>
+                    <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
+                    <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge"
+                            onclick="saveRegistrationForm(false, 'formsPage')">Save
+                    </button>
+                    <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge"
+                            onclick="saveRegistrationForm(true, 'formsPage')">Submit
+                    </button>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+function finishUpCoPreqForm() {
+    $("#registrationTableResults").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
+        "                                       <p>Select the missing co/prerequisite for the class listed above</p>\n" +
+        "                                    </div>\n" +
+        "                                    <br>"+
+        "<input id=\"profileurl2\" class=\"w3-input w3-threequarter\" type=\"text\"\n" +
+        "                                   placeholder=\"Search for courses using Title or Prefix\">");
+}
+
+$('#profileurl').keyup(function(e) {
+    getCourse();
+});
+$(function() {
+    $('#search-id').on("submit", function() {
+        $('#animated-gif').toggle();
+    });
+});
+
+
+$('#profileurl12').keyup(function(e) {
+    //getCourse();
+    //don't allow searching by crn, since we are not looking up a class to register for.
+    //search by title or prefix, look at each semester till the course is found, and display the results
+    //so the user can select the result.
+    //getCourse() is used to get courses for registering.
+
+    /*
+    After this function is called, the last part of the form should be revealed,
+     */
+});
+$(function() {
+    $('#search-id').on("submit", function() {
+        $('#animated-gif').toggle();
+    });
+});
+</script>

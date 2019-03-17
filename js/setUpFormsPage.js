@@ -1,18 +1,16 @@
-let searchDiv;
+/*
+This file is responsible for making any modifications to the forms before showing it to the user.
+ */
+
+let searchDiv; //look into loading that student-search, and erasing it after using it in the home page and anywhere that needs it.
 function startRegistrationForm(role) {
-    $('#profileurl').keyup(function(e) {
-        getCourse();
-    });
-    $(function() {
-        $('#search-id').on("submit", function() {
-            $('#animated-gif').toggle();
-        });
-    });
+    $("#currentFormOpen").load("registration-form.html", function () {
+        if (role == "coord/staff") {
+            if (document.getElementById("studentSearchView").innerHTML != "") { // the dashboard was using the student search view.
+                document.getElementById("studentSearchView").innerHTML = ""; //empty the dashboard one.
+            }
 
-    if (role == "coord/staff") {
-        if (currentUserOfStudentList != "student-search") { //some other form or the dashboard has the student-list.html loaded.
-            removePreviousStudentListUser();
-
+            //load the search for this form.
             $("#registration-form").find("#student-search").load('student_list.html', function () {
                 document.getElementById("searchInput").placeholder = "Enter a student's name to start a form for";
                 document.getElementById("student-search").style.marginBottom = "20px";
@@ -53,8 +51,6 @@ function startRegistrationForm(role) {
                 return;
             });
 
-            currentUserOfStudentList = "registration-form";
-
             //hide the form, so that the coordinator/faculty will search and select for the student first. We will reveal the reset of the
             //form after they make a selection.
             document.getElementById("form-body").style.display = "none";
@@ -66,25 +62,16 @@ function startRegistrationForm(role) {
 
             //add new button for sending to student
             $("#form-options-1").append('<button id="send-option-2" class="w3-button w3-theme-blue w3-round-xxlarge" style="display: none">Send to Student</button>');
-        } else { //starting another register form after just completing one (the student-list.html was already loaded for the registration form).
-            document.getElementById(currentUserOfStudentList).style.display = "block";
-            document.getElementById("send-option-2").style.display = "none"; //rehide the button for new registration form
-            document.getElementById("searchInput").value = "";
-            document.getElementById("studentsList").innerHTML = "";
-            document.getElementById("form-body").style.display = "none";
-            document.getElementById('registration-form').style.display='block';
         }
-    }
-    document.getElementById('registration-form').style.display='block';
+        //reveal the form, or reveal the form after being modified.
+        document.getElementById("currentFormOpen").style.display = "block";
+    });
 }
 
-function removePreviousStudentListUser() {
-    if (document.getElementById(currentUserOfStudentList) != null) { // the home page, or another form has loaded the html for student-list.html.
-        //empty the div that contains the loaded html from student-list.html before loading it into a different div.
-        let studentListUser = document.getElementById(currentUserOfStudentList);
-        while (studentListUser.firstChild) {
-            studentListUser.removeChild(studentListUser.firstChild);
-        }
-    } //free to use student-list.html
-
+function startCoPrerequisteForm(role) {
+    $("#currentFormOpen").load("co-prerequisite-form.html", function () {
+        document.getElementById("currentFormOpen").style.display = "block";
+    });
 }
+
+

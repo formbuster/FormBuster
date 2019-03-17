@@ -44,10 +44,6 @@ function getUserName() {
         return username.substring(0, parseInt(length)-1).toString();
     }
     return window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5).toString();
-    // "aadkins2016"
-    // "eshelton"
-    // "bpetty"
-    //return "aadkins2016";
 }
 
 // Get the user's full name
@@ -1857,7 +1853,8 @@ function getAllStudents () {
     });
 }
 
-// Todo: Make this dynamic instead of hardcoded
-function getAdvisor(studentUsername) {
-    return "eshelton";
+//todo: get this informtion based on the students major
+function getHeadOfDepartment () {
+    //getUserName()
+    return ["Aerospace", "Mya Frost"];
 }

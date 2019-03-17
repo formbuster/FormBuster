@@ -129,7 +129,6 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
     "                                                <td id = \'time" + course.crn + "\'>" + course.beginTime + "-" + course.endTime + "</td>\n" +
     "                                                <td id = \'crs" + course.crn + "\'>" + course.crs + "</td>\n" +
     "                                                <td>" + course.instructor + "</td>\n" +
-    // "                                                <td><button onclick='register(false," + prefix + "," + courseNo + "," + section + ",\"" + title + "\"," + days + "," + beginTime + "," + endTime + "," + credits +")'>Register</button></td>\n"
     "                                                <td><button id=\'regButton" + course.crn +"\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 +")'>Add Course</button></td>\n" +
     "                                            </tr>\n";
 
@@ -186,6 +185,7 @@ function myFunc(id) {
 }
 
 function addCourseTableHeader() {
+    //todo: fix the p tag, for the co/preq form.
     $("#registrationTableResults").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
         "                                       <p>Select the corresponding check boxes if any courses will be added as an Audit or Continuing Education Unit (CEU). Review table before submitting. Delete added courses using the 'X', if needed.</p>\n" +
         "                                    </div>\n" +
@@ -245,7 +245,7 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
         "<td id='registeredCrs"+ course + "'>" + crs +"</td>\n"+
         "<td><input class=\"w3-check\" onclick='auditCourse(" + course + ")' id=\"audit" + course + "\"type=\"checkbox\"></td>\n"+
         "<td><input class=\"w3-check\" onclick='adjustCreditsForCEU(" + course + ")' id=\"ceu" + course + "\"type=\"checkbox\"></td>\n"+
-        "<td onclick='remove(" + course +")'>X</td>\n"+
+        "<td id='remove"+ course +"'" +" onclick='remove(" + course +")'>X</td>\n"+
         "</tr>"
     );
 
@@ -286,7 +286,20 @@ function register(isAudit, course, title, prefix, course_no) {
         document.getElementById("url").innerText = "";
         //empty the text field of any input, reset it so it shows the placeholder text.
         document.getElementById('profileurl').value = '';
+
+        //behavior for the co preqreusite form.
+        if (document.getElementById("co-prerequisite-form")){
+            document.getElementById("profileurl").disabled = true;
+            document.getElementById("totalCredits").style.display = "none";
+            document.getElementById("remove" + course).style.display = "none"; //don't allow removing the course.
+            finishUpCoPreqForm();
+        }
     } else { //user selected to remove that particular course.
+        //behavior for the co preqreusite form. todo: when user deleted the course, it does not reenable the search bar.
+        if (document.getElementById("profileurl").disabled == true) {
+            document.getElementById("profileurl").disabled = false;
+        }
+
         remove(course);
     }
 }
@@ -393,24 +406,8 @@ function sendRegistrationForm(studentUsername) {
     }
 
     saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
-
     closeForm();
-    //hide the form, so that the coordinator/faculty will search and select for the student first the next time. We will reveal the reset of the
-    //form after they make a selection.
-    document.getElementById("form-body").style.display = "none";
-
-    //show submission confirmation message, for student.
-    $("#formsList").prepend("                <div id='submissionConfirmationMessage' class=\"w3-panel w3-green\">\n" +
-        "                    <p>Your form has been sent!</p>\n" +
-        "                </div>");
-
-    //make sure user can see the confirmation message at the top of the page, by scrolling up.
-    window.scrollTo(0, 0);
-
-    //only show the confirmation message for 5 seconds.
-    setTimeout(function () {
-        $('#submissionConfirmationMessage').fadeOut('slow');
-    }, 5000);
+    displayConfirmationMessage("formsList","Your form has been sent!");
 }
 
 /*
@@ -473,29 +470,34 @@ Close the form, don't save any of the information that may have been added into 
 the used ids for reuse.
  */
 function closeForm() {
-    /*
-    fac/staff
-     */
-    document.getElementById("startAFormMessage").innerText = "";
-
-    document.getElementById('registration-form').style.display='none';
-
-    //reset the term selecter in the form to the default value option.
-    document.getElementById('termSelecter').selectedIndex = 0;
-
-    //re enable to term selecter
-    document.getElementById("termSelecter").disabled = false;
-
-    //empty the text field of any input, reset it so it shows the placeholder text.
-    document.getElementById('profileurl').value = '';
+    // /*
+    // fac/staff
+    //  */
+    // document.getElementById("startAFormMessage").innerText = "";
+    //
+    // document.getElementById('registration-form').style.display='none';
+    //
+    // //reset the term selecter in the form to the default value option.
+    // document.getElementById('termSelecter').selectedIndex = 0;
+    //
+    // //re enable to term selecter
+    // document.getElementById("termSelecter").disabled = false;
+    //
+    // //empty the text field of any input, reset it so it shows the placeholder text.
+    // document.getElementById('profileurl').value = '';
 
     crns.splice(0,crns.length);
     coursesCount = 0;
     creditsCount = 0;
 
-    //get rid of messages, results and credit total, it will be regenerated later when user starts another form.
-    $( "#courseResultsMessage" ).html('');
-    $( "#url").html('');
-    $( "#registrationTableResults").html('');
-    $( "#totalCredits").html('');
+    // //get rid of messages, results and credit total, it will be regenerated later when user starts another form.
+    // $( "#courseResultsMessage" ).html('');
+    // $( "#url").html('');
+    // $( "#registrationTableResults").html('');
+    // $( "#totalCredits").html('');
+    if (document.getElementById("currentFormOpen")) {
+        document.getElementById("currentFormOpen").innerHTML = "";
+    } else { //draft
+        document.getElementById("editDraft").innerHTML = "";
+    }
 }

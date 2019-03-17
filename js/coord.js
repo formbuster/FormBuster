@@ -19,16 +19,12 @@ function loadPage () {
         document.getElementById("studentsBtn").addEventListener("click", gotoStudents);
         document.getElementById("formsBtn").addEventListener("click", gotoForms);
 
-        // Load "studentSearchView" only once
-        $('#studentSearchView').load('student_list.html', function(){
-            currentUserOfStudentList = "studentSearchView";
 
-            // Load look up student by default
-            gotoStudents();
-        });
+        // Load look up student by default
+        gotoStudents();
 
         //Load forms page once.
-        $('#formsList').load('registration_forms.html', function() {
+        $('#formsList').load('forms.html', function() {
             //add event listeners for each form.
             document.getElementById("registration-form-button").addEventListener("click", function() {
                 startRegistrationForm("coord/staff");
@@ -37,35 +33,37 @@ function loadPage () {
     });
 }
 
+
 function gotoStudents () {
-    /*
-    Going back to the students page, we need to reload the student-list.html since it is not present.
-    No need to reload it again when the user is on the student's page and clicks on the student's page again.
-    */
-    if (currentUserOfStudentList != "studentSearchView") {
+    if (document.getElementById("studentSearchView").innerHTML == "") {
+        // Load "studentSearchView" only once
         $('#studentSearchView').load('student_list.html', function () {
-            currentUserOfStudentList = "studentSearchView";
+            setUpStudents();
         });
+    } else {
+        setUpStudents();
     }
 
-    // Highlight only the students button, because it is selected
-    document.getElementById("studentsBtn").className = btnHighlighted;
-    document.getElementById("formsBtn").className = btnNotHighlighted;
+    function setUpStudents() {
+        // Highlight only the students button, because it is selected
+        document.getElementById("studentsBtn").className = btnHighlighted;
+        document.getElementById("formsBtn").className = btnNotHighlighted;
 
-    // Unhide "studentsPage" and put focus on the "searchInput"
-    document.getElementById("studentsPage").style.display = "block";
-    document.getElementById("searchInput").focus();
+        // Unhide "studentsPage" and put focus on the "searchInput"
+        document.getElementById("studentsPage").style.display = "block";
+        document.getElementById("searchInput").focus();
 
-    // Clear "searchInput" and "studentsList" and hide other pages
-    document.getElementById("searchInput").value = '';
-    document.getElementById("searchButton").style.visibility = "hidden";
-    document.getElementById("studentsList").innerHTML = '';
-    document.getElementById("formsPage").style.display = "none";
+        // Clear "searchInput" and "studentsList" and hide other pages
+        document.getElementById("searchInput").value = '';
+        document.getElementById("searchButton").style.visibility = "hidden";
+        document.getElementById("studentsList").innerHTML = '';
+        document.getElementById("formsPage").style.display = "none";
 
-    // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Students Records";
+        // Update the page's title
+        document.getElementById("pageTitle").innerHTML = "Students Records";
 
-    const coordID = getUserName();
+        const coordID = getUserName();
+    }
 }
 
 function gotoForms () {

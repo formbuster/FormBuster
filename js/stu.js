@@ -103,7 +103,7 @@ function displayDraftMode (event) {
     const formsFolder = event.currentTarget.formsFolder;
     const formID = event.currentTarget.formID;
 
-    $('#editDraft').load('registration_forms.html #registration-form', function() {
+    $('#editDraft').load('registration-form.html', function() {
         startRegistrationForm("student");
 
         //modify the registration-form with info from the db.
@@ -122,7 +122,7 @@ function displayDraftMode (event) {
 
                 const content = formDoc.content;
                 setUpDraft(content);
-            };
+            }
         });
 
         //change the onclick because the start a form feature loads the same code, once we are done making a draft, get rid of the code.
@@ -141,12 +141,12 @@ function displayDraftMode (event) {
             deleteDbEntry();
         });
 
-        function deleteDbEntry () {
-            formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function() {
+        function deleteDbEntry() {
+            formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
                 closeDraftForm();
                 document.getElementById("draftsList").innerHTML = "";
                 getDrafts(); //refresh pg
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error("Error removing document: ", error);
             });
         }
@@ -154,9 +154,9 @@ function displayDraftMode (event) {
         document.getElementById("submit-option-2").setAttribute("onclick", null);
         document.getElementById("submit-option-2").addEventListener("click", function submit() {
             saveRegistrationForm(true, "draftsPage");
+            //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
             deleteDbEntry();
         })
-
     });
 }
 
@@ -164,7 +164,6 @@ function closeDraftForm() {
     closeForm();
     document.getElementById("editDraft").innerHTML = "";
 }
-
 
 function gotoDrafts () {
     // Highlight only the drafts button, because it is selected
@@ -206,10 +205,13 @@ function gotoForms () {
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms";
 
-    $('#formsList').load('registration_forms.html', function() {
+    $('#formsList').load('forms.html', function() {
         //add event listeners for each form.
         document.getElementById("registration-form-button").addEventListener("click", function() {
             startRegistrationForm("student");
+        });
+        document.getElementById("co-prerequisite-form-button").addEventListener("click", function() {
+            startCoPrerequisteForm("student");
         });
     });
 
