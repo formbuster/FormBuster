@@ -161,6 +161,9 @@ function capitalizeStrings (str) {
 function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButtonFunction) {
     let forEachIteration = 0;
 
+    // Hide "targetDiv" while we populate it
+    document.getElementById(targetDiv).style.display = "none";
+
     formDB.collection("users").doc(studentID).collection(formsFolder).get().then(function(querySnapshot) {
         if (querySnapshot.size == 0) {
             let result_h4 = document.createElement('h4');
@@ -178,8 +181,8 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             const approvals = formDoc.approvals;
 
             var main_div = document.createElement("div");
-            main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
-            main_div.style.display = "none"; // Make main button hidden while we are populating it
+            main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom`;
+            main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
             //make a new div with class name, and append it to main div
             var first_nested_div = document.createElement("div");
@@ -192,7 +195,6 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
             h3_form_name.className = "form_name_tooltip";
             first_nested_div.appendChild(h3_form_name);
-            var progressTrackerStart = document.createElement("ul"); // new
 
             //generate check marks
             for (let i = 0; i < approvals.length; i++) {
@@ -201,9 +203,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                         const pawsDoc = doc.data();
                         const userType = pawsDoc.userType;
 
-                        // Progress bar creation
-                        var progressElement = document.createElement("li");
-
+                        var span_check_mark = document.createElement('span');
 
                         var userInfo = userType;
                         if (userInfo != "Staff") { // then it means it's a Faculty member
@@ -221,31 +221,30 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
 
                         const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
                             + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                        progressElement.setAttribute("data-tooltip-content", tooltipTitle);
+                        span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
 
                         if (approvals.length > 0) {
-                            progressTrackerStart.className = "progress-meter";
+                            span_check_mark.classList.add("w3-margin-left");
                         }
                         if (approvals[i].status == null) {
                             // Has not been approved so use the grey checkWindowWidth mark style
-                            progressTrackerStart.appendChild(progressElement);
-                            progressElement.className = "bubble_tooltip todo";
-
+                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
+                            span_check_mark.appendChild(document.createTextNode("?"));
                         } else if (approvals[i].status == true) {
                             // Green checkWindowWidth mark since it has already been approved
-                            progressTrackerStart.appendChild(progressElement);
-                            progressElement.className = "bubble_tooltip done";
-                                                    } else if (approvals[i].status == false) {
+                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
+                            span_check_mark.appendChild(document.createTextNode("✓"));
+                        } else if (approvals[i].status == false) {
                             // Red checkWindowWidth mark since it has been declined
-                            progressTrackerStart.appendChild(progressElement);
-                            progressElement.className = "bubble_tooltip denied";
-
+                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
+                            span_check_mark.appendChild(document.createTextNode("x"));
                         }
                         if (i > 0) {
                             span_check_mark.classList.add("w3-margin-left");
                         }
 
-                        first_nested_div.appendChild(progressTrackerStart);
+                        span_check_mark.style.width = "30px";
+                        first_nested_div.appendChild(span_check_mark);
                     } else {
                         // doc.data() will be undefined in this case
                         console.log("No such document!");
@@ -277,6 +276,14 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                 second_nested_div.appendChild(h4_due_date);
                 main_div.appendChild(second_nested_div);
 
+                // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
+                main_div.addEventListener("click", mainButtonFunction);
+                main_div.pageDiv = pageDiv;
+                main_div.studentID = studentID;
+                main_div.formsFolder = formsFolder;
+                main_div.formID = doc.id;
+                document.getElementById(targetDiv).appendChild(main_div);
+
                 if (forEachIteration == querySnapshot.size - 1) {
                     // Initialize tooltips after all the elements have been created
                     $(document).ready(function() {
@@ -302,21 +309,26 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                             animation: "grow",
                         });
                     });
-                }
 
-                // Make main button visible again
-                main_div.style.display = "block";
+                    // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv" or "targetDiv"
+                    if (pageDiv === "historyPage" || targetDiv === "completedFormsList") {
+                        // Descending order for "historyPage" and "completedFormsList" (newer forms first)
+                        $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
+
+                    } else if (pageDiv === "dashboardPage" || targetDiv === "inProgressFormsList") {
+                        // Ascending order for "dashboardPage" and "inProgressFormsList" (older forms first)
+                        $(`.divs-to-sort-${targetDiv}`).sort(sortAscending).appendTo(document.getElementById(targetDiv));
+
+                    } else {
+                        alert("EXCEPTION in Sort all the \"divs-to-sort\"");
+                    }
+
+                    // Unhide "targetDiv" after we have populated it
+                    document.getElementById(targetDiv).style.display = "block";
+                }
 
                 forEachIteration++;
             });
-
-            // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
-            main_div.addEventListener("click", mainButtonFunction);
-            main_div.pageDiv = pageDiv;
-            main_div.studentID = studentID;
-            main_div.formsFolder = formsFolder;
-            main_div.formID = doc.id;
-            document.getElementById(targetDiv).appendChild(main_div);
         });
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
@@ -550,7 +562,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
 
                     var main_div = document.createElement("div");
                     main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
-                    main_div.className = "divs-to-sort w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
+                    main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom`;
                     main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
                     //make a new div with class name, and append it to main div
@@ -558,14 +570,14 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     first_nested_div.className = "w3-left";
                     main_div.appendChild(first_nested_div);
 
-                //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
-                var h3_form_name = document.createElement('h3');
-                h3_form_name.appendChild(document.createTextNode(formName));
-                h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
-                h3_form_name.className = "form_name_tooltip";
-                first_nested_div.appendChild(h3_form_name);
-                var progressTrackerStart = document.createElement("ul"); // new
+                    //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
+                    var h3_form_name = document.createElement('h3');
+                    h3_form_name.appendChild(document.createTextNode(formName));
+                    h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
+                    h3_form_name.className = "form_name_tooltip";
+                    first_nested_div.appendChild(h3_form_name);
 
+                    /*
                     //generate check marks
                     for (let i = 0; i < approvals.length; i++) {
                         pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
@@ -573,8 +585,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                 const pawsDoc = doc.data();
                                 const userType = pawsDoc.userType;
 
-                            // Progress bar creation
-                            var progressElement = document.createElement("li");
+                                var span_check_mark = document.createElement('span');
 
                                 var userInfo = userType;
                                 if (userInfo != "Staff") { // then it means it's a Faculty member
@@ -590,46 +601,47 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                     dateInfo = "Waiting for processing."
                                 }
 
-                            let tooltipTitle;
-                            if (userID === approvals[i].tracksID) {
-                                tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last +
-                                    " " + '<span style="color: #ff0000;">' + "(" +  '<u>' + "YOU" + '</u>' + ")" +  '</span>' +
-                                    '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                                let tooltipTitle;
+                                if (userID === approvals[i].tracksID) {
+                                    tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last +
+                                        " " + '<span style="color: #ff0000;">' + "(" +  '<u>' + "YOU" + '</u>' + ")" +  '</span>' +
+                                        '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                                } else {
+                                    tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
+                                        + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                                }
+                                span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+
+                                if (approvals.length > 0) {
+                                    span_check_mark.classList.add("w3-margin-left");
+                                }
+                                if (approvals[i].status == null) {
+                                    // Has not been approved so use the grey checkWindowWidth mark style
+                                    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
+                                    span_check_mark.appendChild(document.createTextNode("?"));
+                                } else if (approvals[i].status == true) {
+                                    // Green checkWindowWidth mark since it has already been approved
+                                    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
+                                    span_check_mark.appendChild(document.createTextNode("✓"));
+                                } else if (approvals[i].status == false) {
+                                    // Red checkWindowWidth mark since it has been declined
+                                    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
+                                    span_check_mark.appendChild(document.createTextNode("x"));
+                                }
+                                if (i > 0) {
+                                    span_check_mark.classList.add("w3-margin-left");
+                                }
+                                span_check_mark.style.width = "30px";
+                                first_nested_div.appendChild(span_check_mark);
                             } else {
-                                tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                                    + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                                // doc.data() will be undefined in this case
+                                console.log("No such document!");
                             }
-                            //span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
-                            progressElement.setAttribute("data-tooltip-content", tooltipTitle);
-
-                            if (approvals.length > 0) {
-                                // span_check_mark.classList.add("w3-margin-left");
-                                progressTrackerStart.className = "progress-meter";
-                            }
-
-                            if (approvals[i].status == null) {
-                                // Has not been approved so use the grey checkWindowWidth mark style
-                                progressTrackerStart.appendChild(progressElement);
-                                progressElement.className = "bubble_tooltip todo";
-                            } else if (approvals[i].status == true) {
-                                // Green checkWindowWidth mark since it has already been approved
-                                progressTrackerStart.appendChild(progressElement);
-                                progressElement.className = "bubble_tooltip done";
-                            } else if (approvals[i].status == false) {
-                                // Red checkWindowWidth mark since it has been declined
-                                progressTrackerStart.appendChild(progressElement);
-                                progressElement.className = "bubble_tooltip denied";
-                            }
-
-                            first_nested_div.appendChild(progressTrackerStart);
-                        } else {
-                            // doc.data() will be undefined in this case
-                            console.log("No such document!");
-                        }
-                    }).catch(function(error) {
-                        console.log("Error getting document:", error);
-                    });
-                }
+                        }).catch(function(error) {
+                            console.log("Error getting document:", error);
+                        });
+                    }
+                    */
 
                     // Middle nested element (middle part)
                     pawsDB.collection("users").doc(userID).get().then(function(doc) {
@@ -710,8 +722,19 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                                     });
                                                 });
 
-                                                // Sort all the "divs-to-sort" in descending order (newer submitted forms first)
-                                                $('.divs-to-sort').sort(sortDescending).appendTo(document.getElementById(targetDiv));
+                                                // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv"
+                                                if (pageDiv === "historyPage") {
+                                                    // Descending order for "historyPage" (newer forms first)
+                                                    $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
+
+                                                } else if (pageDiv === "dashboardPage") {
+                                                    // Ascending order for "dashboardPage" (older forms first) [TEMPORARY - should implement the "Todo" below
+                                                    $(`.divs-to-sort-${targetDiv}`).sort(sortAscending).appendTo(document.getElementById(targetDiv));
+                                                    // Todo: Sort by due date, and then by oldest submission first
+
+                                                } else {
+                                                    alert("EXCEPTION in Sort all the \"divs-to-sort\"");
+                                                }
 
                                                 // Unhide "targetDiv" after we have populated it
                                                 document.getElementById(targetDiv).style.display = "block";
@@ -1706,6 +1729,11 @@ function sortDescending (a, b) {
     return (a.date < b.date) ? 1 : -1;
 }
 
+// Sort "Date" objects in ascending order (older Dates first)
+function sortAscending (a, b) {
+    return (a.date > b.date) ? 1 : -1;
+}
+
 // Search whatever is in input box for the student's name or ID. This function is called for both "click" and "enter" pressed
 function searchButtonPressed () {
     const txt = document.getElementById("searchInput").value;
@@ -1729,7 +1757,6 @@ function searchButtonPressed () {
 // Also, if "Enter" is pressed, call "searchButtonPressed()"
 function keyPressed (event) {
     const txt = document.getElementById("searchInput").value;
-    console.log(txt); //they share the same id, so one needs to change.
 
     if (txt.length == 0) {
         document.getElementById("searchButton").style.visibility = "hidden";
