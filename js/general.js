@@ -47,6 +47,7 @@ function getUserName() {
     // "aadkins2016"
     // "eshelton"
     // "bpetty"
+    // "adunlap"
     //return "aadkins2016";
 }
 
@@ -181,7 +182,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             const approvals = formDoc.approvals;
 
             var main_div = document.createElement("div");
-            main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom`;
+            main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-round-xlarge w3-margin-bottom`;
             main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
             //make a new div with class name, and append it to main div
@@ -194,20 +195,58 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             h3_form_name.appendChild(document.createTextNode(formName));
             h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
             h3_form_name.className = "form_name_tooltip";
+            h3_form_name.style.display = "flex";
             first_nested_div.appendChild(h3_form_name);
 
-            //generate check marks
+
+            // Create progress bar container
+            var progress_bar = document.createElement('div');
+            progress_bar.style.display = "flex";
+            progress_bar.style.paddingBottom = "20px";
+            progress_bar.className = "centered_elements";
+            progress_bar.id = "progressBarContainer";
+
+            // Create initial checkmark
+            var span_check_mark = document.createElement('span');
+            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-black start_checkmark";
+            const tooltipTitle = '<span>' + 'The ' + '<i>' + formName + ' form</i>' + ' was started' + '<br>' + 'and successfully submitted.</span>';
+            span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+            progress_bar.appendChild(span_check_mark);
+
+            // Create initial checkmark text
+            var checkmarkText = document.createElement('span');
+            checkmarkText.className = "checkmark_text";
+            checkmarkText.innerHTML = '<span>Started</span>';
+            progress_bar.appendChild(checkmarkText);
+
+            // Generate checkmarks
             for (let i = 0; i < approvals.length; i++) {
                 pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
                     if (doc.exists) {
                         const pawsDoc = doc.data();
                         const userType = pawsDoc.userType;
+                        const facultyRole = pawsDoc.facultyRole;
 
+                        // Create checkmark element
                         var span_check_mark = document.createElement('span');
+
+                        // Create progress progressLine element
+                        var progressLine = document.createElement('span');
+                        progressLine.className = "progress_line";
+
+                        // Create progress progressLine arrow element
+                        var lineArrow = document.createElement('span');
+                        lineArrow.className = "line_arrow";
+                        lineArrow.style.marginRight = "5px";
+
+                        // Create text
+                        var checkmarkText = document.createElement('span');
+                        checkmarkText.className = "checkmark_text";
+                        checkmarkText.innerHTML = '<span style="display: inline-block;">' + getAbbreviation (userType, facultyRole) + '</span>';
 
                         var userInfo = userType;
                         if (userInfo != "Staff") { // then it means it's a Faculty member
-                            userInfo = pawsDoc.facultyRole;
+                            userInfo = facultyRole;
                         }
 
                         let dateInfo;
@@ -219,32 +258,75 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                             dateInfo = "Waiting for processing."
                         }
 
+                        let dateInfoTitle = "Date";
+                        let borderLeftProperties = "";
+
+                        if (approvals[i].status == null) {
+                            // Has not been approved so use the gray checkmark style
+                            span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                            span_check_mark.style.border = "2px solid #9e9e9e";
+
+                            progressLine.style.borderBottomStyle = "dashed";
+                            progressLine.style.borderBottomColor = "#9e9e9e";
+                            lineArrow.style.borderColor = "#9e9e9e";
+
+                            borderLeftProperties = "solid #9e9e9e";
+
+                        } else if (approvals[i].status == true) {
+                            // Green checkmark since it has already been approved
+                            span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                            span_check_mark.appendChild(document.createTextNode("✓"));
+                            span_check_mark.style.backgroundColor = "#4CAF50";
+                            span_check_mark.style.color = "#FFFFFF";
+                            span_check_mark.fontSize = "14px";
+
+                            progressLine.style.borderBottomStyle = "solid";
+                            progressLine.style.borderBottomColor = "#4CAF50";
+                            lineArrow.style.borderColor = "#4CAF50";
+
+                            borderLeftProperties = "solid #4CAF50";
+
+                            if (userType === "Faculty") {
+                                dateInfoTitle = 'Date that form was <b>approved</b>';
+                            } else {
+                                dateInfoTitle = 'Date that form was <b>processed</b>';
+                            }
+
+                        } else if (approvals[i].status == false) {
+                            // Red checkmark since it has been declined
+                            span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                            span_check_mark.appendChild(document.createTextNode("X"));
+                            span_check_mark.style.backgroundColor = "#e20000";
+                            span_check_mark.style.color = "#FFFFFF";
+                            span_check_mark.style.fontSize = "11px";
+
+                            progressLine.style.borderBottomStyle = "solid";
+                            progressLine.style.borderBottomColor = "#e20000";
+                            lineArrow.style.borderColor = "#e20000";
+
+                            borderLeftProperties = "solid #e20000";
+
+                            if (userType === "Faculty") {
+                                dateInfoTitle = 'Date that form was <b>not approved</b>';
+                            } else {
+                                dateInfoTitle = 'Date that form was <b>not processed</b>';
+                            }
+                        }
+
+                        if (i == approvals.length - 1) {
+                            main_div.style.borderLeft = "5px " + borderLeftProperties;
+                            main_div.borderLeft = "6px " + borderLeftProperties;
+                        }
+
                         const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                            + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
+                            + '</br>' + '</br>' + '<u>' + dateInfoTitle + '</u>' + '</br>' + dateInfo + '</span>';
                         span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
 
-                        if (approvals.length > 0) {
-                            span_check_mark.classList.add("w3-margin-left");
-                        }
-                        if (approvals[i].status == null) {
-                            // Has not been approved so use the grey checkWindowWidth mark style
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
-                            span_check_mark.appendChild(document.createTextNode("?"));
-                        } else if (approvals[i].status == true) {
-                            // Green checkWindowWidth mark since it has already been approved
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
-                            span_check_mark.appendChild(document.createTextNode("✓"));
-                        } else if (approvals[i].status == false) {
-                            // Red checkWindowWidth mark since it has been declined
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
-                            span_check_mark.appendChild(document.createTextNode("x"));
-                        }
-                        if (i > 0) {
-                            span_check_mark.classList.add("w3-margin-left");
-                        }
+                        progress_bar.appendChild(progressLine);
+                        progress_bar.appendChild(lineArrow);
+                        progress_bar.appendChild(span_check_mark);
+                        progress_bar.appendChild(checkmarkText);
 
-                        span_check_mark.style.width = "30px";
-                        first_nested_div.appendChild(span_check_mark);
                     } else {
                         // doc.data() will be undefined in this case
                         console.log("No such document!");
@@ -253,6 +335,8 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                     console.log("Error getting document:", error);
                 });
             }
+            first_nested_div.appendChild(progress_bar);
+
 
             // Second nested div (right side)
             var second_nested_div = document.createElement("div");
@@ -341,6 +425,7 @@ function displayFormReadMode (event) {
     const studentID = event.currentTarget.studentID;
     const formsFolder = event.currentTarget.formsFolder;
     const formID = event.currentTarget.formID;
+    const borderLeft = event.currentTarget.borderLeft;
 
     formDB.collection("users").doc(studentID).collection(formsFolder).doc(formID).get().then(function(doc) {
         if (doc.exists) {
@@ -368,7 +453,7 @@ function displayFormReadMode (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
+                            `    <div class="w3-modal-content w3-round-xlarge w3-bottombar" style="border-left: ${borderLeft}">\n` +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
@@ -576,72 +661,6 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
                     h3_form_name.className = "form_name_tooltip";
                     first_nested_div.appendChild(h3_form_name);
-
-                    /*
-                    //generate check marks
-                    for (let i = 0; i < approvals.length; i++) {
-                        pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
-                            if (doc.exists) {
-                                const pawsDoc = doc.data();
-                                const userType = pawsDoc.userType;
-
-                                var span_check_mark = document.createElement('span');
-
-                                var userInfo = userType;
-                                if (userInfo != "Staff") { // then it means it's a Faculty member
-                                    userInfo = pawsDoc.facultyRole;
-                                }
-
-                                let dateInfo;
-                                if (approvals[i].date != null) {
-                                    dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                                } else if (userType === "Faculty") {
-                                    dateInfo = "Waiting for approval."
-                                } else if (userType === "Staff") {
-                                    dateInfo = "Waiting for processing."
-                                }
-
-                                let tooltipTitle;
-                                if (userID === approvals[i].tracksID) {
-                                    tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last +
-                                        " " + '<span style="color: #ff0000;">' + "(" +  '<u>' + "YOU" + '</u>' + ")" +  '</span>' +
-                                        '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                                } else {
-                                    tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                                        + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                                }
-                                span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
-
-                                if (approvals.length > 0) {
-                                    span_check_mark.classList.add("w3-margin-left");
-                                }
-                                if (approvals[i].status == null) {
-                                    // Has not been approved so use the grey checkWindowWidth mark style
-                                    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
-                                    span_check_mark.appendChild(document.createTextNode("?"));
-                                } else if (approvals[i].status == true) {
-                                    // Green checkWindowWidth mark since it has already been approved
-                                    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
-                                    span_check_mark.appendChild(document.createTextNode("✓"));
-                                } else if (approvals[i].status == false) {
-                                    // Red checkWindowWidth mark since it has been declined
-                                    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
-                                    span_check_mark.appendChild(document.createTextNode("x"));
-                                }
-                                if (i > 0) {
-                                    span_check_mark.classList.add("w3-margin-left");
-                                }
-                                span_check_mark.style.width = "30px";
-                                first_nested_div.appendChild(span_check_mark);
-                            } else {
-                                // doc.data() will be undefined in this case
-                                console.log("No such document!");
-                            }
-                        }).catch(function(error) {
-                            console.log("Error getting document:", error);
-                        });
-                    }
-                    */
 
                     // Middle nested element (middle part)
                     pawsDB.collection("users").doc(userID).get().then(function(doc) {
@@ -1732,6 +1751,26 @@ function sortDescending (a, b) {
 // Sort "Date" objects in ascending order (older Dates first)
 function sortAscending (a, b) {
     return (a.date > b.date) ? 1 : -1;
+}
+
+// Get abbreviation of the "userType" or "facultyRole" for the checkmark text of the progress bar
+function getAbbreviation (userType, facultyRole) {
+    let abbreviation = "";
+    if (userType === "Staff") {
+        abbreviation = "Staff";
+    } else if (userType === "Faculty") {
+        if (facultyRole === "Advisor") {
+            abbreviation = "Advisor";
+        } else if (facultyRole === "Head of Department") {
+            abbreviation = "Head of<br>" + "Dept.";
+        } else if (facultyRole === "Dean of Student") {
+            abbreviation = "Dean of<br>" + "Stud.";
+        }
+    } else {
+        console.log("Error in function \"getAbbreviation()\".");
+    }
+
+    return abbreviation;
 }
 
 // Search whatever is in input box for the student's name or ID. This function is called for both "click" and "enter" pressed
