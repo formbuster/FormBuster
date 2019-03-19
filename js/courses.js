@@ -26,14 +26,14 @@ function getCourse() {
 
         if (/^\d+$/.test(document.getElementById("profileurl").value)) { //user only entered numbers, assume it is a CRN
             filterCRNResults = true;
-            xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
+            xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
         } else {
             if (/[a-z]/i.test(document.getElementById("profileurl").value)) {  //user only entered alphabet
                 if (document.getElementById("profileurl").value.length == 3) { //user probably entered in a Prefix
-                    xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value, true);
+                    xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value, true);
                     //todo: maybe check to see if there is any results, if none then check to see if it is part of a title.
                 } else { //check titles.
-                    xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&title=' + document.getElementById("profileurl").value, true);
+                    xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&title=' + document.getElementById("profileurl").value, true);
                 }
             } else {
                 //todo: possibly do a prefix & course no combination.
