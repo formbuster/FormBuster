@@ -1763,8 +1763,8 @@ function getAbbreviation (userType, facultyRole) {
             abbreviation = "Advisor";
         } else if (facultyRole === "Head of Department") {
             abbreviation = "Head of<br>" + "Dept.";
-        } else if (facultyRole === "Dean of Student") {
-            abbreviation = "Dean of<br>" + "Stud.";
+        } else if (facultyRole === "Dean of Students") {
+            abbreviation = "Dean of<br>Students";
         }
     } else {
         console.log("Error in function \"getAbbreviation()\".");
