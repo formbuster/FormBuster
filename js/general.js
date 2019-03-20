@@ -269,6 +269,7 @@ function generateTrackingBar (main_div, approvals, formName, tracking_bar, initi
     // Set the style for the tracking bar
     tracking_bar.style.display = "none"; // It is changed to "flex" when the tracking is done
     tracking_bar.style.paddingBottom = "20px";
+    tracking_bar.style.cssFloat = "left";
     tracking_bar.className = "centered_elements";
     tracking_bar.id = "progressBarContainer";
 
@@ -285,12 +286,14 @@ function generateTrackingBar (main_div, approvals, formName, tracking_bar, initi
     checkmarkText.innerHTML = '<span>Started</span>';
     tracking_bar.appendChild(checkmarkText);
 
-    generateTrackingCheckmarks(main_div, approvals, 0, tracking_bar, initializeCheckmarkTooltip);
+    var declineNum = 0;
+
+    generateTrackingCheckmarks(main_div, approvals, 0, tracking_bar, declineNum);
 }
 
 // This will generate the checkmarks of the "approvals" array in a recursion way, to prevent JavaScript async behavior
 // from messing up the checkmark order
-function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
+function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar, declinedNum) {
     pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
         if (doc.exists) {
             const pawsDoc = doc.data();
@@ -331,6 +334,7 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
             let dateInfoTitle = "Date";
             let borderLeftProperties = "";
 
+            let declined = false;
             if (approvals[i].status == null) {
                 // Has not been approved so use the gray checkmark style
                 span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
@@ -340,7 +344,11 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
                 progressLine.style.borderBottomColor = "#9e9e9e";
                 lineArrow.style.borderColor = "#9e9e9e";
 
-                borderLeftProperties = "solid #9e9e9e";
+                if (declinedNum == 0) {
+                    // Propagate border color to "main_div" when the form is viewed in full
+                    main_div.style.borderLeft = "5px " + "solid #9e9e9e";
+                    main_div.borderLeft = "6px " + "solid #9e9e9e";
+                }
 
             } else if (approvals[i].status == true) {
                 // Green checkmark since it has already been approved
@@ -354,7 +362,11 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
                 progressLine.style.borderBottomColor = "#4CAF50";
                 lineArrow.style.borderColor = "#4CAF50";
 
-                borderLeftProperties = "solid #4CAF50";
+                if (declinedNum == 0) {
+                    // Propagate border color to "main_div" when the form is viewed in full
+                    main_div.style.borderLeft = "5px " + "solid #4CAF50";
+                    main_div.borderLeft = "6px " + "solid #4CAF50";
+                }
 
                 if (userType === "Faculty") {
                     dateInfoTitle = 'Date that form was <b>approved</b>';
@@ -374,29 +386,35 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
                 progressLine.style.borderBottomColor = "#e20000";
                 lineArrow.style.borderColor = "#e20000";
 
-                borderLeftProperties = "solid #e20000";
+                // Propagate border color to "main_div" when the form is viewed in full
+                main_div.style.borderLeft = "5px " + "solid #e20000";
+                main_div.borderLeft = "6px " + "solid #e20000";
 
                 if (userType === "Faculty") {
                     dateInfoTitle = 'Date that form was <b>not approved</b>';
                 } else {
                     dateInfoTitle = 'Date that form was <b>not processed</b>';
                 }
+
+                declined = true;
             }
 
             const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
                 + '</br>' + '</br>' + '<u>' + dateInfoTitle + '</u>' + '</br>' + dateInfo + '</span>';
             span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
 
-            tracking_bar.appendChild(progressLine);
-            tracking_bar.appendChild(lineArrow);
-            tracking_bar.appendChild(span_check_mark);
-            tracking_bar.appendChild(checkmarkText);
+            if (declinedNum == 0) {
+                tracking_bar.appendChild(progressLine);
+                tracking_bar.appendChild(lineArrow);
+                tracking_bar.appendChild(span_check_mark);
+                tracking_bar.appendChild(checkmarkText);
+            }
+
+            if (declined == true) {
+                declinedNum++;
+            }
 
             if (i == approvals.length - 1) {
-                // Propagate border color to "main_div" when the form is viewed in full
-                main_div.style.borderLeft = "5px " + borderLeftProperties;
-                main_div.borderLeft = "6px " + borderLeftProperties;
-
                 // Make tracking bar visible again
                 tracking_bar.style.display = "flex";
 
@@ -411,7 +429,7 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
 
             } else if (i < approvals.length) {
                 // Generate following checkmarks accordingly, by recursion
-                generateTrackingCheckmarks(main_div, approvals, i + 1, tracking_bar);
+                generateTrackingCheckmarks(main_div, approvals, i + 1, tracking_bar, declinedNum);
             }
 
         } else {
@@ -457,7 +475,7 @@ function displayFormReadMode (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            `    <div class="w3-modal-content w3-round-xlarge w3-bottombar" style="border-left: ${borderLeft}">\n` +
+                            `    <div class="w3-modal-content w3-round-xlarge" style="border-left: ${borderLeft}">\n` +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
@@ -522,7 +540,14 @@ function displayFormReadMode (event) {
                                     const pawsDoc2 = doc.data();
                                     const approvalObj = approvals[i];
                                     const approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
-                                    const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
+
+                                    let approvalEmail;
+                                    if (pawsDoc2.userType != "Staff") { // then it means it's a Faculty member
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u> (${pawsDoc2.facultyRole})</br>${pawsDoc2.email}</span>`;
+                                    } else {
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u></br>${pawsDoc2.email}</span>`;
+                                    }
+
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
                                     const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
@@ -798,7 +823,7 @@ function displayFormReadModeByReference (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
+                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-leftbar">\n' +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
@@ -863,7 +888,14 @@ function displayFormReadModeByReference (event) {
                                     const pawsDoc2 = doc.data();
                                     const approvalObj = approvals[i];
                                     let approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
-                                    const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
+
+                                    let approvalEmail;
+                                    if (pawsDoc2.userType != "Staff") { // then it means it's a Faculty member
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u> (${pawsDoc2.facultyRole})</br>${pawsDoc2.email}</span>`;
+                                    } else {
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u></br>${pawsDoc2.email}</span>`;
+                                    }
+
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
                                     const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
@@ -1010,7 +1042,7 @@ function displayFormApproveMode (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
+                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-leftbar">\n' +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
