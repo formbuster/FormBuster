@@ -154,8 +154,6 @@ function capitalizeStrings (str) {
     return newStr;
 }
 
-
-
 // Populates all the forms from "formsFolder" of student "studentID", into "targetDiv".
 // Each of those forms will call "mainButtonFunction" when the user clicks on them.
 // Once the the user clicks on the form, the form contents will be populated in the "pageDiv"
@@ -199,7 +197,6 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             var tracking_bar = document.createElement('div');
             generateTrackingBar(main_div, approvals, formName, tracking_bar);
             first_nested_div.appendChild(tracking_bar);
-            forEachSecond++;
 
 
             // Second nested div (right side)
@@ -305,7 +302,7 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
 
             // Create progress progressLine element
             var progressLine = document.createElement('span');
-            progressLine.className = "progress_line";
+            progressLine.className = "tracking_line";
 
             // Create progress progressLine arrow element
             var lineArrow = document.createElement('span');
