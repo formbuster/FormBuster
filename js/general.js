@@ -193,149 +193,13 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
             var h3_form_name = document.createElement('h3');
             h3_form_name.appendChild(document.createTextNode(formName));
-            h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
-            h3_form_name.className = "form_name_tooltip";
             h3_form_name.style.display = "flex";
             first_nested_div.appendChild(h3_form_name);
 
-
-            // Create progress bar container
-            var progress_bar = document.createElement('div');
-            progress_bar.style.display = "flex";
-            progress_bar.style.paddingBottom = "20px";
-            progress_bar.className = "centered_elements";
-            progress_bar.id = "progressBarContainer";
-
-            // Create initial checkmark
-            var span_check_mark = document.createElement('span');
-            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-black start_checkmark";
-            const tooltipTitle = '<span>' + 'The ' + '<i>' + formName + ' form</i>' + ' was started' + '<br>' + 'and successfully submitted.</span>';
-            span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
-            progress_bar.appendChild(span_check_mark);
-
-            // Create initial checkmark text
-            var checkmarkText = document.createElement('span');
-            checkmarkText.className = "checkmark_text";
-            checkmarkText.innerHTML = '<span>Started</span>';
-            progress_bar.appendChild(checkmarkText);
-
-            // Generate checkmarks
-            for (let i = 0; i < approvals.length; i++) {
-                pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
-                    if (doc.exists) {
-                        const pawsDoc = doc.data();
-                        const userType = pawsDoc.userType;
-                        const facultyRole = pawsDoc.facultyRole;
-
-                        // Create checkmark element
-                        var span_check_mark = document.createElement('span');
-
-                        // Create progress progressLine element
-                        var progressLine = document.createElement('span');
-                        progressLine.className = "progress_line";
-
-                        // Create progress progressLine arrow element
-                        var lineArrow = document.createElement('span');
-                        lineArrow.className = "line_arrow";
-                        lineArrow.style.marginRight = "5px";
-
-                        // Create text
-                        var checkmarkText = document.createElement('span');
-                        checkmarkText.className = "checkmark_text";
-                        checkmarkText.innerHTML = '<span style="display: inline-block;">' + getAbbreviation (userType, facultyRole) + '</span>';
-
-                        var userInfo = userType;
-                        if (userInfo != "Staff") { // then it means it's a Faculty member
-                            userInfo = facultyRole;
-                        }
-
-                        let dateInfo;
-                        if (approvals[i].date != null) {
-                            dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                        } else if (userType === "Faculty") {
-                            dateInfo = "Waiting for approval."
-                        } else if (userType === "Staff") {
-                            dateInfo = "Waiting for processing."
-                        }
-
-                        let dateInfoTitle = "Date";
-                        let borderLeftProperties = "";
-
-                        if (approvals[i].status == null) {
-                            // Has not been approved so use the gray checkmark style
-                            span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
-                            span_check_mark.style.border = "2px solid #9e9e9e";
-
-                            progressLine.style.borderBottomStyle = "dashed";
-                            progressLine.style.borderBottomColor = "#9e9e9e";
-                            lineArrow.style.borderColor = "#9e9e9e";
-
-                            borderLeftProperties = "solid #9e9e9e";
-
-                        } else if (approvals[i].status == true) {
-                            // Green checkmark since it has already been approved
-                            span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
-                            span_check_mark.appendChild(document.createTextNode("✓"));
-                            span_check_mark.style.backgroundColor = "#4CAF50";
-                            span_check_mark.style.color = "#FFFFFF";
-                            span_check_mark.fontSize = "14px";
-
-                            progressLine.style.borderBottomStyle = "solid";
-                            progressLine.style.borderBottomColor = "#4CAF50";
-                            lineArrow.style.borderColor = "#4CAF50";
-
-                            borderLeftProperties = "solid #4CAF50";
-
-                            if (userType === "Faculty") {
-                                dateInfoTitle = 'Date that form was <b>approved</b>';
-                            } else {
-                                dateInfoTitle = 'Date that form was <b>processed</b>';
-                            }
-
-                        } else if (approvals[i].status == false) {
-                            // Red checkmark since it has been declined
-                            span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
-                            span_check_mark.appendChild(document.createTextNode("X"));
-                            span_check_mark.style.backgroundColor = "#e20000";
-                            span_check_mark.style.color = "#FFFFFF";
-                            span_check_mark.style.fontSize = "11px";
-
-                            progressLine.style.borderBottomStyle = "solid";
-                            progressLine.style.borderBottomColor = "#e20000";
-                            lineArrow.style.borderColor = "#e20000";
-
-                            borderLeftProperties = "solid #e20000";
-
-                            if (userType === "Faculty") {
-                                dateInfoTitle = 'Date that form was <b>not approved</b>';
-                            } else {
-                                dateInfoTitle = 'Date that form was <b>not processed</b>';
-                            }
-                        }
-
-                        if (i == approvals.length - 1) {
-                            main_div.style.borderLeft = "5px " + borderLeftProperties;
-                            main_div.borderLeft = "6px " + borderLeftProperties;
-                        }
-
-                        const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                            + '</br>' + '</br>' + '<u>' + dateInfoTitle + '</u>' + '</br>' + dateInfo + '</span>';
-                        span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
-
-                        progress_bar.appendChild(progressLine);
-                        progress_bar.appendChild(lineArrow);
-                        progress_bar.appendChild(span_check_mark);
-                        progress_bar.appendChild(checkmarkText);
-
-                    } else {
-                        // doc.data() will be undefined in this case
-                        console.log("No such document!");
-                    }
-                }).catch(function(error) {
-                    console.log("Error getting document:", error);
-                });
-            }
-            first_nested_div.appendChild(progress_bar);
+            var tracking_bar = document.createElement('div');
+            generateTrackingBar(main_div, approvals, formName, tracking_bar);
+            first_nested_div.appendChild(tracking_bar);
+            forEachSecond++;
 
 
             // Second nested div (right side)
@@ -371,22 +235,6 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                 if (forEachIteration == querySnapshot.size - 1) {
                     // Initialize tooltips after all the elements have been created
                     $(document).ready(function() {
-                        $('.form_name_tooltip').tooltipster({
-                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                            side: "top",
-                            animation: "grow",
-                            functionPosition: function(instance, helper, position){
-                                position.coord.top += 10;
-                                return position;
-                            }
-                        });
-
-                        $('.bubble_tooltip').tooltipster({
-                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                            side: "bottom",
-                            animation: "grow",
-                        });
-
                         $('.form_date_tooltip').tooltipster({
                             theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
                             position: "left",
@@ -416,6 +264,165 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
         });
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
+    });
+}
+
+// Generate tracking bar, given a "tracking_bar" div container
+function generateTrackingBar (main_div, approvals, formName, tracking_bar, initializeCheckmarkTooltip) {
+    // Set the style for the tracking bar
+    tracking_bar.style.display = "none"; // It is changed to "flex" when the tracking is done
+    tracking_bar.style.paddingBottom = "20px";
+    tracking_bar.className = "centered_elements";
+    tracking_bar.id = "progressBarContainer";
+
+    // Create initial checkmark
+    var span_check_mark = document.createElement('span');
+    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-black start_checkmark";
+    const tooltipTitle = '<span>' + 'The ' + '<i>' + formName + ' form</i>' + ' was started' + '<br>' + 'and successfully submitted.</span>';
+    span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+    tracking_bar.appendChild(span_check_mark);
+
+    // Create initial checkmark text
+    var checkmarkText = document.createElement('span');
+    checkmarkText.className = "checkmark_text";
+    checkmarkText.innerHTML = '<span>Started</span>';
+    tracking_bar.appendChild(checkmarkText);
+
+    generateTrackingCheckmarks(main_div, approvals, 0, tracking_bar, initializeCheckmarkTooltip);
+}
+
+// This will generate the checkmarks of the "approvals" array in a recursion way, to prevent JavaScript async behavior
+// from messing up the checkmark order
+function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar) {
+    pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
+        if (doc.exists) {
+            const pawsDoc = doc.data();
+            const userType = pawsDoc.userType;
+            const facultyRole = pawsDoc.facultyRole;
+
+            // Create checkmark element
+            var span_check_mark = document.createElement('span');
+
+            // Create progress progressLine element
+            var progressLine = document.createElement('span');
+            progressLine.className = "progress_line";
+
+            // Create progress progressLine arrow element
+            var lineArrow = document.createElement('span');
+            lineArrow.className = "line_arrow";
+            lineArrow.style.marginRight = "5px";
+
+            // Create text
+            var checkmarkText = document.createElement('span');
+            checkmarkText.className = "checkmark_text";
+            checkmarkText.innerHTML = '<span style="display: inline-block;">' + getAbbreviation (userType, facultyRole) + '</span>';
+
+            var userInfo = userType;
+            if (userInfo != "Staff") { // then it means it's a Faculty member
+                userInfo = facultyRole;
+            }
+
+            let dateInfo;
+            if (approvals[i].date != null) {
+                dateInfo = getExactDateAndTime(approvals[i].date.toDate());
+            } else if (userType === "Faculty") {
+                dateInfo = "Waiting for approval."
+            } else if (userType === "Staff") {
+                dateInfo = "Waiting for processing."
+            }
+
+            let dateInfoTitle = "Date";
+            let borderLeftProperties = "";
+
+            if (approvals[i].status == null) {
+                // Has not been approved so use the gray checkmark style
+                span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                span_check_mark.style.border = "2px solid #9e9e9e";
+
+                progressLine.style.borderBottomStyle = "dashed";
+                progressLine.style.borderBottomColor = "#9e9e9e";
+                lineArrow.style.borderColor = "#9e9e9e";
+
+                borderLeftProperties = "solid #9e9e9e";
+
+            } else if (approvals[i].status == true) {
+                // Green checkmark since it has already been approved
+                span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                span_check_mark.appendChild(document.createTextNode("✓"));
+                span_check_mark.style.backgroundColor = "#4CAF50";
+                span_check_mark.style.color = "#FFFFFF";
+                span_check_mark.fontSize = "14px";
+
+                progressLine.style.borderBottomStyle = "solid";
+                progressLine.style.borderBottomColor = "#4CAF50";
+                lineArrow.style.borderColor = "#4CAF50";
+
+                borderLeftProperties = "solid #4CAF50";
+
+                if (userType === "Faculty") {
+                    dateInfoTitle = 'Date that form was <b>approved</b>';
+                } else {
+                    dateInfoTitle = 'Date that form was <b>processed</b>';
+                }
+
+            } else if (approvals[i].status == false) {
+                // Red checkmark since it has been declined
+                span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                span_check_mark.appendChild(document.createTextNode("X"));
+                span_check_mark.style.backgroundColor = "#e20000";
+                span_check_mark.style.color = "#FFFFFF";
+                span_check_mark.style.fontSize = "11px";
+
+                progressLine.style.borderBottomStyle = "solid";
+                progressLine.style.borderBottomColor = "#e20000";
+                lineArrow.style.borderColor = "#e20000";
+
+                borderLeftProperties = "solid #e20000";
+
+                if (userType === "Faculty") {
+                    dateInfoTitle = 'Date that form was <b>not approved</b>';
+                } else {
+                    dateInfoTitle = 'Date that form was <b>not processed</b>';
+                }
+            }
+
+            const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
+                + '</br>' + '</br>' + '<u>' + dateInfoTitle + '</u>' + '</br>' + dateInfo + '</span>';
+            span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+
+            tracking_bar.appendChild(progressLine);
+            tracking_bar.appendChild(lineArrow);
+            tracking_bar.appendChild(span_check_mark);
+            tracking_bar.appendChild(checkmarkText);
+
+            if (i == approvals.length - 1) {
+                // Propagate border color to "main_div" when the form is viewed in full
+                main_div.style.borderLeft = "5px " + borderLeftProperties;
+                main_div.borderLeft = "6px " + borderLeftProperties;
+
+                // Make tracking bar visible again
+                tracking_bar.style.display = "flex";
+
+                // Initialize check mark tooltip
+                $(document).ready(function() {
+                    $('.bubble_tooltip').tooltipster({
+                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                        side: "bottom",
+                        animation: "grow",
+                    });
+                });
+
+            } else if (i < approvals.length) {
+                // Generate following checkmarks accordingly, by recursion
+                generateTrackingCheckmarks(main_div, approvals, i + 1, tracking_bar);
+            }
+
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
     });
 }
 
@@ -658,8 +665,6 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
                     var h3_form_name = document.createElement('h3');
                     h3_form_name.appendChild(document.createTextNode(formName));
-                    h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
-                    h3_form_name.className = "form_name_tooltip";
                     first_nested_div.appendChild(h3_form_name);
 
                     // Middle nested element (middle part)
@@ -718,16 +723,6 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                             if (forEachIteration == querySnapshot.size - 1) {
                                                 // Initialize tooltips after all the elements have been created
                                                 $(document).ready(function() {
-                                                    $('.form_name_tooltip').tooltipster({
-                                                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                                        side: "top",
-                                                        animation: "grow",
-                                                        functionPosition: function(instance, helper, position){
-                                                            position.coord.top += 10;
-                                                            return position;
-                                                        }
-                                                    });
-
                                                     $('.bubble_tooltip').tooltipster({
                                                         theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
                                                         side: "bottom",
@@ -1764,7 +1759,7 @@ function getAbbreviation (userType, facultyRole) {
         } else if (facultyRole === "Head of Department") {
             abbreviation = "Head of<br>" + "Dept.";
         } else if (facultyRole === "Dean of Students") {
-            abbreviation = "Dean of<br>Students";
+            abbreviation = "Dean";
         }
     } else {
         console.log("Error in function \"getAbbreviation()\".");
