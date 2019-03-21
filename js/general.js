@@ -207,6 +207,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
             h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
             h4_submission_date.className = "form_date_tooltip";
+            h4_submission_date.style.fontSize = "20px";
 
 
             second_nested_div.appendChild(h4_submission_date);
@@ -217,6 +218,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                 h4_due_date.style.textAlign = "left";
                 h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
                 h4_due_date.className = "form_date_tooltip";
+                h4_due_date.style.fontSize = "20px";
 
                 second_nested_div.appendChild(h4_due_date);
                 main_div.appendChild(second_nested_div);
@@ -723,6 +725,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                         h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
                                         h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
                                         h4_submission_date.className = "form_date_tooltip";
+                                        h4_submission_date.style.fontSize = "20px";
 
                                         second_nested_div.appendChild(h4_submission_date);
                                         var h4_due_date = document.createElement('h3');
@@ -732,6 +735,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                             h4_due_date.style.textAlign = "left";
                                             h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
                                             h4_due_date.className = "form_date_tooltip";
+                                            h4_due_date.style.fontSize = "20px";
 
                                             second_nested_div.appendChild(h4_due_date);
                                             main_div.appendChild(second_nested_div);
