@@ -484,13 +484,13 @@ function displayFormReadMode (event) {
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
                             '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
                             '                <div class="w3-left">\n' +
-                            '                    <h3>' + formName + ' Form</h3>\n' +
-                            '                    <h3>Student: ' + studentName + '</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
@@ -675,7 +675,6 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     const submDate = getSubmDate(doc);
                     const exactSubmDate = getExactSubmDate(doc);
                     const dueDatePromise = getFormDueDate(formName);
-                    const approvals = formDoc.approvals;
 
                     var main_div = document.createElement("div");
                     main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
@@ -834,13 +833,13 @@ function displayFormReadModeByReference (event) {
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
                             '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
                             '                <div class="w3-left">\n' +
-                            '                    <h3>' + formName + ' Form</h3>\n' +
-                            '                    <h3>Student: ' + studentName + '</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
