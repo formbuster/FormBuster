@@ -258,6 +258,8 @@ function getNotifications () {
             const userNotification = notification.data();
             const notificationMessage = userNotification.message;
             const notificationDate = notification.id.toString().split('_')[1];
+            const exactDate = getExactDateAndTime(getDateFromTimestamp(notificationDate));
+            const dateTooltip = `<span>${exactDate}</span>`;
 
             wholeHTML +=
                 `<div class="w3-container w3-white w3-margin-bottom" data-studentid="${studentID}"
@@ -268,13 +270,22 @@ function getNotifications () {
                 '        <p>' + notificationMessage + '</p>\n' +
                 '    </div>\n' +
                 '    <div class="time">\n' +
-                '        <p style="font-style: italic; color: #8e8e8e;">' + moment(notificationDate, "MMDDYYYYHHmmss").fromNow() + '</p>\n' +
+                `        <p style="font-style: italic; color: #8e8e8e;" class="form_date_tooltip"
+                    data-tooltip-content="${dateTooltip}">${moment(notificationDate, "MMDDYYYYHHmmss").fromNow()}</p>\n` +
                 '    </div>\n' +
                 '</div>\n';
 
-            // Insert all the notifications into "notificationsList"
+            // Insert all the notifications into "notificationsList" and intitialize the tooltips
             if (forEachIteration == querySnapshot.size - 1) {
                 notificationsList.innerHTML = wholeHTML;
+
+                $(document).ready(function() {
+                    $('.form_date_tooltip').tooltipster({
+                        theme: "tooltipster-borderless",
+                        position: "left",
+                        animation: "grow",
+                    });
+                });
             }
 
             forEachIteration++;
