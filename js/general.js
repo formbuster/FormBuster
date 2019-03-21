@@ -317,9 +317,11 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar, decli
             checkmarkText.className = "checkmark_text";
             checkmarkText.innerHTML = '<span style="display: inline-block;">' + getAbbreviation (userType, facultyRole) + '</span>';
 
-            var userInfo = userType;
-            if (userInfo != "Staff") { // then it means it's a Faculty member
-                userInfo = facultyRole;
+            let approvalText;
+            if (userType != "Staff") { // then it means it's a Faculty member
+                approvalText = `<u>${userType}</u> (${facultyRole})`;
+            } else {
+                approvalText = `<u>${userType}</u>`;
             }
 
             let dateInfo;
@@ -332,7 +334,6 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar, decli
             }
 
             let dateInfoTitle = "Date";
-            let borderLeftProperties = "";
 
             let declined = false;
             if (approvals[i].status == null) {
@@ -399,7 +400,7 @@ function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar, decli
                 declined = true;
             }
 
-            const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
+            const tooltipTitle = '<span>' + approvalText + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
                 + '</br>' + '</br>' + '<u>' + dateInfoTitle + '</u>' + '</br>' + dateInfo + '</span>';
             span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
 
