@@ -1,4 +1,9 @@
 var xmlhttp = new XMLHttpRequest();
+let copy; //value set at 85. //todo: delete
+
+function getWaiverResultsQuery() {
+    return copy; //using this to temp to get results, will be replaced later with McNels algorithm.
+}
 
 class Course {
     constructor(crn, prefix, course_no, sec, title, crs, days, beginTime, endTime, instructor) {
@@ -46,7 +51,7 @@ function getCourse() {
     }
 
     //every time a letter is typed, empty the innertext to start over the query
-    document.getElementById("url").innerText = "";
+    document.getElementById("searchRegistrationResults").innerText = "";
     document.getElementById("courseResultsMessage").innerText = "";
 
     xmlhttp.onload = function () {
@@ -61,7 +66,7 @@ function getCourse() {
                 let i = 0;
                 while (filtered_results.records[i] != null) {
                     if (!(filtered_results.records[i].crn.toString()).startsWith(document.getElementById("profileurl").value)) {
-                        filtered_results.records.splice(i,1); //remove the result that doesn't fit the query.
+                        filtered_results.records.splice(i, 1); //remove the result that doesn't fit the query.
                     } else {
                         i++;
                     }
@@ -76,40 +81,46 @@ function getCourse() {
                 myObj = JSON.parse(this.response); //use original results from api, because there's no need to filter the results.
             }
 
-            i = 0;//next course incrementer, and used to id the courses
-            let accordionId = 0;
+            copy = myObj;
 
-            if (myObj.records[i] != null) {
-                var currentTitle = "";
-                while (myObj.records[i] != null) {
-                    let courseResult = new Course (myObj.records[i].crn, myObj.records[i].subject, myObj.records[i].course_number, myObj.records[i].section,
-                        myObj.records[i].title,  myObj.records[i].credit_hours, myObj.records[i].days, myObj.records[i].begin_time, myObj.records[i].end_time, myObj.records[i].instructor);
-
-                    if (currentTitle != courseResult.title) { //new title, create a new accordion.
-                        generateNewCourseRowAccordion(i, courseResult);
-                        accordionId = i; //there was a new accoridon row created at ith course, the current course needs to be added into the accordion, it will use the same accordion.
-                    }
-
-                    addCourseToAccordion(i, accordionId, courseResult , "", "");
-                    currentTitle = myObj.records[i].title;
-                    i++;
-                }
-
-                //after filtering results, there may not be any matches.
-                if (document.getElementById("url").innerText == "") {
-                    document.getElementById("courseResultsMessage").innerText = "No results found";
-                    $('#animated-gif').hide(); //get rid of the loading gif.
-                } else {
-                    $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
-                        "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
-                        "                                    </div>\n" +
-                        "                                    <br>");
-                }
-            }
+            fillResults(myObj, "searchRegistrationResults");
 
             $('#animated-gif').hide(); //get rid of the loading gif.
         }
     };
+}
+
+function fillResults(myObj, placeholder){
+    i = 0;//next course incrementer, and used to id the courses
+    let accordionId = 0;
+
+    if (myObj.records[i] != null) {
+        var currentTitle = "";
+        while (myObj.records[i] != null) {
+            let courseResult = new Course (myObj.records[i].crn, myObj.records[i].subject, myObj.records[i].course_number, myObj.records[i].section,
+                myObj.records[i].title,  myObj.records[i].credit_hours, myObj.records[i].days, myObj.records[i].begin_time, myObj.records[i].end_time, myObj.records[i].instructor);
+
+            if (currentTitle != courseResult.title) { //new title, create a new accordion.
+                generateNewCourseRowAccordion(placeholder,i, courseResult);
+                accordionId = i; //there was a new accoridon row created at ith course, the current course needs to be added into the accordion, it will use the same accordion.
+            }
+
+            addCourseToAccordion(i, accordionId, courseResult , "", "");
+            currentTitle = myObj.records[i].title;
+            i++;
+        }
+
+        //after filtering results, there may not be any matches.
+        if (document.getElementById("searchRegistrationResults").innerText == "") {
+            document.getElementById("courseResultsMessage").innerText = "No results found";
+            $('#animated-gif').hide(); //get rid of the loading gif.
+        } else {
+            $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
+                "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
+                "                                    </div>\n" +
+                "                                    <br>");
+        }
+    }
 }
 
 function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay, additionalTime) {
@@ -122,19 +133,21 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
     //todo: fix course number for MTH 0111
     let string2 = course.course_no.toString()+"";
 
-    document.getElementById("courseAccordion" + courseAccordionId).innerHTML += " <tr id=\"course"+ course.crn + "\" bgcolor=\"" + rowColor +"\">\n" +
-    "                                                <td id = \'crn" + course.crn + "\'>" + course.crn +"</td>\n" +
-    "                                                <td id = \'sec" + course.crn + "\'>" + course.sec +"</td>\n" +
-    "                                                <td id = \'days" + course.crn + "\'>" + course.days + "</td>\n" +
-    "                                                <td id = \'time" + course.crn + "\'>" + course.beginTime + "-" + course.endTime + "</td>\n" +
-    "                                                <td id = \'crs" + course.crn + "\'>" + course.crs + "</td>\n" +
-    "                                                <td>" + course.instructor + "</td>\n" +
-    "                                                <td><button id=\'regButton" + course.crn +"\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 +")'>Add Course</button></td>\n" +
-    "                                            </tr>\n";
+    if (document.getElementById("courseAccordion" + courseAccordionId)) {
+        document.getElementById("courseAccordion" + courseAccordionId).innerHTML += " <tr id=\"course" + course.crn + "\" bgcolor=\"" + rowColor + "\">\n" +
+            "                                                <td id = \'crn" + course.crn + "\'>" + course.crn + "</td>\n" +
+            "                                                <td id = \'sec" + course.crn + "\'>" + course.sec + "</td>\n" +
+            "                                                <td id = \'days" + course.crn + "\'>" + course.days + "</td>\n" +
+            "                                                <td id = \'time" + course.crn + "\'>" + course.beginTime + "-" + course.endTime + "</td>\n" +
+            "                                                <td id = \'crs" + course.crn + "\'>" + course.crs + "</td>\n" +
+            "                                                <td>" + course.instructor + "</td>\n" +
+            "                                                <td><button id=\'regButton" + course.crn + "\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 + ")'>Add Course</button></td>\n" +
+            "                                            </tr>\n";
 
-    //check to see if the user already added the course, if so, they shouldn't be able to add the same course again.
-    if (crns.indexOf(course.crn.toString()) >= 0 || crns.indexOf(course.crn) >= 0) {
-        document.getElementById("regButton" + course.crn).innerText = "Remove Course";
+        //check to see if the user already added the course, if so, they shouldn't be able to add the same course again.
+        if (crns.indexOf(course.crn.toString()) >= 0 || crns.indexOf(course.crn) >= 0) {
+            document.getElementById("regButton" + course.crn).innerText = "Remove Course";
+        }
     }
     //todo: figure out how to get the lab times for a class.
     // "                                            <tr bgcolor=\"EEEEEE\">\n" +
@@ -148,26 +161,35 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
     // "                                            </tr>\n" +
 }
 
+let waivers = [];
 
 /*
 Course is the Course Object that stores a course's information.
  */
-function generateNewCourseRowAccordion(rowID, course) {
-    $("#url").append("<button onclick=\"myFunc('CourseSlider"+ rowID +"')\" class=\"w3-padding-16 w3-button w3-block w3-left-align w3-lightgrey w3-leftbar w3-border-theme w3-round-large\">" + "+  " + course.prefix + " " + course.course_no + " " + course.title + "</button>\n");
-    $("#url").append("                                    <div id=\"CourseSlider"+ rowID +"\" class=\"w3-hide w3-card\">\n" +
-        "                                        <table id=\"courseAccordion"+ rowID +"\" class=\"w3-table\">\n" +
-        "                                            <tr>\n" +
-        "                                                <th>CRN</th>\n" +
-        "                                                <th>Sec.</th>\n" +
-        "                                                <th>Days</th>\n" +
-        "                                                <th>Time</th>\n" +
-        "                                                <th>CRS.</th>\n" +
-        "                                                <th>Instructor</th>\n" +
-        "                                                <th></th>\n" +
-        "                                            </tr>\n" +
-        "                                        </table>\n" +
-        "\n" +
-        "                                    </div><hr style='height:1px; padding:2px;  margin:0px;'>\n")
+function generateNewCourseRowAccordion(div ,rowID, course) {
+    div = "#" + div;
+    if (div === "#searchRegistrationResults") {
+        $(div).append("<button onclick=\"myFunc('CourseSlider" + rowID + "')\" class=\"w3-padding-16 w3-button w3-block w3-left-align w3-lightgrey w3-leftbar w3-border-theme w3-round-large\">" + "+  " + course.prefix + " " + course.course_no + " " + course.title + "</button>\n");
+        $(div).append("                                    <div id=\"CourseSlider" + rowID + "\" class=\"w3-hide w3-card\">\n" +
+            "                                        <table id=\"courseAccordion" + rowID + "\" class=\"w3-table\">\n" +
+            "                                            <tr>\n" +
+            "                                                <th>CRN</th>\n" +
+            "                                                <th>Sec.</th>\n" +
+            "                                                <th>Days</th>\n" +
+            "                                                <th>Time</th>\n" +
+            "                                                <th>CRS.</th>\n" +
+            "                                                <th>Instructor</th>\n" +
+            "                                                <th></th>\n" +
+            "                                            </tr>\n" +
+            "                                        </table>\n" +
+            "\n" +
+            "                                    </div><hr style='height:1px; padding:2px;  margin:0px;'>\n")
+    } else if (div === "#searchWaiverTableResults") {
+        $(div).append("<button id='addCoPrerequisite" + course.prefix + course.course_no + "'onclick=\"addCoPrerequiste('CourseSlider" + rowID + "','" + course.course_no + "','" + course.title + "','" + course.prefix + "')\" class=\"w3-padding-16 w3-button w3-block w3-left-align w3-lightgrey w3-leftbar w3-border-theme w3-round-large\">" + "+  " + course.prefix + " " + course.course_no + " " + course.title + "</button>\n");
+        if (waivers.indexOf(course.prefix + "" + course.course_no) > -1) {
+            document.getElementById("addCoPrerequisite"+ course.prefix + course.course_no).disabled = true;
+        }
+    }
 }
 
 let currentOpen = "";
@@ -264,8 +286,6 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
     crns.push(course);
 
     coursesCount++;
-
-
 }
 
 function register(isAudit, course, title, prefix, course_no) {
@@ -280,10 +300,10 @@ function register(isAudit, course, title, prefix, course_no) {
         addResultToCoursesTable(course, prefix, course_no, document.getElementById("sec" + course).innerText, title,
             document.getElementById("days" + course).innerText, document.getElementById("time" + course).innerText,
             document.getElementById("crs" + course).innerText);
-        
+
         //get rid of search results.
         $("#courseResultsMessage").html('');
-        document.getElementById("url").innerText = "";
+        document.getElementById("searchRegistrationResults").innerText = "";
         //empty the text field of any input, reset it so it shows the placeholder text.
         document.getElementById('profileurl').value = '';
 
@@ -404,6 +424,8 @@ function sendRegistrationForm(studentUsername) {
             "9_Audit": document.getElementById("audit" + crns[i]).checked == true,
         });
     }
+
+
 
     saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
     closeForm();

@@ -1853,8 +1853,59 @@ function getAllStudents () {
     });
 }
 
-//todo: get this informtion based on the students major
-function getHeadOfDepartment () {
-    //getUserName()
-    return ["Aerospace", "Mya Frost"];
+function getAdvisor() {
+    return pawsDB.collection("users").doc(getUserName()).get().then(function(doc) {
+        if (doc.exists) {
+            const docData = doc.data();
+            return docData.advisor.advisorUsername.toString();
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+}
+
+function getStudentMajor() {
+    return pawsDB.collection("users").doc(getUserName()).get().then(function(doc) {
+        if (doc.exists) {
+            const docData = doc.data();
+            let studentMajor = docData.major.department;
+            return studentMajor.toString();
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+}
+
+function getUnitHead() {
+     return getStudentMajor().then(function(studentMajor) {
+        return pawsDB.collection("users").where("facultyRole", "==", "Head of Department").where("department", "==", studentMajor).get().then(function (querySnapshot) {
+            let result = [];
+            querySnapshot.forEach(function (doc) {
+                const pawsDoc = doc.data();
+                let email2 = pawsDoc.email;
+                result.push(email2.substring(0, email2.indexOf("@")));
+            });
+            return result[0].toString();
+        });
+    });
+}
+
+function getRandomStaff() {
+    return pawsDB.collection("users").where("userType", "==", "Staff").get().then(function(querySnapshot) {
+        let allStaff = [];
+        querySnapshot.forEach(function (doc) {
+            const pawsDoc = doc.data();
+            allStaff.push(pawsDoc);
+        });
+        let random = Math.floor(Math.random() * Math.floor(allStaff.length));
+        let email2 = allStaff[random].email;
+
+        return email2.substring(0,email2.indexOf("@"));
+    });
 }

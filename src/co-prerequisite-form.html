@@ -26,14 +26,18 @@
 
                             <input id="profileurl" class="w3-input w3-threequarter" type="text"
                                    placeholder="Search for courses using CRN, Title or Prefix">
-
                             <br><br>
                             <img src="../img/loadinfo.net.gif" id="animated-gif" style="display:none;"
                                  justify-content="center"/>
                         </div>
                         <div id="courseResultsMessage"></div>
-                        <div id="url"></div>
+                        <div id="searchRegistrationResults"></div>
                         <div id="registrationTableResults"></div>
+                        <div id="waiverSearchInstructions"></div>
+                        <div id="searchWaiverTableResults"></div>
+                        <div id="waiverTableReview"></div>
+                        <div id="waiverJustificationInstructions"></div>
+                        <div id="waiverJustificationTextField"></div>
                         <p id="totalCredits"></p>
                     </div>
                     <br>
@@ -51,10 +55,10 @@
                     </button>
                     <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
                     <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge"
-                            onclick="saveRegistrationForm(false, 'formsPage')">Save
+                            onclick="saveRegistrationForm2(false, 'formsPage')">Save
                     </button>
                     <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge"
-                            onclick="saveRegistrationForm(true, 'formsPage')">Submit
+                            onclick="saveRegistrationForm2(true, 'formsPage')">Submit
                     </button>
                 </div>
                 <br>
@@ -64,40 +68,117 @@
 </div>
 
 <script>
+    function saveRegistrationForm2(b, formsPage) {
+        let courses_list = [];
+        courses_list.push({
+            "1_CRN": document.getElementById("registeredCrn" + crns[0]).innerText.toString(),
+            "2_Prefix": document.getElementById("registeredPrefix" + crns[0]).innerText.toString(),
+            "3_Course No.": document.getElementById("registeredCourseNo" + crns[0]).innerText,
+            "4_Section": document.getElementById("registeredSec" + crns[0]).innerText,
+            "5_Course Title": document.getElementById("registeredTitle" + crns[0]).innerText,
+            "6_Days": document.getElementById("registeredDays" + crns[0]).innerText,
+            "7_Time": document.getElementById("registeredTime" + crns[0]).innerText,
+            "8_Credits": document.getElementById("registeredCrs" + crns[0]).innerText,
+            "9_Audit": document.getElementById("audit" + crns[0]).checked == true,
+        });
 
-function finishUpCoPreqForm() {
-    $("#registrationTableResults").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
-        "                                       <p>Select the missing co/prerequisite for the class listed above</p>\n" +
-        "                                    </div>\n" +
-        "                                    <br>"+
-        "<input id=\"profileurl2\" class=\"w3-input w3-threequarter\" type=\"text\"\n" +
-        "                                   placeholder=\"Search for courses using Title or Prefix\">");
-}
+        let wantToWaive = [];
+        for (i = 0; i < waivers.length; i++) {
+            wantToWaive.push({
+                "1_Prefix": document.getElementById("waivedPrefix" + i).innerText.toString(),
+                "2_Course No.": document.getElementById("waivedCourseNo" + i).innerText,
+                "3_Course Title": document.getElementById("waivedTitle" + i).innerText,
+            });
+        }
 
-$('#profileurl').keyup(function(e) {
-    getCourse();
-});
-$(function() {
-    $('#search-id').on("submit", function() {
-        $('#animated-gif').toggle();
+        let currentTime = moment().format('MMDDYYYYHHmmss');
+        getUnitHead().then(function(unitHead3) {
+            getAdvisor().then(function(advisor) {
+                getRandomStaff().then(function(staff) {
+                    console.log(advisor, unitHead3, staff);
+                    formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Coprerequisite_" + currentTime).set({
+                        approvals: [{date: null, declinedReason: null, status: null, tracksID: advisor /*advisor*/},
+                            {date: null, declinedReason: null, status: null, tracksID: unitHead3 /*academic unit head*/},
+                            {date: null, declinedReason: null, status: null, tracksID: staff} /*staff*/],
+                        content: {
+                            "1_Course Requested for Registration": courses_list,
+                            "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                            "3_Justifcation for the Waiver": {"1_Justification": document.getElementById("justificationTextField").value}
+                        }
+                    });
+                });
+            });
+        });
+    }
+
+    function finishUpCoPreqForm() {
+        $("#waiverSearchInstructions").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
+            "                                       <p>Search for and select <b>up to 2</b> missing co/prerequisite for the class listed above</p>\n" +
+            "                                    </div>\n" +
+            "                                    <br>"+
+            "<input id=\"profileurl2\" class=\"w3-input w3-threequarter\" type=\"text\"\n" +
+            "                                       placeholder='Search for co/prerequisite courses by Title or Prefix' onkeyup=\"lookupCoPrerequiste(this);\"><br><br>"
+        );
+
+        let courseResults = [{crn: "17456", prefix: "cse", course_no: "1002", sec: "01", title: "Fund of Software Dev 2",
+            days: "TR", time: "930-1045", crs: "4"}];
+
+        let corurseResults2 = [{crn: "18035", prefix: "ahf", course_no: "3101", sec: "01", title: "Intro to Human Factors",
+            days: "TR", time: "1400-1515", crs: "3"}];
+    }
+
+    $('#profileurl').keyup(function(e) {
+        getCourse();
     });
-});
-
-
-$('#profileurl12').keyup(function(e) {
-    //getCourse();
-    //don't allow searching by crn, since we are not looking up a class to register for.
-    //search by title or prefix, look at each semester till the course is found, and display the results
-    //so the user can select the result.
-    //getCourse() is used to get courses for registering.
-
-    /*
-    After this function is called, the last part of the form should be revealed,
-     */
-});
-$(function() {
-    $('#search-id').on("submit", function() {
-        $('#animated-gif').toggle();
+    $(function() {
+        $('#search-id').on("submit", function() {
+            $('#animated-gif').toggle();
+        });
     });
-});
+
+    function lookupCoPrerequiste() {
+        fillResults(getWaiverResultsQuery(), "searchWaiverTableResults");
+        document.getElementById("courseResultsMessage").innerHTML = "";
+    }
+
+    function addCoPrerequiste(name, course_no, title, prefix) {
+        //empty the text field of any input, reset it so it shows the placeholder text.
+        document.getElementById('profileurl2').value = '';
+        document.getElementById("searchWaiverTableResults").innerHTML ="";
+
+        if(!document.getElementById("waiverTableReviewMessage")) {
+            $("#waiverTableReview").append("     <br><div id=\"waiverTableReviewMessage\" class=\"w3-container w3-theme-red\">\n" +
+                "                                       <p>Please review the below table of Co/Prerequisite(s) to be waived for the above course. </p>\n" +
+                "                                    </div>\n" +
+                "                                    <br>   " +
+                "<table id='waiverResults' class=\"w3-table\">\n" +
+                "                                            <tr>\n" +
+                "                                                <th>Prefix</th>\n" +
+                "                                                <th>Course No</th>\n" +
+                "                                                <th>Course Title</th>\n" +
+                "                                                <th></th>" +
+                "                                            </tr>\n" +
+                "                                        </table>\n");
+
+            $("#waiverJustificationInstructions").append(" <br><div id=\"waiverReasonMessage\" class=\"w3-container w3-theme-red\">\n" +
+                "                                       <p>Articulate your justification for the waiver below.</p>\n" +
+                "                                    </div>");
+            $("#waiverJustificationTextField").append("<br><textarea id='justificationTextField' rows='5' cols='70'></textarea>");
+        } else {
+            document.getElementById('profileurl2').disabled = true;
+        }
+
+        $("#waiverResults").append("" +
+            "<tr id='waivedCourse"+ waivers.length + "'>"+
+            "<td id='waivedPrefix"+ waivers.length + "'>" + prefix.toUpperCase() +"</td>\n" +
+            "<td id='waivedCourseNo"+ waivers.length + "'>" + course_no +"</td>\n"+
+            "<td id='waivedTitle"+ waivers.length + "'>" + title +"</td>\n" +
+            // "<td id='remove1' onclick='remove(" + courseResults[0].prefix +"" + courseResults[0].course_no +")'>X</td>\n"+
+            "</tr>"
+        );
+
+        waivers.push(prefix + "" + course_no);
+
+    }
+
 </script>
