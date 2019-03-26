@@ -27,7 +27,10 @@ function loadPage () {
         $('#formsList').load('forms.html', function() {
             //add event listeners for each form.
             document.getElementById("registration-form-button").addEventListener("click", function() {
-                startRegistrationForm("coord/staff");
+                startForm("coord/staff", "registration");
+            });
+            document.getElementById("co-prerequisite-form-button").addEventListener("click", function() {
+                startForm("coord/staff", "co-prerequisite");
             });
         });
     });

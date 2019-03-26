@@ -2,7 +2,8 @@ var xmlhttp = new XMLHttpRequest();
 let copy; //value set at 85. //todo: delete
 
 function getWaiverResultsQuery() {
-    return copy; //using this to temp to get results, will be replaced later with McNels algorithm.
+
+    return copy;
 }
 
 class Course {
@@ -229,8 +230,59 @@ function addCourseTableHeader() {
         "                                        </table>\n");
 }
 
+function setUpCoPrerequisiteDraft(content) {
+    let headerAdded = false;
 
-function setUpDraft(content) {
+    for (var formSection in content) {
+        if (formSection == "1_Course Requested for Registration") {
+            if (Array.isArray(content[formSection])) {
+                let array = content[formSection];
+                for (let i = 0; i < array.length; i++) {
+                    if (!headerAdded) { //only add table header once.
+                        headerAdded = true;
+                        addCourseTableHeader();
+                    }
+                    addResultToCoursesTable(array[i]['1_CRN'], array[i]['2_Prefix'], array[i]['3_Course No.'],
+                        array[i]['4_Section'], array[i]['5_Course Title'], array[i]['6_Days'], array[i]['7_Time'],
+                        array[i]['8_Credits'], array[i]['9_Audit']);
+
+                    document.getElementById("profileurl").disabled = true;
+                    document.getElementById("totalCredits").style.display = "none";
+                    document.getElementById("remove" + array[i]['1_CRN']).style.display = "none"; //don't allow removing the course.
+                    finishUpCoPreqForm();
+
+
+                    // addCoPrerequiste("", array[i]['3_Course No.'], array[i]['5_Course Title'], array[i]['2_Prefix']);
+                    /*
+                   todo: implement ceu and ceu db spot
+                    */
+                }
+            }
+        } else if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
+            let array = content[formSection];
+            for (var i = 0; i < array.length; i++)
+            {
+                addCoPrerequiste("", array[i]['2_Course No.'], array[i]['3_Course Title'], array[i]['1_Prefix']);
+            }
+        } else if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
+            let array = content[formSection];
+            for (var i = 0; i < array.length; i++)
+            {
+                addCoPrerequiste("", array[i]['2_Course No.'], array[i]['3_Course Title'], array[i]['1_Prefix']);
+            }
+        } else if (formSection == "3_Justifcation for the Waiver") {
+            let justification = content[formSection];
+
+            if (justification["1_Justification"] != "") {
+                document.getElementById("justificationTextField").value = justification["1_Justification"];
+            }
+        }
+    }
+
+
+}
+
+function setUpRegistrationDraft(content) {
     let headerAdded = false;
 
     for (var formSection in content) {
@@ -424,9 +476,7 @@ function sendRegistrationForm(studentUsername) {
             "9_Audit": document.getElementById("audit" + crns[i]).checked == true,
         });
     }
-
-
-
+    
     saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
     closeForm();
     displayConfirmationMessage("formsList","Your form has been sent!");
@@ -509,8 +559,10 @@ function closeForm() {
     // document.getElementById('profileurl').value = '';
 
     crns.splice(0,crns.length);
+    waivers.splice(0,waivers.length);
     coursesCount = 0;
     creditsCount = 0;
+
 
     // //get rid of messages, results and credit total, it will be regenerated later when user starts another form.
     // $( "#courseResultsMessage" ).html('');

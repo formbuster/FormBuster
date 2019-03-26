@@ -84,7 +84,9 @@ function getDrafts() {
             document.getElementById("draftsList").appendChild(main_div);
 
             if (formName === "Registration") {
-                main_div.addEventListener("click", displayDraftMode);
+                main_div.addEventListener("click", displayDraftModeRegistration);
+            } else if (formName === "Coprerequisite") {
+                main_div.addEventListener("click", displayDraftModeCoPrerequisite);
             }
 
             main_div.pageDiv = "draftsPage";
@@ -97,14 +99,75 @@ function getDrafts() {
     });
 }
 
-function displayDraftMode (event) {
+function displayDraftModeCoPrerequisite (event) {
+    const pageDiv = document.getElementById(event.currentTarget.pageDiv);
+    const studentID = event.currentTarget.studentID;
+    const formsFolder = event.currentTarget.formsFolder;
+    const formID = event.currentTarget.formID;
+
+    $('#editDraft').load('co-prerequisite-form.html', function() {
+        startForm("student", "co-prerequisite");
+
+        //modify the registration-form with info from the db.
+        formDB.collection("users").doc(getUserName()).collection("drafts").doc(formID).get().then(function(doc) {
+            if (doc.exists) {
+                const formDoc = doc.data();
+
+                //select the correct term, based on what was saved in the db.
+                if (formDoc.content["4_Term"] === "spring") {
+                    $("#termSelecter").val('spring');
+                } else if (formDoc.content["4_Term"] === "summer") {
+                    $("#termSelecter").val('summer');
+                } else if (formDoc.content["4_Term"] === "fall"){
+                    $("#termSelecter").val('fall');
+                }
+
+                const content = formDoc.content;
+                setUpCoPrerequisiteDraft(content);
+            }
+        });
+
+        //change the onclick because the start a form feature loads the same code, once we are done making a draft, get rid of the code.
+        document.getElementById("close-registration-form").setAttribute("onclick", null);
+        document.getElementById("close-registration-form").onclick = closeDraftForm;
+
+        document.getElementById("discard-option-1").setAttribute("onclick", null);
+        document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
+
+        //when user saves the form, we will delete the current form, and make new one.
+        document.getElementById("save-option-2").setAttribute("onclick", null);
+        document.getElementById("save-option-2").addEventListener("click", function saveForm() {
+            saveCoPrerequisiteForm(false, "draftsPage");
+            deleteDbEntry();
+        });
+
+        function deleteDbEntry() {
+            formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
+                closeDraftForm();
+                document.getElementById("draftsList").innerHTML = "";
+                getDrafts(); //refresh pg
+            }).catch(function (error) {
+                console.error("Error removing document: ", error);
+            });
+        }
+
+        document.getElementById("submit-option-2").setAttribute("onclick", null);
+        document.getElementById("submit-option-2").addEventListener("click", function submit() {
+            saveCoPrerequisiteForm(true, "draftsPage");
+            //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
+            deleteDbEntry();
+        })
+    });
+}
+
+function displayDraftModeRegistration (event) {
     const pageDiv = document.getElementById(event.currentTarget.pageDiv);
     const studentID = event.currentTarget.studentID;
     const formsFolder = event.currentTarget.formsFolder;
     const formID = event.currentTarget.formID;
 
     $('#editDraft').load('registration-form.html', function() {
-        startRegistrationForm("student");
+        startForm("student", "registration");
 
         //modify the registration-form with info from the db.
         formDB.collection("users").doc(getUserName()).collection("drafts").doc(formID).get().then(function(doc) {
@@ -116,12 +179,12 @@ function displayDraftMode (event) {
                     $("#termSelecter").val('spring');
                 } else if (formDoc.content["2_Term"] === "summer") {
                     $("#termSelecter").val('summer');
-                } else {
+                } else if (formDoc.content["2_Term"] === "fall") {
                     $("#termSelecter").val('fall');
                 }
 
                 const content = formDoc.content;
-                setUpDraft(content);
+                setUpRegistrationDraft(content);
             }
         });
 
@@ -130,7 +193,6 @@ function displayDraftMode (event) {
         document.getElementById("close-registration-form").onclick = closeDraftForm;
 
         document.getElementById("discard-option-1").setAttribute("onclick", null);
-        //document.getElementById("discard-option-1").onclick = deleteDbEntry;
         document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
 
         //when user saves the form, we will delete the current form, and make new one.
@@ -208,10 +270,10 @@ function gotoForms () {
     $('#formsList').load('forms.html', function() {
         //add event listeners for each form.
         document.getElementById("registration-form-button").addEventListener("click", function() {
-            startRegistrationForm("student");
+            startForm("student", "registration");
         });
         document.getElementById("co-prerequisite-form-button").addEventListener("click", function() {
-            startCoPrerequisteForm("student");
+            startForm("student", "co-prerequisite");
         });
     });
 
@@ -318,15 +380,5 @@ function chooseDifferentApprover() {
 
 }
 
-class DesiredCourse {
-    constructor(crn, prefix, course_no, sec, course_title, crs, audit) {
-        this.crn = crn;
-        this.prefix = prefix;
-        this.course_no = course_no;
-        this.sec = sec;
-        this.course_title = course_title;
-        this.crs = crs;
-        this.audit = audit;
-    }
-}
+
 

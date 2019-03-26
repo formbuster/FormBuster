@@ -46,7 +46,7 @@
                     </div>
                     <br>
                     <div id=emptyFormMessage class="w3-panel w3-red" style="display: none;">
-                        <p>The form is empty. Select a term and search for courses above!</p>
+                        <p>The form is incomplete! Please finish the form, or save the form for later.</p>
                     </div>
                 </div>
                 <div id="form-options-1" class="w3-container">
@@ -55,10 +55,10 @@
                     </button>
                     <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
                     <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge"
-                            onclick="saveRegistrationForm2(false, 'formsPage')">Save
+                            onclick="saveCoPrerequisiteForm(false, 'formsPage')">Save
                     </button>
                     <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge"
-                            onclick="saveRegistrationForm2(true, 'formsPage')">Submit
+                            onclick="saveCoPrerequisiteForm(true, 'formsPage')">Submit
                     </button>
                 </div>
                 <br>
@@ -68,19 +68,27 @@
 </div>
 
 <script>
-    function saveRegistrationForm2(b, formsPage) {
+    //todo: fix page, used for confirmation on drafts page/forms page.
+    function saveCoPrerequisiteForm(ifSubmit, page) {
+        let justification = "";
+        if (document.getElementById("justificationTextField")) {
+            justification = document.getElementById("justificationTextField").value;
+        };
+        
         let courses_list = [];
-        courses_list.push({
-            "1_CRN": document.getElementById("registeredCrn" + crns[0]).innerText.toString(),
-            "2_Prefix": document.getElementById("registeredPrefix" + crns[0]).innerText.toString(),
-            "3_Course No.": document.getElementById("registeredCourseNo" + crns[0]).innerText,
-            "4_Section": document.getElementById("registeredSec" + crns[0]).innerText,
-            "5_Course Title": document.getElementById("registeredTitle" + crns[0]).innerText,
-            "6_Days": document.getElementById("registeredDays" + crns[0]).innerText,
-            "7_Time": document.getElementById("registeredTime" + crns[0]).innerText,
-            "8_Credits": document.getElementById("registeredCrs" + crns[0]).innerText,
-            "9_Audit": document.getElementById("audit" + crns[0]).checked == true,
-        });
+        if (document.getElementById("registeredCrn" + crns[0])) {
+            courses_list.push({
+                "1_CRN": document.getElementById("registeredCrn" + crns[0]).innerText.toString(),
+                "2_Prefix": document.getElementById("registeredPrefix" + crns[0]).innerText.toString(),
+                "3_Course No.": document.getElementById("registeredCourseNo" + crns[0]).innerText,
+                "4_Section": document.getElementById("registeredSec" + crns[0]).innerText,
+                "5_Course Title": document.getElementById("registeredTitle" + crns[0]).innerText,
+                "6_Days": document.getElementById("registeredDays" + crns[0]).innerText,
+                "7_Time": document.getElementById("registeredTime" + crns[0]).innerText,
+                "8_Credits": document.getElementById("registeredCrs" + crns[0]).innerText,
+                "9_Audit": document.getElementById("audit" + crns[0]).checked == true,
+            });
+        }
 
         let wantToWaive = [];
         for (i = 0; i < waivers.length; i++) {
@@ -92,20 +100,51 @@
         }
 
         let currentTime = moment().format('MMDDYYYYHHmmss');
-        getUnitHead().then(function(unitHead3) {
+        getUnitHead().then(function(unitHead) {
             getAdvisor().then(function(advisor) {
                 getRandomStaff().then(function(staff) {
-                    console.log(advisor, unitHead3, staff);
-                    formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Coprerequisite_" + currentTime).set({
-                        approvals: [{date: null, declinedReason: null, status: null, tracksID: advisor /*advisor*/},
-                            {date: null, declinedReason: null, status: null, tracksID: unitHead3 /*academic unit head*/},
-                            {date: null, declinedReason: null, status: null, tracksID: staff} /*staff*/],
-                        content: {
-                            "1_Course Requested for Registration": courses_list,
-                            "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
-                            "3_Justifcation for the Waiver": {"1_Justification": document.getElementById("justificationTextField").value}
+                    if (ifSubmit) {
+                        if (document.getElementById("justificationTextField") && document.getElementById("justificationTextField").value == "") {
+                            document.getElementById("emptyFormMessage").style.display = "block";
+                        } else {
+                            formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Coprerequisite_" + currentTime).set({
+                                approvals: [{
+                                    date: null,
+                                    declinedReason: null,
+                                    status: null,
+                                    tracksID: advisor /*advisor*/
+                                },
+                                    {
+                                        date: null,
+                                        declinedReason: null,
+                                        status: null,
+                                        tracksID: unitHead /*academic unit head*/
+                                    },
+                                    {date: null, declinedReason: null, status: null, tracksID: staff} /*staff*/],
+                                content: {
+                                    "1_Course Requested for Registration": courses_list,
+                                    "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                                    "3_Justifcation for the Waiver": {"1_Justification": justification}
+                                }
+                            });
+
+                            formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+                                formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Coprerequisite_" + currentTime)
+                            });
+                            displayConfirmationMessage(page, "Your form has been submitted! Check your dashboard for form progress.");
                         }
-                    });
+                    } else { //just save.
+                        console.log("justification" , justification);
+                        formDB.collection("users").doc(getUserName()).collection("drafts").doc("Coprerequisite_" + currentTime).set({
+                            content: {
+                                "1_Course Requested for Registration": courses_list,
+                                "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                                "3_Justifcation for the Waiver": {"1_Justification": justification}
+                            }
+                        });
+                        displayConfirmationMessage(page, "Your form has been saved! Check your drafts section to complete this form later.");
+                    }
+                    closeForm();
                 });
             });
         });
@@ -119,12 +158,6 @@
             "<input id=\"profileurl2\" class=\"w3-input w3-threequarter\" type=\"text\"\n" +
             "                                       placeholder='Search for co/prerequisite courses by Title or Prefix' onkeyup=\"lookupCoPrerequiste(this);\"><br><br>"
         );
-
-        let courseResults = [{crn: "17456", prefix: "cse", course_no: "1002", sec: "01", title: "Fund of Software Dev 2",
-            days: "TR", time: "930-1045", crs: "4"}];
-
-        let corurseResults2 = [{crn: "18035", prefix: "ahf", course_no: "3101", sec: "01", title: "Intro to Human Factors",
-            days: "TR", time: "1400-1515", crs: "3"}];
     }
 
     $('#profileurl').keyup(function(e) {
@@ -180,5 +213,4 @@
         waivers.push(prefix + "" + course_no);
 
     }
-
 </script>
