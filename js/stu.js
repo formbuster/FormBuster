@@ -99,6 +99,49 @@ function getDrafts() {
     });
 }
 
+//todo: further refactor
+function updateDraftButtons(formID, formType, studentID) {
+    //change the onclick because the start a form feature loads the same code, once we are done making a draft, get rid of the code.
+    document.getElementById("close-registration-form").setAttribute("onclick", null);
+    document.getElementById("close-registration-form").onclick = closeDraftForm;
+
+    document.getElementById("discard-option-1").setAttribute("onclick", null);
+    document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
+
+    //when user saves the form, we will delete the current form, and make new one.
+    document.getElementById("save-option-2").setAttribute("onclick", null);
+    document.getElementById("save-option-2").addEventListener("click", function saveForm() {
+        if (formType === "registration") {
+            saveRegistrationForm(false, "draftsPage");
+        } else if (formType === "co-prerequisite") {
+            saveCoPrerequisiteForm(false, "draftsPage");
+        }
+        deleteDbEntry();
+    });
+
+    function deleteDbEntry() {
+        formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
+            closeDraftForm();
+            document.getElementById("draftsList").innerHTML = "";
+            getDrafts(); //refresh pg
+        }).catch(function (error) {
+            console.error("Error removing document: ", error);
+        });
+    }
+
+    document.getElementById("submit-option-2").setAttribute("onclick", null);
+    document.getElementById("submit-option-2").addEventListener("click", function submit() {
+        if (formType === "registration") {
+            saveRegistrationForm(true, "draftsPage");
+        } else if (formType === "co-prerequisite") {
+            saveCoPrerequisiteForm(true, "draftsPage");
+        }
+        //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
+        deleteDbEntry();
+    })
+}
+
+
 function displayDraftModeCoPrerequisite (event) {
     const pageDiv = document.getElementById(event.currentTarget.pageDiv);
     const studentID = event.currentTarget.studentID;
@@ -127,36 +170,7 @@ function displayDraftModeCoPrerequisite (event) {
             }
         });
 
-        //change the onclick because the start a form feature loads the same code, once we are done making a draft, get rid of the code.
-        document.getElementById("close-registration-form").setAttribute("onclick", null);
-        document.getElementById("close-registration-form").onclick = closeDraftForm;
-
-        document.getElementById("discard-option-1").setAttribute("onclick", null);
-        document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
-
-        //when user saves the form, we will delete the current form, and make new one.
-        document.getElementById("save-option-2").setAttribute("onclick", null);
-        document.getElementById("save-option-2").addEventListener("click", function saveForm() {
-            saveCoPrerequisiteForm(false, "draftsPage");
-            deleteDbEntry();
-        });
-
-        function deleteDbEntry() {
-            formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
-                closeDraftForm();
-                document.getElementById("draftsList").innerHTML = "";
-                getDrafts(); //refresh pg
-            }).catch(function (error) {
-                console.error("Error removing document: ", error);
-            });
-        }
-
-        document.getElementById("submit-option-2").setAttribute("onclick", null);
-        document.getElementById("submit-option-2").addEventListener("click", function submit() {
-            saveCoPrerequisiteForm(true, "draftsPage");
-            //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
-            deleteDbEntry();
-        })
+        updateDraftButtons(formID, "co-prerequisite", studentID);
     });
 }
 
@@ -188,37 +202,7 @@ function displayDraftModeRegistration (event) {
             }
         });
 
-        //change the onclick because the start a form feature loads the same code, once we are done making a draft, get rid of the code.
-        document.getElementById("close-registration-form").setAttribute("onclick", null);
-        document.getElementById("close-registration-form").onclick = closeDraftForm;
-
-        document.getElementById("discard-option-1").setAttribute("onclick", null);
-        document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
-
-        //when user saves the form, we will delete the current form, and make new one.
-
-        document.getElementById("save-option-2").setAttribute("onclick", null);
-        document.getElementById("save-option-2").addEventListener("click", function saveForm() {
-            saveRegistrationForm(false, "draftsPage");
-            deleteDbEntry();
-        });
-
-        function deleteDbEntry() {
-            formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
-                closeDraftForm();
-                document.getElementById("draftsList").innerHTML = "";
-                getDrafts(); //refresh pg
-            }).catch(function (error) {
-                console.error("Error removing document: ", error);
-            });
-        }
-
-        document.getElementById("submit-option-2").setAttribute("onclick", null);
-        document.getElementById("submit-option-2").addEventListener("click", function submit() {
-            saveRegistrationForm(true, "draftsPage");
-            //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
-            deleteDbEntry();
-        })
+        updateDraftButtons(formID, 'registration', studentID);
     });
 }
 
