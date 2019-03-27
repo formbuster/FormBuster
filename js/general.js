@@ -181,6 +181,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
 
             var main_div = document.createElement("div");
             main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-round-xlarge w3-margin-bottom`;
+            main_div.style.height = "118px";
             main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
             //make a new div with class name, and append it to main div
@@ -679,6 +680,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     var main_div = document.createElement("div");
                     main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
                     main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom`;
+                    main_div.style.height = "118px";
                     main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
                     //make a new div with class name, and append it to main div
