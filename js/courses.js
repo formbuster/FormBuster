@@ -22,8 +22,17 @@ class Course {
     }
 }
 
+/*
+This will take in the user query and user selected term, and return courses for that semester.
+The user may type in a:
+    prefix code for a course, ex: CSE
+    prefix code and a course no, ex: CSE 1001 (Typing in 'CSE 1' will show all 1000 level CSE courses).
+    title or partial title of a course, ex: aviation
+    CRN, ex: 22339
+ */
 function getCourse() {
     let filterCRNResults = false;
+    let filterCourseNoResults = false;
 
     if (document.getElementById("profileurl").value.length < 3) {
         return;
@@ -34,18 +43,21 @@ function getCourse() {
             filterCRNResults = true;
             xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
         } else {
-            if (/[a-z]/i.test(document.getElementById("profileurl").value)) {  //user only entered alphabet
+            if (/^[a-zA-Z]+$/.test(document.getElementById("profileurl").value)) {  //user only entered alphabet
                 if (document.getElementById("profileurl").value.length == 3) { //user probably entered in a Prefix
                     xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value, true);
-                    //todo: maybe check to see if there is any results, if none then check to see if it is part of a title.
                 } else { //check titles.
                     xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&title=' + document.getElementById("profileurl").value, true);
                 }
-            } else {
-                //todo: possibly do a prefix & course no combination.
-                document.getElementById("courseResultsMessage").innerText = "No results found";
-                $('#animated-gif').hide(); //get rid of the loading gif.
-                return;
+            } else { //user probably entered in a prefix course no combination.
+                if (document.getElementById("profileurl").value.length >= 5 && document.getElementById("profileurl").value.length <= 8) {
+                    xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value.substring(0, 3) + '&course_number=' + document.getElementById("profileurl").value.substring(4), true);
+                    filterCourseNoResults = true;
+                } else {
+                    document.getElementById("courseResultsMessage").innerText = "No results found";
+                    $('#animated-gif').hide(); //get rid of the loading gif.
+                    return;
+                }
             }
         }
         xmlhttp.send();
@@ -67,6 +79,22 @@ function getCourse() {
                 let i = 0;
                 while (filtered_results.records[i] != null) {
                     if (!(filtered_results.records[i].crn.toString()).startsWith(document.getElementById("profileurl").value)) {
+                        filtered_results.records.splice(i, 1); //remove the result that doesn't fit the query.
+                    } else {
+                        i++;
+                    }
+                }
+                if (filtered_results.records.length == 0) { //the query didn't match any results once we filtered the original results.
+                    document.getElementById("courseResultsMessage").innerText = "No results found";
+                    $('#animated-gif').hide(); //get rid of the loading gif.
+                    return;
+                }
+                myObj = filtered_results; //display these results instead of using the original results given from the api.
+            } else if (filterCourseNoResults) {
+                var filtered_results = JSON.parse(this.response);
+                let i = 0;
+                while (filtered_results.records[i] != null) {
+                    if (!(filtered_results.records[i].course_number.toString()).startsWith(document.getElementById("profileurl").value.replace(/[a-z A-z]/g, ''))) {
                         filtered_results.records.splice(i, 1); //remove the result that doesn't fit the query.
                     } else {
                         i++;
@@ -476,7 +504,7 @@ function sendRegistrationForm(studentUsername) {
             "9_Audit": document.getElementById("audit" + crns[i]).checked == true,
         });
     }
-    
+
     saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
     closeForm();
     displayConfirmationMessage("formsList","Your form has been sent!");
