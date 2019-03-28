@@ -1,11 +1,96 @@
 var xmlhttp = new XMLHttpRequest();
+var xmlhttp4 = new XMLHttpRequest();
+var xmlhttp2 = new XMLHttpRequest();
+var xmlhttp3 = new XMLHttpRequest();
+
+
+let values = [xmlhttp4, xmlhttp2, xmlhttp3];
 let copy; //value set at 85. //todo: delete
-
+let passed = false;
 function getWaiverResultsQuery() {
+    $('#animated-gif2').show();
 
-    return copy;
+    let terms = ["spring", "summer", "fall"];
+    let filterCourseNoResults = false;
+
+    let myObj = [];
+    let p = 0;
+    for (p = 0; p < 3; p++) {
+        if (/^[a-zA-Z]+$/.test(document.getElementById("profileurl2").value)) {  //user only entered alphabet
+            if (document.getElementById("profileurl2").value.length === 3) { //user probably entered in a Prefix
+                values[p].open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&subject=' + document.getElementById("profileurl2").value, true);
+            } else { //check titles.
+                values[p].open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&title=' + document.getElementById("profileurl2").value, true);
+            }
+        } else { //user probably entered in a prefix course no combination.
+            if (document.getElementById("profileurl2").value.length >= 5 && document.getElementById("profileurl2").value.length <= 8) {
+                values[p].open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&subject=' + document.getElementById("profileurl2").value.substring(0, 3) + '&course_number=' + document.getElementById("profileurl2").value.substring(4), true);
+                filterCourseNoResults = true;
+            } else {
+                document.getElementById("searchWaiverTableResults").innerText = "No results found";
+                $('#animated-gif2').hide(); //get rid of the loading gif.
+                return;
+            }
+        }
+
+        values[p].send();
+
+        //every time a letter is typed, empty the innertext to start over the query
+        // document.getElementById("searchRegistrationResults").innerText = "";
+        document.getElementById("searchWaiverTableResults").innerText = "";
+
+        return values[p].onload = async function () {
+            if (this.responseText.includes("\"status\":\"fail\"")) {
+                document.getElementById("searchWaiverTableResults").innerText = "No results found";
+                $('#animated-gif2').hide(); //get rid of the loading gif.
+            } else if (this.readyState === 4 && this.status === 200) {
+                if (filterCourseNoResults) {
+                    var filtered_results = JSON.parse(this.response);
+                    let k = 0;
+                    while (filtered_results.records[k] != null) {
+                        if (!(filtered_results.records[k].course_number.toString()).startsWith(document.getElementById("profileurl2").value.replace(/[a-z A-z]/g, ''))) {
+                            filtered_results.records.splice(k, 1); //remove the result that doesn't fit the query.
+                        } else {
+                            k++;
+                        }
+                    }
+                    if (filtered_results.records.length === 0) { //the query didn't match any results once we filtered the original results.
+                        document.getElementById("searchWaiverTableResults").innerText = "No results found";
+                        $('#animated-gif2').hide(); //get rid of the loading gif.
+                        return;
+                    }
+                    // myObj = filtered_results; //display these results instead of using the original results given from the api.
+                    //  finalMyObj[0].push( filtered_results.records);
+                    let m = 0;
+                    while (filtered_results.records[m] != null) {
+                        //finalMyObj[records].push(filtered_results.records[m]);
+                        myObj.push(filtered_results.records[m]);
+
+                        m++;
+                    }
+                } else {
+                    let m = 0;
+                    while (JSON.parse(this.response).records[m] != null) {
+                        // finalMyObj["records"].push( JSON.parse(this.response).records[m]);
+                        myObj.push(JSON.parse(this.response).records[m]);
+                        m++;
+                    }
+                    // finalMyObj[0].push( JSON.parse(this.response).records);
+                }
+            }
+
+            let finalMyObj = {};
+            finalMyObj['records'] = await myObj;
+            fillResults(finalMyObj, "searchWaiverTableResults");
+
+            $('#animated-gif2').hide(); //get rid of the loading gif.
+        };
+    }
 }
 
+/*
+Course is the Course Object that stores a course's information. Used to help fill results for registering for courses.
+ */
 class Course {
     constructor(crn, prefix, course_no, sec, title, crs, days, beginTime, endTime, instructor) {
         this.crn = crn;
@@ -110,16 +195,14 @@ function getCourse() {
                 myObj = JSON.parse(this.response); //use original results from api, because there's no need to filter the results.
             }
 
-            copy = myObj;
-
-            fillResults(myObj, "searchRegistrationResults");
+            fillResults(myObj, "searchRegistrationResults", "courseResultsMessage");
 
             $('#animated-gif').hide(); //get rid of the loading gif.
         }
     };
 }
 
-function fillResults(myObj, placeholder){
+function fillResults(myObj, placeholder1, placeholder2){
     i = 0;//next course incrementer, and used to id the courses
     let accordionId = 0;
 
@@ -130,7 +213,7 @@ function fillResults(myObj, placeholder){
                 myObj.records[i].title,  myObj.records[i].credit_hours, myObj.records[i].days, myObj.records[i].begin_time, myObj.records[i].end_time, myObj.records[i].instructor);
 
             if (currentTitle != courseResult.title) { //new title, create a new accordion.
-                generateNewCourseRowAccordion(placeholder,i, courseResult);
+                generateNewCourseRowAccordion(placeholder1,i, courseResult);
                 accordionId = i; //there was a new accoridon row created at ith course, the current course needs to be added into the accordion, it will use the same accordion.
             }
 
@@ -140,14 +223,16 @@ function fillResults(myObj, placeholder){
         }
 
         //after filtering results, there may not be any matches.
-        if (document.getElementById("searchRegistrationResults").innerText == "") {
-            document.getElementById("courseResultsMessage").innerText = "No results found";
+        if (document.getElementById(placeholder1).innerText == "") {
+            document.getElementById(placeholder2).innerText = "No results found";
             $('#animated-gif').hide(); //get rid of the loading gif.
         } else {
-            $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
-                "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
-                "                                    </div>\n" +
-                "                                    <br>");
+            if (placeholder1 === 'searchRegistrationResults') {
+                $("#courseResultsMessage").append("                     <br><div class=\"w3-container w3-theme-red\">\n" +
+                    "                                        <p>Select a course title below, and select the 'Add Course' button that corresponds to the correct course.</p>\n" +
+                    "                                    </div>\n" +
+                    "                                    <br>");
+            }
         }
     }
 }
@@ -192,9 +277,6 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
 
 let waivers = [];
 
-/*
-Course is the Course Object that stores a course's information.
- */
 function generateNewCourseRowAccordion(div ,rowID, course) {
     div = "#" + div;
     if (div === "#searchRegistrationResults") {
@@ -221,15 +303,19 @@ function generateNewCourseRowAccordion(div ,rowID, course) {
     }
 }
 
-let currentOpen = "";
+/*
+Once an accordion is opened by a user, it will close when the user opens another accordion.
+This will prevent too many accordions being open at once.
+ */
+let currentOpenCourseAccordion = "";
 function myFunc(id) {
     var x = document.getElementById(id);
     if (x.className.indexOf("w3-show") == -1) { //open
-        if (currentOpen !== "") {
-            currentOpen.className = currentOpen.className.replace(" w3-show", ""); //close the previous open
+        if (currentOpenCourseAccordion !== "") {
+            currentOpenCourseAccordion.className = currentOpenCourseAccordion.className.replace(" w3-show", ""); //close the previous open
         }
         x.className += " w3-show"; //open the current one.
-        currentOpen = document.getElementById(id); //change id, so this one can close when a different one is opened.
+        currentOpenCourseAccordion = document.getElementById(id); //change id, so this one can close when a different one is opened.
     } else { //close
         x.className = x.className.replace(" w3-show", "");
     }
@@ -276,37 +362,37 @@ function setUpCoPrerequisiteDraft(content) {
 
                     document.getElementById("profileurl").disabled = true;
                     document.getElementById("totalCredits").style.display = "none";
-                    document.getElementById("remove" + array[i]['1_CRN']).style.display = "none"; //don't allow removing the course.
+
                     finishUpCoPreqForm();
 
-
-                    // addCoPrerequiste("", array[i]['3_Course No.'], array[i]['5_Course Title'], array[i]['2_Prefix']);
                     /*
                    todo: implement ceu and ceu db spot
                     */
                 }
             }
-        } else if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
+        }
+        if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
             let array = content[formSection];
             for (var i = 0; i < array.length; i++)
             {
                 addCoPrerequiste("", array[i]['2_Course No.'], array[i]['3_Course Title'], array[i]['1_Prefix']);
             }
-        } else if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
+        }
+        if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
             let array = content[formSection];
             for (var i = 0; i < array.length; i++)
             {
                 addCoPrerequiste("", array[i]['2_Course No.'], array[i]['3_Course Title'], array[i]['1_Prefix']);
             }
-        } else if (formSection == "3_Justifcation for the Waiver") {
-            let justification = content[formSection];
+        }
+        if (formSection == "3_Justifcation for the Waiver") {
+            justificationArray = content[formSection];
 
-            if (justification["1_Justification"] != "") {
-                document.getElementById("justificationTextField").value = justification["1_Justification"];
+            if (justificationArray["1_Justification"] != "") {
+                document.getElementById("justificationTextField").value = justificationArray["1_Justification"];
             }
         }
     }
-
 
 }
 
@@ -347,7 +433,7 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
         "<td id='registeredCrs"+ course + "'>" + crs +"</td>\n"+
         "<td><input class=\"w3-check\" onclick='auditCourse(" + course + ")' id=\"audit" + course + "\"type=\"checkbox\"></td>\n"+
         "<td><input class=\"w3-check\" onclick='adjustCreditsForCEU(" + course + ")' id=\"ceu" + course + "\"type=\"checkbox\"></td>\n"+
-        "<td id='remove"+ course +"'" +" onclick='remove(" + course +")'>X</td>\n"+
+        `<td><span onclick="remove(${course})" class="w3-button w3-round-xlarge" style="padding: 3px 8px">&times;</span></td>\n`+
         "</tr>"
     );
 
@@ -366,6 +452,7 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
     crns.push(course);
 
     coursesCount++;
+
 }
 
 function register(isAudit, course, title, prefix, course_no) {
@@ -391,7 +478,8 @@ function register(isAudit, course, title, prefix, course_no) {
         if (document.getElementById("co-prerequisite-form")){
             document.getElementById("profileurl").disabled = true;
             document.getElementById("totalCredits").style.display = "none";
-            document.getElementById("remove" + course).style.display = "none"; //don't allow removing the course.
+            //document.getElementById("remove" + course).style.display = "none"; //don't allow removing the course.
+
             finishUpCoPreqForm();
         }
     } else { //user selected to remove that particular course.
@@ -428,6 +516,20 @@ function remove (course) {
 
         //no classes are added, allow the user to change the term if needed.
         document.getElementById("termSelecter").disabled = false;
+
+
+        //-------co/prerequiste form.
+        //todo: create a list of used divs to know which ones to delete, this would be independent of form.
+        document.getElementById("profileurl").disabled = false;
+        if (document.getElementById("registrationResultsMessage")) {
+            document.getElementById("waiverSearchInstructions").innerHTML = "";
+        }
+        if (document.getElementById("waiverTableReview")) {
+            document.getElementById("waiverTableReview").innerHTML = "";
+        }
+        if (document.getElementById("waiverJustificationInstructions")){
+            document.getElementById("waiverJustificationInstructions").innerHTML = "";
+        }
     }
 
     if (creditsCount != 0) {
@@ -511,17 +613,11 @@ function sendRegistrationForm(studentUsername) {
 }
 
 /*
-The form will be saved if the user presses save or if the form is submitted. Use ifSubmit to know,
-if we need to send out form, send notifications update dashboards....
-But no matter if you save or submit it, the table needs to be deleted.
+If the user selects save or submit, we need to save the current state of the form in the respective
+database spot (drafts or in-progress forms), unless it is blank show a empty form message.
  */
 function saveRegistrationForm (ifSubmit, page) {
     let term = document.getElementById("termSelecter").value;
-
-    if (crns.length == 0) { //no forms will be submitted.
-        document.getElementById("emptyFormMessage").style.display = "block";
-        return;
-    }
 
     let courses_list = [];
     for (i = 0; i < crns.length; i++) {
@@ -544,6 +640,11 @@ function saveRegistrationForm (ifSubmit, page) {
             let advisor = userDocData.advisor.advisorUsername;
 
             if (ifSubmit) {
+                if (courses_list.length === 0) { //no form will be submitted.
+                    document.getElementById("emptyFormMessage").style.display = "block";
+                    return;
+                }
+
                 let currentTime = moment().format('MMDDYYYYHHmmss');
                 formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
                     approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
@@ -566,40 +667,20 @@ function saveRegistrationForm (ifSubmit, page) {
 }
 
 /*
-Close the form, don't save any of the information that may have been added into the form, but remove
-the used ids for reuse.
+We will erase the contents of the div that holds the form (close the form), and reset any arrays and counters used.
  */
 function closeForm() {
-    // /*
-    // fac/staff
-    //  */
-    // document.getElementById("startAFormMessage").innerText = "";
-    //
-    // document.getElementById('registration-form').style.display='none';
-    //
-    // //reset the term selecter in the form to the default value option.
-    // document.getElementById('termSelecter').selectedIndex = 0;
-    //
-    // //re enable to term selecter
-    // document.getElementById("termSelecter").disabled = false;
-    //
-    // //empty the text field of any input, reset it so it shows the placeholder text.
-    // document.getElementById('profileurl').value = '';
-
     crns.splice(0,crns.length);
     waivers.splice(0,waivers.length);
     coursesCount = 0;
     creditsCount = 0;
+    justification = "";
 
-
-    // //get rid of messages, results and credit total, it will be regenerated later when user starts another form.
-    // $( "#courseResultsMessage" ).html('');
-    // $( "#url").html('');
-    // $( "#registrationTableResults").html('');
-    // $( "#totalCredits").html('');
     if (document.getElementById("currentFormOpen")) {
         document.getElementById("currentFormOpen").innerHTML = "";
     } else { //draft
         document.getElementById("editDraft").innerHTML = "";
     }
 }
+
+let justification = ""; //don't want to delete the student's justification if they added the wrong course.
