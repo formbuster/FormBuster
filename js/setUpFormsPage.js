@@ -28,9 +28,9 @@ function loadStudentSearchView(form) {
             //name was selected, so when the user selects the send to student parameter, we use their username as the parameter.
             document.getElementById("send-option-2").addEventListener("click", function () {
                 if (form == "registration-form") {
-                    sendRegistrationForm(username); //pass the student username to the send to s
+                    sendRegistrationForm(username); //pass the student username to the send to student
                 } else if (form == "co-prerequisite-form") {
-                    saveCoPrerequisiteForm()
+                    saveCoPrerequisiteForm();
                 }
             });
 
