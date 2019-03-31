@@ -1,0 +1,295 @@
+<div id="co-prerequisite-form" class="w3-modal" style="display: block">
+    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">
+        <div class="w3-container">
+            <span id = "close-registration-form" onclick="closeForm()" class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px;">×</span>
+            <div class="w3-text-theme-red w3-container" style="display: block">
+                <p></p>
+                <h3 class="w3-left">Co/Prerequisite Waiver Form</h3>
+                <h3 class="w3-right w3-padding-right">Due Date: 12/1/18</h3>
+            </div>
+            <div id="first-page">
+                <div id="startAFormMessage" class="w3-container"></div>
+                <div id="student-search" class="w3-container"></div>
+                <div id = "form-body" class="w3-container">
+                    <div>
+                        <div class="w3-container w3-theme-red">
+                            <p>Select a semester term, then search for courses by CRN, Title or Prefix. Only <b>one course</b>
+                                may be added to this section.</p>
+                        </div>
+                        <br>
+                        <div id ="first-part-of-form">
+                            <select id="termSelecter" autofocus="" class="w3-select w3-quarter" onchange="getCourse()">
+                                <option value="" disabled selected>Select a term:</option>
+                                <option value="spring">Spring</option>
+                                <option value="summer">Summer</option>
+                                <option value="fall">Fall</option>
+                            </select>
+
+                            <input id="profileurl" class="w3-input w3-threequarter" type="text"
+                                   placeholder="Search for courses using CRN, Title or Prefix">
+                            <br><br>
+                            <img src="../img/loadinfo.net.gif" id="animated-gif" style="display:none;"
+                                 justify-content="center"/>
+                        </div>
+                        <div id="courseResultsMessage"></div>
+                        <div id="searchRegistrationResults"></div>
+                        <div id="registrationTableResults"></div>
+                        <div id="waiverSearchInstructions"></div>
+                        <img src="../img/loadinfo.net.gif" id="animated-gif2" style="display:none;"
+                             justify-content="center"/>
+                        <div id="searchWaiverTableResults"></div>
+                        <div id="waiverTableReview"></div>
+                        <div id="waiverJustificationInstructions"></div>
+                        <div id="waiverJustificationTextField"></div>
+                        <p id="totalCredits"></p>
+                    </div>
+                    <br>
+                    <div>
+
+                    </div>
+                    <br>
+                    <div id=emptyFormMessage class="w3-panel w3-red" style="display: none;">
+                        <p>The form is incomplete! Please finish the form, or save the form for later.</p>
+                    </div>
+                </div>
+                <div id="form-options-1" class="w3-container">
+                    <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">
+                        Discard
+                    </button>
+                    <button id="enter-pin-2" class="w3-button w3-grey w3-round-xxlarge" onclick="">Enter Pin</button>
+                    <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge"
+                            onclick="saveCoPrerequisiteForm(false, 'formsPage')">Save
+                    </button>
+                    <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge"
+                            onclick="saveCoPrerequisiteForm(true, 'formsPage')">Submit
+                    </button>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function saveCoPreqFormAsDraft(studentUsername, courses_list, wantToWaive, value) {
+        let currentTime = moment().format('MMDDYYYYHHmmss');
+        let finalJustification = "";
+        if (document.getElementById("justificationTextField")) {
+            finalJustification = document.getElementById("justificationTextField").value;
+        }
+
+        formDB.collection("users").doc(studentUsername).collection("drafts").doc("Coprerequisite_" + currentTime).set({
+            content: {
+                "1_Course Requested for Registration": courses_list,
+                "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+            }
+        });
+    }
+
+    /*
+    currently only used by Stu coord/faculty only
+     */
+    function sendCoPrerequisiteForm(studentUsername) {
+        let finalJustification = "";
+        if (document.getElementById("justificationTextField")) {
+            finalJustification = document.getElementById("justificationTextField").value;
+        };
+
+        let courses_list = [];
+        if (document.getElementById("registeredCrn" + crns[0])) {
+            courses_list.push({
+                "1_CRN": document.getElementById("registeredCrn" + crns[0]).innerText.toString(),
+                "2_Prefix": document.getElementById("registeredPrefix" + crns[0]).innerText.toString(),
+                "3_Course No.": document.getElementById("registeredCourseNo" + crns[0]).innerText,
+                "4_Section": document.getElementById("registeredSec" + crns[0]).innerText,
+                "5_Course Title": document.getElementById("registeredTitle" + crns[0]).innerText,
+                "6_Days": document.getElementById("registeredDays" + crns[0]).innerText,
+                "7_Time": document.getElementById("registeredTime" + crns[0]).innerText,
+                "8_Credits": document.getElementById("registeredCrs" + crns[0]).innerText,
+                "9_Audit": document.getElementById("audit" + crns[0]).checked == true,
+            });
+        }
+
+        let wantToWaive = [];
+        for (i = 0; i < waivers.length; i++) {
+            wantToWaive.push({
+                "1_Prefix": document.getElementById("waivedPrefix" + i).innerText.toString(),
+                "2_Course No.": document.getElementById("waivedCourseNo" + i).innerText,
+                "3_Course Title": document.getElementById("waivedTitle" + i).innerText,
+            });
+        }
+
+        saveCoPreqFormAsDraft(studentUsername, courses_list, wantToWaive ,document.getElementById("termSelecter").value);
+        closeForm();
+        displayConfirmationMessage("formsList","Your form has been sent!");
+    }
+
+
+    //todo: fix page, used for confirmation on drafts page/forms page.
+    function saveCoPrerequisiteForm(ifSubmit, page, username) {
+        let finalJustification = "";
+        if (document.getElementById("justificationTextField")) {
+            finalJustification = document.getElementById("justificationTextField").value;
+        };
+
+        let courses_list = [];
+        if (document.getElementById("registeredCrn" + crns[0])) {
+            courses_list.push({
+                "1_CRN": document.getElementById("registeredCrn" + crns[0]).innerText.toString(),
+                "2_Prefix": document.getElementById("registeredPrefix" + crns[0]).innerText.toString(),
+                "3_Course No.": document.getElementById("registeredCourseNo" + crns[0]).innerText,
+                "4_Section": document.getElementById("registeredSec" + crns[0]).innerText,
+                "5_Course Title": document.getElementById("registeredTitle" + crns[0]).innerText,
+                "6_Days": document.getElementById("registeredDays" + crns[0]).innerText,
+                "7_Time": document.getElementById("registeredTime" + crns[0]).innerText,
+                "8_Credits": document.getElementById("registeredCrs" + crns[0]).innerText,
+                "9_Audit": document.getElementById("audit" + crns[0]).checked == true,
+            });
+        }
+
+        let wantToWaive = [];
+        for (i = 0; i < waivers.length; i++) {
+            wantToWaive.push({
+                "1_Prefix": document.getElementById("waivedPrefix" + i).innerText.toString(),
+                "2_Course No.": document.getElementById("waivedCourseNo" + i).innerText,
+                "3_Course Title": document.getElementById("waivedTitle" + i).innerText,
+            });
+        }
+
+        //only allowed to submit if all fields are filled out; students are allowed to save empty form.
+        if (ifSubmit && (finalJustification === "" || courses_list.length == 0 || wantToWaive.length == 0)) {
+            document.getElementById("emptyFormMessage").style.display = "block";
+            return;
+        }
+
+        let currentTime = moment().format('MMDDYYYYHHmmss');
+        getUnitHead(username).then(function(unitHead) {
+            getAdvisor().then(function(advisor) {
+                getRandomStaff().then(function(staff) {
+                    if (ifSubmit) {
+                        if (document.getElementById("justificationTextField") && document.getElementById("justificationTextField").value == "") {
+                            document.getElementById("emptyFormMessage").style.display = "block";
+                        } else {
+                            formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Coprerequisite_" + currentTime).set({
+                                approvals: [{
+                                    date: null,
+                                    declinedReason: null,
+                                    status: null,
+                                    tracksID: advisor /*advisor*/
+                                },
+                                    {
+                                        date: null,
+                                        declinedReason: null,
+                                        status: null,
+                                        tracksID: unitHead /*academic unit head*/
+                                    },
+                                    {date: null, declinedReason: null, status: null, tracksID: staff} /*staff*/],
+                                content: {
+                                    "1_Course Requested for Registration": courses_list,
+                                    "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                                    "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+                                }
+                            });
+
+                            formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+                                formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Coprerequisite_" + currentTime)
+                            });
+                            displayConfirmationMessage(page, "Your form has been submitted! Check your dashboard for form progress.");
+                        }
+                    } else { //just save.
+                        formDB.collection("users").doc(getUserName()).collection("drafts").doc("Coprerequisite_" + currentTime).set({
+                            content: {
+                                "1_Course Requested for Registration": courses_list,
+                                "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                                "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+                            }
+                        });
+                        displayConfirmationMessage(page, "Your form has been saved! Check your drafts section to complete this form later.");
+                    }
+                    closeForm();
+                });
+            });
+        });
+    }
+
+    function finishUpCoPreqForm() {
+        $("#waiverSearchInstructions").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
+            "                                       <p>Search for and select <b>up to 2</b> missing co/prerequisite for the class listed above</p>\n" +
+            "                                    </div>\n" +
+            "                                    <br>"+
+            "<input id=\"profileurl2\" class=\"w3-input w3-threequarter\" type=\"text\"\n" +
+            "                                       placeholder='Search for co/prerequisite courses by Title or Prefix' onkeyup=\"getWaiverResultsQuery(this);\"><br><br>"
+        );
+    }
+
+    $('#profileurl').keyup(function(e) {
+        getCourse();
+    });
+    $(function() {
+        $('#search-id').on("submit", function() {
+            $('#animated-gif').toggle();
+        });
+    });
+
+    function addCoPrerequiste(name, course_no, title, prefix) {
+        //empty the text field of any input, reset it so it shows the placeholder text.
+        document.getElementById('profileurl2').value = '';
+        document.getElementById("searchWaiverTableResults").innerHTML ="";
+
+        if(/*!document.getElementById("waiverTableReviewMessage") || !document.getElementById("waiverTableReview")*/ waivers.length == 0) {
+            $("#waiverTableReview").append("     <br><div id=\"waiverTableReviewMessage\" class=\"w3-container w3-theme-red\">\n" +
+                "                                       <p>Please review the below table of Co/Prerequisite(s) to be waived for the above course. </p>\n" +
+                "                                    </div>\n" +
+                "                                    <br>   " +
+                "<table id='waiverResults' class=\"w3-table\">\n" +
+                "                                            <tr>\n" +
+                "                                                <th>Prefix</th>\n" +
+                "                                                <th>Course No</th>\n" +
+                "                                                <th>Course Title</th>\n" +
+                "                                                <th></th>" +
+                "                                            </tr>\n" +
+                "                                        </table>\n");
+
+            $("#waiverJustificationInstructions").append(" <br><div id=\"waiverReasonMessage\" class=\"w3-container w3-theme-red\">\n" +
+                "                                       <p>Articulate your justification for the waiver below.</p>\n" +
+                "                                    </div>" +
+                "<br><textarea id='justificationTextField' rows='5' cols='70'></textarea>");
+
+            document.getElementById("justificationTextField").value = justification;
+        } else {
+            document.getElementById('profileurl2').disabled = true;
+        }
+
+        $("#waiverResults").append("" +
+            "<tr id='waivedCourse"+ prefix + course_no + "'>"+
+            "<td id='waivedPrefix"+ waivers.length + "'>" + prefix.toUpperCase() +"</td>\n" +
+            "<td id='waivedCourseNo"+ waivers.length + "'>" + course_no +"</td>\n"+
+            "<td id='waivedTitle"+ waivers.length + "'>" + title +"</td>\n" +
+            `<td><span onclick="removeDesiredWaiver('${prefix}${course_no}')" class="w3-button w3-round-xlarge" style="padding: 3px 8px">&times;</span></td>\n`+
+            "</tr>"
+        );
+
+        waivers.push(prefix + "" + course_no);
+
+    }
+
+    function removeDesiredWaiver(prefixCourse_no)
+    {
+        if (document.getElementById('profileurl2').disabled == true) {
+            document.getElementById('profileurl2').disabled = false;
+        }
+
+        document.getElementById('waivedCourse'+prefixCourse_no).remove();
+        waivers.splice(waivers.indexOf(prefixCourse_no),1);
+
+        if (waivers.length == 0) {
+            document.getElementById("waiverTableReview").innerHTML = "";
+            if (document.getElementById("waiverJustificationInstructions")) {
+                justification = document.getElementById("justificationTextField").value;
+                document.getElementById("waiverJustificationInstructions").innerHTML = "";
+            }
+        }
+    }
+
+</script>
