@@ -640,7 +640,7 @@ function saveRegistrationForm (ifSubmit, page) {
 
                 let currentTime = moment().format('MMDDYYYYHHmmss');
                 formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
-                    approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: "bpetty"}],
+                    approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: getRandomStaff()}],
                     content: {"1_Courses": courses_list} //todo: save the term to the db
                 });
 
