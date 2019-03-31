@@ -142,7 +142,7 @@ function getCourse() {
                 }
             }
         }
-        xml.send();
+        xmlhttp.send();
     }
 
     //every time a letter is typed, empty the innertext to start over the query
