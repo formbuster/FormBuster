@@ -30,7 +30,7 @@ function loadStudentSearchView(form) {
                 if (form == "registration-form") {
                     sendRegistrationForm(username); //pass the student username to the send to student
                 } else if (form == "co-prerequisite-form") {
-                    saveCoPrerequisiteForm();
+                    sendCoPrerequisiteForm(username);
                 }
             });
 

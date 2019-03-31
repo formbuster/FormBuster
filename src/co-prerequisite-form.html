@@ -71,6 +71,61 @@
 </div>
 
 <script>
+    function saveCoPreqFormAsDraft(studentUsername, courses_list, wantToWaive, value) {
+        let currentTime = moment().format('MMDDYYYYHHmmss');
+        let finalJustification = "";
+        if (document.getElementById("justificationTextField")) {
+            finalJustification = document.getElementById("justificationTextField").value;
+        }
+
+        formDB.collection("users").doc(studentUsername).collection("drafts").doc("Coprerequisite_" + currentTime).set({
+            content: {
+                "1_Course Requested for Registration": courses_list,
+                "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
+                "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+            }
+        });
+    }
+
+    /*
+    currently only used by Stu coord/faculty only
+     */
+    function sendCoPrerequisiteForm(studentUsername) {
+        let finalJustification = "";
+        if (document.getElementById("justificationTextField")) {
+            finalJustification = document.getElementById("justificationTextField").value;
+        };
+
+        let courses_list = [];
+        if (document.getElementById("registeredCrn" + crns[0])) {
+            courses_list.push({
+                "1_CRN": document.getElementById("registeredCrn" + crns[0]).innerText.toString(),
+                "2_Prefix": document.getElementById("registeredPrefix" + crns[0]).innerText.toString(),
+                "3_Course No.": document.getElementById("registeredCourseNo" + crns[0]).innerText,
+                "4_Section": document.getElementById("registeredSec" + crns[0]).innerText,
+                "5_Course Title": document.getElementById("registeredTitle" + crns[0]).innerText,
+                "6_Days": document.getElementById("registeredDays" + crns[0]).innerText,
+                "7_Time": document.getElementById("registeredTime" + crns[0]).innerText,
+                "8_Credits": document.getElementById("registeredCrs" + crns[0]).innerText,
+                "9_Audit": document.getElementById("audit" + crns[0]).checked == true,
+            });
+        }
+
+        let wantToWaive = [];
+        for (i = 0; i < waivers.length; i++) {
+            wantToWaive.push({
+                "1_Prefix": document.getElementById("waivedPrefix" + i).innerText.toString(),
+                "2_Course No.": document.getElementById("waivedCourseNo" + i).innerText,
+                "3_Course Title": document.getElementById("waivedTitle" + i).innerText,
+            });
+        }
+
+        saveCoPreqFormAsDraft(studentUsername, courses_list, wantToWaive ,document.getElementById("termSelecter").value);
+        closeForm();
+        displayConfirmationMessage("formsList","Your form has been sent!");
+    }
+
+
     //todo: fix page, used for confirmation on drafts page/forms page.
     function saveCoPrerequisiteForm(ifSubmit, page, username) {
         let finalJustification = "";
@@ -235,7 +290,6 @@
                 document.getElementById("waiverJustificationInstructions").innerHTML = "";
             }
         }
-
     }
 
 </script>

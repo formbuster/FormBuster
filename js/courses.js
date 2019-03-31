@@ -2,11 +2,8 @@ var xmlhttp = new XMLHttpRequest();
 var xmlhttp4 = new XMLHttpRequest();
 var xmlhttp2 = new XMLHttpRequest();
 var xmlhttp3 = new XMLHttpRequest();
-
-
 let values = [xmlhttp4, xmlhttp2, xmlhttp3];
-let copy; //value set at 85. //todo: delete
-let passed = false;
+
 function getWaiverResultsQuery() {
     $('#animated-gif2').show();
 
@@ -378,13 +375,7 @@ function setUpCoPrerequisiteDraft(content) {
                 addCoPrerequiste("", array[i]['2_Course No.'], array[i]['3_Course Title'], array[i]['1_Prefix']);
             }
         }
-        if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
-            let array = content[formSection];
-            for (var i = 0; i < array.length; i++)
-            {
-                addCoPrerequiste("", array[i]['2_Course No.'], array[i]['3_Course Title'], array[i]['1_Prefix']);
-            }
-        }
+
         if (formSection == "3_Justifcation for the Waiver") {
             justificationArray = content[formSection];
 
@@ -587,6 +578,7 @@ function saveFormAsDraft(studentUsername, courses_list, term){
         }
     });
 }
+
 
 /*
 currently only used by Stu coord/faculty only
