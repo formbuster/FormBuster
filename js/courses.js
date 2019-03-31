@@ -15,13 +15,13 @@ function getWaiverResultsQuery() {
     for (p = 0; p < 3; p++) {
         if (/^[a-zA-Z]+$/.test(document.getElementById("profileurl2").value)) {  //user only entered alphabet
             if (document.getElementById("profileurl2").value.length === 3) { //user probably entered in a Prefix
-                values[p].open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&subject=' + document.getElementById("profileurl2").value, true);
+                values[p].open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&subject=' + document.getElementById("profileurl2").value, true);
             } else { //check titles.
-                values[p].open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&title=' + document.getElementById("profileurl2").value, true);
+                values[p].open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&title=' + document.getElementById("profileurl2").value, true);
             }
         } else { //user probably entered in a prefix course no combination.
             if (document.getElementById("profileurl2").value.length >= 5 && document.getElementById("profileurl2").value.length <= 8) {
-                values[p].open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&subject=' + document.getElementById("profileurl2").value.substring(0, 3) + '&course_number=' + document.getElementById("profileurl2").value.substring(4), true);
+                values[p].open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + terms[p] + '&subject=' + document.getElementById("profileurl2").value.substring(0, 3) + '&course_number=' + document.getElementById("profileurl2").value.substring(4), true);
                 filterCourseNoResults = true;
             } else {
                 document.getElementById("searchWaiverTableResults").innerText = "No results found";
@@ -123,17 +123,17 @@ function getCourse() {
 
         if (/^\d+$/.test(document.getElementById("profileurl").value)) { //user only entered numbers, assume it is a CRN
             filterCRNResults = true;
-            xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
+            xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term='+ document.getElementById("termSelecter").value + '&crn=' + document.getElementById("profileurl").value, true);
         } else {
             if (/^[a-zA-Z]+$/.test(document.getElementById("profileurl").value)) {  //user only entered alphabet
                 if (document.getElementById("profileurl").value.length == 3) { //user probably entered in a Prefix
-                    xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value, true);
+                    xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value, true);
                 } else { //check titles.
-                    xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&title=' + document.getElementById("profileurl").value, true);
+                    xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&title=' + document.getElementById("profileurl").value, true);
                 }
             } else { //user probably entered in a prefix course no combination.
                 if (document.getElementById("profileurl").value.length >= 5 && document.getElementById("profileurl").value.length <= 8) {
-                    xmlhttp.open('GET', 'http://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value.substring(0, 3) + '&course_number=' + document.getElementById("profileurl").value.substring(4), true);
+                    xmlhttp.open('GET', 'https://api.fit.edu/courses/v1/courses?term=' + document.getElementById("termSelecter").value + '&subject=' + document.getElementById("profileurl").value.substring(0, 3) + '&course_number=' + document.getElementById("profileurl").value.substring(4), true);
                     filterCourseNoResults = true;
                 } else {
                     document.getElementById("courseResultsMessage").innerText = "No results found";
@@ -142,7 +142,8 @@ function getCourse() {
                 }
             }
         }
-        xmlhttp.send();
+        xml
+          .send();
     }
 
     //every time a letter is typed, empty the innertext to start over the query

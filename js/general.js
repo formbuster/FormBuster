@@ -149,13 +149,14 @@ function capitalizeStrings (str) {
     return newStr;
 }
 
-
-
 // Populates all the forms from "formsFolder" of student "studentID", into "targetDiv".
 // Each of those forms will call "mainButtonFunction" when the user clicks on them.
 // Once the the user clicks on the form, the form contents will be populated in the "pageDiv"
 function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButtonFunction) {
     let forEachIteration = 0;
+
+    // Hide "targetDiv" while we populate it
+    document.getElementById(targetDiv).style.display = "none";
 
     formDB.collection("users").doc(studentID).collection(formsFolder).get().then(function(querySnapshot) {
         if (querySnapshot.size == 0) {
@@ -174,8 +175,9 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             const approvals = formDoc.approvals;
 
             var main_div = document.createElement("div");
-            main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
-            main_div.style.display = "none"; // Make main button hidden while we are populating it
+            main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-round-xlarge w3-margin-bottom`;
+            main_div.style.height = "118px";
+            main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
             //make a new div with class name, and append it to main div
             var first_nested_div = document.createElement("div");
@@ -185,66 +187,13 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
             var h3_form_name = document.createElement('h3');
             h3_form_name.appendChild(document.createTextNode(formName));
-            h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
-            h3_form_name.className = "form_name_tooltip";
+            h3_form_name.style.display = "flex";
             first_nested_div.appendChild(h3_form_name);
 
-            //generate check marks
-            for (let i = 0; i < approvals.length; i++) {
-                pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
-                    if (doc.exists) {
-                        const pawsDoc = doc.data();
-                        const userType = pawsDoc.userType;
+            var tracking_bar = document.createElement('div');
+            generateTrackingBar(main_div, approvals, formName, tracking_bar);
+            first_nested_div.appendChild(tracking_bar);
 
-                        var span_check_mark = document.createElement('span');
-
-                        var userInfo = userType;
-                        if (userInfo != "Staff") { // then it means it's a Faculty member
-                            userInfo = pawsDoc.facultyRole;
-                        }
-
-                        let dateInfo;
-                        if (approvals[i].date != null) {
-                            dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                        } else if (userType === "Faculty") {
-                            dateInfo = "Waiting for approval."
-                        } else if (userType === "Staff") {
-                            dateInfo = "Waiting for processing."
-                        }
-
-                        const tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                            + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                        span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
-
-                        if (approvals.length > 0) {
-                            span_check_mark.classList.add("w3-margin-left");
-                        }
-                        if (approvals[i].status == null) {
-                            // Has not been approved so use the grey checkWindowWidth mark style
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
-                            span_check_mark.appendChild(document.createTextNode("✓"));
-                        } else if (approvals[i].status == true) {
-                            // Green checkWindowWidth mark since it has already been approved
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
-                            span_check_mark.appendChild(document.createTextNode("✓"));
-                        } else if (approvals[i].status == false) {
-                            // Red checkWindowWidth mark since it has been declined
-                            span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
-                            span_check_mark.appendChild(document.createTextNode("x"));
-                        }
-                        if (i > 0) {
-                            span_check_mark.classList.add("w3-margin-left");
-                        }
-                        span_check_mark.style.width = "30px";
-                        first_nested_div.appendChild(span_check_mark);
-                    } else {
-                        // doc.data() will be undefined in this case
-                        console.log("No such document!");
-                    }
-                }).catch(function(error) {
-                    console.log("Error getting document:", error);
-                });
-            }
 
             // Second nested div (right side)
             var second_nested_div = document.createElement("div");
@@ -254,6 +203,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
             h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
             h4_submission_date.className = "form_date_tooltip";
+            h4_submission_date.style.fontSize = "20px";
 
 
             second_nested_div.appendChild(h4_submission_date);
@@ -264,53 +214,229 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
                 h4_due_date.style.textAlign = "left";
                 h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
                 h4_due_date.className = "form_date_tooltip";
+                h4_due_date.style.fontSize = "20px";
 
                 second_nested_div.appendChild(h4_due_date);
                 main_div.appendChild(second_nested_div);
 
+                // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
+                main_div.addEventListener("click", mainButtonFunction);
+                main_div.pageDiv = pageDiv;
+                main_div.studentID = studentID;
+                main_div.formsFolder = formsFolder;
+                main_div.formID = doc.id;
+                document.getElementById(targetDiv).appendChild(main_div);
+
                 if (forEachIteration == querySnapshot.size - 1) {
                     // Initialize tooltips after all the elements have been created
                     $(document).ready(function() {
-                        $('.form_name_tooltip').tooltipster({
-                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                            side: "top",
-                            animation: "grow",
-                            functionPosition: function(instance, helper, position){
-                                position.coord.top += 10;
-                                return position;
-                            }
-                        });
-
-                        $('.bubble_tooltip').tooltipster({
-                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                            side: "bottom",
-                            animation: "grow",
-                        });
-
                         $('.form_date_tooltip').tooltipster({
                             theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
                             position: "left",
                             animation: "grow",
                         });
                     });
-                }
 
-                // Make main button visible again
-                main_div.style.display = "block";
+                    // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv" or "targetDiv"
+                    if (pageDiv === "historyPage" || targetDiv === "completedFormsList") {
+                        // Descending order for "historyPage" and "completedFormsList" (newer forms first)
+                        $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
+
+                    } else if (pageDiv === "dashboardPage" || targetDiv === "inProgressFormsList") {
+                        // Ascending order for "dashboardPage" and "inProgressFormsList" (older forms first)
+                        $(`.divs-to-sort-${targetDiv}`).sort(sortAscending).appendTo(document.getElementById(targetDiv));
+
+                    } else {
+                        alert("EXCEPTION in Sort all the \"divs-to-sort\"");
+                    }
+
+                    // Unhide "targetDiv" after we have populated it
+                    document.getElementById(targetDiv).style.display = "block";
+                }
 
                 forEachIteration++;
             });
-
-            // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
-            main_div.addEventListener("click", mainButtonFunction);
-            main_div.pageDiv = pageDiv;
-            main_div.studentID = studentID;
-            main_div.formsFolder = formsFolder;
-            main_div.formID = doc.id;
-            document.getElementById(targetDiv).appendChild(main_div);
         });
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
+    });
+}
+
+// Generate tracking bar, given a "tracking_bar" div container
+function generateTrackingBar (main_div, approvals, formName, tracking_bar, initializeCheckmarkTooltip) {
+    // Set the style for the tracking bar
+    tracking_bar.style.display = "none"; // It is changed to "flex" when the tracking is done
+    tracking_bar.style.paddingBottom = "20px";
+    tracking_bar.style.cssFloat = "left";
+    tracking_bar.className = "centered_elements";
+    tracking_bar.id = "progressBarContainer";
+
+    // Create initial checkmark
+    var span_check_mark = document.createElement('span');
+    span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-black start_checkmark";
+    const tooltipTitle = '<span>' + 'The ' + '<i>' + formName + ' form</i>' + ' was started' + '<br>' + 'and successfully submitted.</span>';
+    span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+    tracking_bar.appendChild(span_check_mark);
+
+    // Create initial checkmark text
+    var checkmarkText = document.createElement('span');
+    checkmarkText.className = "checkmark_text";
+    checkmarkText.innerHTML = '<span>Started</span>';
+    tracking_bar.appendChild(checkmarkText);
+
+    var declineNum = 0;
+
+    generateTrackingCheckmarks(main_div, approvals, 0, tracking_bar, declineNum);
+}
+
+// This will generate the checkmarks of the "approvals" array in a recursion way, to prevent JavaScript async behavior
+// from messing up the checkmark order
+function generateTrackingCheckmarks (main_div, approvals, i, tracking_bar, declinedNum) {
+    pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
+        if (doc.exists) {
+            const pawsDoc = doc.data();
+            const userType = pawsDoc.userType;
+            const facultyRole = pawsDoc.facultyRole;
+
+            // Create checkmark element
+            var span_check_mark = document.createElement('span');
+
+            // Create progress progressLine element
+            var progressLine = document.createElement('span');
+            progressLine.className = "tracking_line";
+
+            // Create progress progressLine arrow element
+            var lineArrow = document.createElement('span');
+            lineArrow.className = "line_arrow";
+            lineArrow.style.marginRight = "5px";
+
+            // Create text
+            var checkmarkText = document.createElement('span');
+            checkmarkText.className = "checkmark_text";
+            checkmarkText.innerHTML = '<span style="display: inline-block;">' + getAbbreviation (userType, facultyRole) + '</span>';
+
+            let approvalText;
+            if (userType != "Staff") { // then it means it's a Faculty member
+                approvalText = `<u>${userType}</u> (${facultyRole})`;
+            } else {
+                approvalText = `<u>${userType}</u>`;
+            }
+
+            let dateInfo;
+            if (approvals[i].date != null) {
+                dateInfo = getExactDateAndTime(approvals[i].date.toDate());
+            } else if (userType === "Faculty") {
+                dateInfo = "Waiting for approval."
+            } else if (userType === "Staff") {
+                dateInfo = "Waiting for processing."
+            }
+
+            let dateInfoTitle = "Date";
+
+            let declined = false;
+            if (approvals[i].status == null) {
+                // Has not been approved so use the gray checkmark style
+                span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                span_check_mark.style.border = "2px solid #9e9e9e";
+
+                progressLine.style.borderBottomStyle = "dashed";
+                progressLine.style.borderBottomColor = "#9e9e9e";
+                lineArrow.style.borderColor = "#9e9e9e";
+
+                if (declinedNum == 0) {
+                    // Propagate border color to "main_div" when the form is viewed in full
+                    main_div.style.borderLeft = "5px " + "solid #9e9e9e";
+                    main_div.borderLeft = "6px " + "solid #9e9e9e";
+                }
+
+            } else if (approvals[i].status == true) {
+                // Green checkmark since it has already been approved
+                span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                span_check_mark.appendChild(document.createTextNode("✓"));
+                span_check_mark.style.backgroundColor = "#4CAF50";
+                span_check_mark.style.color = "#FFFFFF";
+                span_check_mark.fontSize = "14px";
+
+                progressLine.style.borderBottomStyle = "solid";
+                progressLine.style.borderBottomColor = "#4CAF50";
+                lineArrow.style.borderColor = "#4CAF50";
+
+                if (declinedNum == 0) {
+                    // Propagate border color to "main_div" when the form is viewed in full
+                    main_div.style.borderLeft = "5px " + "solid #4CAF50";
+                    main_div.borderLeft = "6px " + "solid #4CAF50";
+                }
+
+                if (userType === "Faculty") {
+                    dateInfoTitle = 'Date that form was <b>approved</b>';
+                } else {
+                    dateInfoTitle = 'Date that form was <b>processed</b>';
+                }
+
+            } else if (approvals[i].status == false) {
+                // Red checkmark since it has been declined
+                span_check_mark.className = "bubble_tooltip w3-left centered_elements checkmark_skeleton";
+                span_check_mark.appendChild(document.createTextNode("X"));
+                span_check_mark.style.backgroundColor = "#e20000";
+                span_check_mark.style.color = "#FFFFFF";
+                span_check_mark.style.fontSize = "11px";
+
+                progressLine.style.borderBottomStyle = "solid";
+                progressLine.style.borderBottomColor = "#e20000";
+                lineArrow.style.borderColor = "#e20000";
+
+                // Propagate border color to "main_div" when the form is viewed in full
+                main_div.style.borderLeft = "5px " + "solid #e20000";
+                main_div.borderLeft = "6px " + "solid #e20000";
+
+                if (userType === "Faculty") {
+                    dateInfoTitle = 'Date that form was <b>not approved</b>';
+                } else {
+                    dateInfoTitle = 'Date that form was <b>not processed</b>';
+                }
+
+                declined = true;
+            }
+
+            const tooltipTitle = '<span>' + approvalText + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
+                + '</br>' + '</br>' + '<u>' + dateInfoTitle + '</u>' + '</br>' + dateInfo + '</span>';
+            span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
+
+            if (declinedNum == 0) {
+                tracking_bar.appendChild(progressLine);
+                tracking_bar.appendChild(lineArrow);
+                tracking_bar.appendChild(span_check_mark);
+                tracking_bar.appendChild(checkmarkText);
+            }
+
+            if (declined == true) {
+                declinedNum++;
+            }
+
+            if (i == approvals.length - 1) {
+                // Make tracking bar visible again
+                tracking_bar.style.display = "flex";
+
+                // Initialize check mark tooltip
+                $(document).ready(function() {
+                    $('.bubble_tooltip').tooltipster({
+                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                        side: "bottom",
+                        animation: "grow",
+                    });
+                });
+
+            } else if (i < approvals.length) {
+                // Generate following checkmarks accordingly, by recursion
+                generateTrackingCheckmarks(main_div, approvals, i + 1, tracking_bar, declinedNum);
+            }
+
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
     });
 }
 
@@ -320,6 +446,7 @@ function displayFormReadMode (event) {
     const studentID = event.currentTarget.studentID;
     const formsFolder = event.currentTarget.formsFolder;
     const formID = event.currentTarget.formID;
+    const borderLeft = event.currentTarget.borderLeft;
 
     formDB.collection("users").doc(studentID).collection(formsFolder).doc(formID).get().then(function(doc) {
         if (doc.exists) {
@@ -347,19 +474,19 @@ function displayFormReadMode (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
+                            `    <div class="w3-modal-content w3-round-xlarge" style="border-left: ${borderLeft}">\n` +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
                             '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
                             '                <div class="w3-left">\n' +
-                            '                    <h3>' + formName + ' Form</h3>\n' +
-                            '                    <h3>Student: ' + studentName + '</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
@@ -412,7 +539,14 @@ function displayFormReadMode (event) {
                                     const pawsDoc2 = doc.data();
                                     const approvalObj = approvals[i];
                                     const approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
-                                    const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
+
+                                    let approvalEmail;
+                                    if (pawsDoc2.userType != "Staff") { // then it means it's a Faculty member
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u> (${pawsDoc2.facultyRole})</br>${pawsDoc2.email}</span>`;
+                                    } else {
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u></br>${pawsDoc2.email}</span>`;
+                                    }
+
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
                                     const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
@@ -518,6 +652,9 @@ function displayFormReadMode (event) {
 function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder, mainButtonFunction) {
     let forEachIteration = 0;
 
+    // Hide "targetDiv" while we populate it
+    document.getElementById(targetDiv).style.display = "none";
+
     formDB.collection("users").doc(userID).collection(formsFolder).get().then(function(querySnapshot) {
         if (querySnapshot.size == 0) {
             let result_h4 = document.createElement('h4');
@@ -528,154 +665,126 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
 
         querySnapshot.forEach(function(formReference) {
             formReference.data().formRef.get().then(function(doc) {
-                const formDoc = doc.data();
-                const formName = getFormName(doc);
-                const submDate = getSubmDate(doc);
-                const exactSubmDate = getExactSubmDate(doc);
-                const dueDatePromise = getFormDueDate(formName);
-                const approvals = formDoc.approvals;
+                if (doc.exists) {
+                    const formDoc = doc.data();
+                    const formName = getFormName(doc);
+                    const submDate = getSubmDate(doc);
+                    const exactSubmDate = getExactSubmDate(doc);
+                    const dueDatePromise = getFormDueDate(formName);
 
-                var main_div = document.createElement("div");
-                main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
-                main_div.style.display = "none"; // Make main button hidden while we are populating it
+                    var main_div = document.createElement("div");
+                    main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
+                    main_div.className = `divs-to-sort-${targetDiv} w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom`;
+                    main_div.style.height = "118px";
+                    main_div.date = getDateFromTimestamp(doc.id.toString().split('_')[1]);
 
-                //make a new div with class name, and append it to main div
-                var first_nested_div = document.createElement("div");
-                first_nested_div.className = "w3-left";
-                main_div.appendChild(first_nested_div);
+                    //make a new div with class name, and append it to main div
+                    var first_nested_div = document.createElement("div");
+                    first_nested_div.className = "w3-left";
+                    main_div.appendChild(first_nested_div);
 
-                //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
-                var h3_form_name = document.createElement('h3');
-                h3_form_name.appendChild(document.createTextNode(formName));
-                h3_form_name.setAttribute("data-tooltip-content", '<span>' + formName + " Form" + '</span>');
-                h3_form_name.className = "form_name_tooltip";
-                first_nested_div.appendChild(h3_form_name);
+                    //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
+                    var h3_form_name = document.createElement('h3');
+                    h3_form_name.appendChild(document.createTextNode(formName));
+                    first_nested_div.appendChild(h3_form_name);
 
-                //generate check marks
-                for (let i = 0; i < approvals.length; i++) {
-                    pawsDB.collection("users").doc(approvals[i].tracksID).get().then(function(doc) {
+                    // Middle nested element (middle part)
+                    pawsDB.collection("users").doc(userID).get().then(function(doc) {
                         if (doc.exists) {
                             const pawsDoc = doc.data();
                             const userType = pawsDoc.userType;
 
-                            var span_check_mark = document.createElement('span');
+                            if (userType === "Faculty" || userType === "Staff") {
+                                var middle_nested_element = document.createElement("h4");
+                                middle_nested_element.className = "bubble_tooltip";
+                                middle_nested_element.style.position = "relative";
+                                middle_nested_element.style.display = "inline-block";
+                                middle_nested_element.style.color = "#8e8e8e";
 
-                            var userInfo = userType;
-                            if (userInfo != "Staff") { // then it means it's a Faculty member
-                                userInfo = pawsDoc.facultyRole;
-                            }
+                                const formReferencePath = formReference.data().formRef.path;
+                                pawsDB.collection(formReferencePath.split("/")[0]).doc(formReferencePath.split("/")[1]).get().then(function(doc) {
+                                    if (doc.exists) {
+                                        const pawsDoc = doc.data();
+                                        const studentName = pawsDoc.name.first + " " + pawsDoc.name.last;
+                                        const tooltipStudentEmail = '<span>' + pawsDoc.email + '</span>';
 
-                            let dateInfo;
-                            if (approvals[i].date != null) {
-                                dateInfo = getExactDateAndTime(approvals[i].date.toDate());
-                            } else if (userType === "Faculty") {
-                                dateInfo = "Waiting for approval."
-                            } else if (userType === "Staff") {
-                                dateInfo = "Waiting for processing."
-                            }
+                                        middle_nested_element.innerHTML = studentName;
+                                        middle_nested_element.setAttribute("data-tooltip-content", tooltipStudentEmail);
+                                        main_div.appendChild(middle_nested_element);
 
-                            let tooltipTitle;
-                            if (userID === approvals[i].tracksID) {
-                                tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last +
-                                    " " + '<span style="color: #ff0000;">' + "(" +  '<u>' + "YOU" + '</u>' + ")" +  '</span>' +
-                                    '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                            } else {
-                                tooltipTitle = '<span>' + '<u>' + userInfo + '</u>' + '</br>' + pawsDoc.name.first + " " + pawsDoc.name.last
-                                    + '</br>' + '</br>' + '<u>' + "Date" + '</u>' + '</br>' + dateInfo + '</span>';
-                            }
-                            span_check_mark.setAttribute("data-tooltip-content", tooltipTitle);
 
-                            if (approvals.length > 0) {
-                                span_check_mark.classList.add("w3-margin-left");
+                                        // Second nested div (right side)
+                                        var second_nested_div = document.createElement("div");
+                                        second_nested_div.className = "w3-right";
+
+                                        var h4_submission_date = document.createElement('h3');
+                                        h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
+                                        h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
+                                        h4_submission_date.className = "form_date_tooltip";
+                                        h4_submission_date.style.fontSize = "20px";
+
+                                        second_nested_div.appendChild(h4_submission_date);
+                                        var h4_due_date = document.createElement('h3');
+
+                                        dueDatePromise.then(function(result) {
+                                            h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
+                                            h4_due_date.style.textAlign = "left";
+                                            h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
+                                            h4_due_date.className = "form_date_tooltip";
+                                            h4_due_date.style.fontSize = "20px";
+
+                                            second_nested_div.appendChild(h4_due_date);
+                                            main_div.appendChild(second_nested_div);
+
+                                            // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
+                                            main_div.addEventListener("click", mainButtonFunction);
+                                            main_div.pageDiv = pageDiv;
+                                            main_div.formReference = formReference.data().formRef;
+                                            main_div.userID = userID;
+                                            document.getElementById(targetDiv).appendChild(main_div);
+
+                                            if (forEachIteration == querySnapshot.size - 1) {
+                                                // Initialize tooltips after all the elements have been created
+                                                $(document).ready(function() {
+                                                    $('.bubble_tooltip').tooltipster({
+                                                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                                        side: "bottom",
+                                                        animation: "grow",
+                                                    });
+
+                                                    $('.form_date_tooltip').tooltipster({
+                                                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                                        position: "left",
+                                                        animation: "grow",
+                                                    });
+                                                });
+
+                                                // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv"
+                                                if (pageDiv === "historyPage") {
+                                                    // Descending order for "historyPage" (newer forms first)
+                                                    $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
+
+                                                } else if (pageDiv === "dashboardPage") {
+                                                    // Ascending order for "dashboardPage" (older forms first) [TEMPORARY - should implement the "Todo" below
+                                                    $(`.divs-to-sort-${targetDiv}`).sort(sortAscending).appendTo(document.getElementById(targetDiv));
+                                                    // Todo: Sort by due date, and then by oldest submission first
+
+                                                } else {
+                                                    alert("EXCEPTION in Sort all the \"divs-to-sort\"");
+                                                }
+
+                                                // Unhide "targetDiv" after we have populated it
+                                                document.getElementById(targetDiv).style.display = "block";
+                                            }
+
+                                            forEachIteration++;
+                                        });
+                                    }
+                                });
                             }
-                            if (approvals[i].status == null) {
-                                // Has not been approved so use the grey checkWindowWidth mark style
-                                span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-grey w3-large";
-                                span_check_mark.appendChild(document.createTextNode("✓"));
-                            } else if (approvals[i].status == true) {
-                                // Green checkWindowWidth mark since it has already been approved
-                                span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-green w3-large";
-                                span_check_mark.appendChild(document.createTextNode("✓"));
-                            } else if (approvals[i].status == false) {
-                                // Red checkWindowWidth mark since it has been declined
-                                span_check_mark.className = "bubble_tooltip w3-left w3-badge w3-red w3-large";
-                                span_check_mark.appendChild(document.createTextNode("x"));
-                            }
-                            if (i > 0) {
-                                span_check_mark.classList.add("w3-margin-left");
-                            }
-                            span_check_mark.style.width = "30px";
-                            first_nested_div.appendChild(span_check_mark);
-                        } else {
-                            // doc.data() will be undefined in this case
-                            console.log("No such document!");
                         }
-                    }).catch(function(error) {
-                        console.log("Error getting document:", error);
                     });
                 }
-
-                // Second nested div (right side)
-                var second_nested_div = document.createElement("div");
-                second_nested_div.className = "w3-right";
-
-                var h4_submission_date = document.createElement('h3');
-                h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
-                h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
-                h4_submission_date.className = "form_date_tooltip";
-
-
-                second_nested_div.appendChild(h4_submission_date);
-                var h4_due_date = document.createElement('h3');
-
-                dueDatePromise.then(function(result) {
-                    h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
-                    h4_due_date.style.textAlign = "left";
-                    h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
-                    h4_due_date.className = "form_date_tooltip";
-
-                    second_nested_div.appendChild(h4_due_date);
-                    main_div.appendChild(second_nested_div);
-
-                    if (forEachIteration == querySnapshot.size - 1) {
-                        // Initialize tooltips after all the elements have been created
-                        $(document).ready(function() {
-                            $('.form_name_tooltip').tooltipster({
-                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                side: "top",
-                                animation: "grow",
-                                functionPosition: function(instance, helper, position){
-                                    position.coord.top += 10;
-                                    return position;
-                                }
-                            });
-
-                            $('.bubble_tooltip').tooltipster({
-                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                side: "bottom",
-                                animation: "grow",
-                            });
-
-                            $('.form_date_tooltip').tooltipster({
-                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                position: "left",
-                                animation: "grow",
-                            });
-                        });
-                    }
-
-                    // Make main button visible again
-                    main_div.style.display = "block";
-
-                    forEachIteration++;
-                });
-
-                // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
-                main_div.addEventListener("click", mainButtonFunction);
-                main_div.pageDiv = pageDiv;
-                main_div.formReference = formReference.data().formRef;
-                main_div.userID = userID;
-                document.getElementById(targetDiv).appendChild(main_div);
             });
         });
     }).catch(function(error) {
@@ -715,19 +824,19 @@ function displayFormReadModeByReference (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
+                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-leftbar">\n' +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
                             '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
                             '                <div class="w3-left">\n' +
-                            '                    <h3>' + formName + ' Form</h3>\n' +
-                            '                    <h3>Student: ' + studentName + '</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
@@ -780,7 +889,14 @@ function displayFormReadModeByReference (event) {
                                     const pawsDoc2 = doc.data();
                                     const approvalObj = approvals[i];
                                     let approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
-                                    const approvalEmail = '<span>' + '<u>' + pawsDoc2.userType + '</u>' + '</br>' + pawsDoc2.email + '</span>';
+
+                                    let approvalEmail;
+                                    if (pawsDoc2.userType != "Staff") { // then it means it's a Faculty member
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u> (${pawsDoc2.facultyRole})</br>${pawsDoc2.email}</span>`;
+                                    } else {
+                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u></br>${pawsDoc2.email}</span>`;
+                                    }
+
                                     const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
                                     const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
                                     const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
@@ -927,19 +1043,19 @@ function displayFormApproveMode (event) {
                         let wholeHTML = '';
                         wholeHTML +=
                             '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-bottombar">\n' +
+                            '    <div class="w3-modal-content w3-round-xlarge w3-border-theme w3-leftbar">\n' +
                             '        <div class="w3-container">\n' +
                             '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
                             'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
                             '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
                             '                <div class="w3-left">\n' +
-                            '                    <h3>' + formName + ' Form</h3>\n' +
-                            '                    <h3>Student: ' + studentName + '</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
+                            '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
@@ -1380,6 +1496,10 @@ function submitFormApproval (event) {
                                 timestamp: dateToday
                             });
 
+                            // Send email to student
+                            //sendEmail("Aliyah Adkins", "something here", "aadkins2016");
+                            sendEmail(getDisplayName(), notificationMessage, studentID);
+
                             // There are still more people in the approvals list to approve this form, but only send this form's reference to the first/next one if
                             // the person who just signed the form has approved it
                         } else if (approvalUpdated && (nullCount == 0) && approved) {
@@ -1648,6 +1768,35 @@ function createTableFromArray (array) {
 
 /********* Don't delete the code below! (Just separating the code for now) **********/
 
+// Sort "Date" objects in descending order (newer Dates first)
+function sortDescending (a, b) {
+    return (a.date < b.date) ? 1 : -1;
+}
+
+// Sort "Date" objects in ascending order (older Dates first)
+function sortAscending (a, b) {
+    return (a.date > b.date) ? 1 : -1;
+}
+
+// Get abbreviation of the "userType" or "facultyRole" for the checkmark text of the progress bar
+function getAbbreviation (userType, facultyRole) {
+    let abbreviation = "";
+    if (userType === "Staff") {
+        abbreviation = "Staff";
+    } else if (userType === "Faculty") {
+        if (facultyRole === "Advisor") {
+            abbreviation = "Advisor";
+        } else if (facultyRole === "Head of Department") {
+            abbreviation = "Head of<br>" + "Dept.";
+        } else if (facultyRole === "Dean of Students") {
+            abbreviation = "Dean";
+        }
+    } else {
+        console.log("Error in function \"getAbbreviation()\".");
+    }
+
+    return abbreviation;
+}
 
 // Search whatever is in input box for the student's name or ID. This function is called for both "click" and "enter" pressed
 function searchButtonPressed () {
@@ -1672,7 +1821,6 @@ function searchButtonPressed () {
 // Also, if "Enter" is pressed, call "searchButtonPressed()"
 function keyPressed (event) {
     const txt = document.getElementById("searchInput").value;
-    console.log(txt); //they share the same id, so one needs to change.
 
     if (txt.length == 0) {
         document.getElementById("searchButton").style.visibility = "hidden";
@@ -1908,4 +2056,57 @@ function getRandomStaff() {
 
         return email2.substring(0,email2.indexOf("@"));
     });
+}
+
+function sendEmail(studentName, message, tracks) {
+    //var email = tracks + "@my.fit.edu";
+    var data = JSON.stringify({
+        "personalizations": [
+            {
+                "to": [
+                    {
+                        "email": "mcnspa@gmail.com",
+                        "name": "McNels"
+                    }
+                ],
+                "dynamic_template_data": {
+                    "firstName": studentName,
+                    "notification": message
+                },
+                "subject": "You have a new notification!"
+            }
+        ],
+        "from": {
+            "email": "mcnspa@gmail.com",
+            "name": "Form Buster"
+        },
+        "reply_to": {
+            "email": "noreply@formbuster.me",
+            "name": "Form Buster"
+        },
+        "content": [
+            {
+                "type": "text/html",
+                "value": " "
+            }
+        ],
+        "template_id": "d-ddecfdb62fbf440cad3b971a9ddc597b"
+    });
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === this.DONE) {
+            console.log(this.responseText);
+        }
+    });
+
+    xhr.open("POST", "https://api.sendgrid.com/v3/mail/send");
+    xhr.setRequestHeader("authorization", "Bearer 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");
+    xhr.setRequestHeader("content-type", "application/json");
+
+    xhr.send(data);
+    // console.log("email sent!");
+    //alert("email sent!");
 }
