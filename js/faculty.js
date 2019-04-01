@@ -61,7 +61,7 @@ function gotoStudents () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Students";
+    document.getElementById("pageTitle").innerHTML = "Find Students Records";
 
     // Unhide "studentsPage" and put focus on the "searchInput"
     document.getElementById("studentsPage").style.display = "block";
@@ -80,7 +80,7 @@ function gotoHistory () {
     document.getElementById("formsHistoryList").innerHTML = '';
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "History";
+    document.getElementById("pageTitle").innerHTML = "My Completed Forms";
 
     const facultyID = getUserName();
     /* Todo: call a function to populate all the forms in which this facultyID has signed into "formsHistoryList" */

@@ -63,7 +63,7 @@ function gotoStudents () {
         document.getElementById("formsPage").style.display = "none";
 
         // Update the page's title
-        document.getElementById("pageTitle").innerHTML = "Students Records";
+        document.getElementById("pageTitle").innerHTML = "Find Students Records";
 
         const coordID = getUserName();
     }
@@ -78,7 +78,7 @@ function gotoForms () {
     document.getElementById("studentsPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Forms";
+    document.getElementById("pageTitle").innerHTML = "Start a Form";
 
     // Unhide "formsPage" and get the notifications
     document.getElementById("formsPage").style.display = "block";

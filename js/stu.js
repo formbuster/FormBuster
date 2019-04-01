@@ -251,7 +251,7 @@ function gotoForms () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Forms";
+    document.getElementById("pageTitle").innerHTML = "Start a Form";
 
     $('#formsList').load('forms.html', function() {
         //add event listeners for each form.
@@ -282,7 +282,7 @@ function gotoHistory () {
     document.getElementById("formsHistoryList").innerHTML = '';
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "History";
+    document.getElementById("pageTitle").innerHTML = "My Completed Forms";
 
     // Populate completedForms forms to "formsHistoryList"
     const studentID = getUserName();
