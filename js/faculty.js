@@ -11,6 +11,7 @@ function loadPage () {
         document.getElementById("display-name").classList.add('w3-theme-teal');
         document.getElementById("generalTopBar").classList.add('w3-theme-teal');
         document.getElementById("footer").classList.add('w3-theme-teal');
+        document.getElementById("dashboardBtn").innerHTML = "Pending Forms";
 
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);

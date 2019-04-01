@@ -6,16 +6,17 @@ function loadPage () {
         document.getElementById("formsBtn").remove();
         document.getElementById("notifications").remove();
         document.getElementById("notificationPreferences").remove();
+        document.getElementById("formsManagementBtn").remove();
 
         document.getElementById("display-name").classList.add('w3-theme-darkblue');
         document.getElementById("generalTopBar").classList.add('w3-theme-darkblue');
         document.getElementById("footer").classList.add('w3-theme-darkblue');
+        document.getElementById("dashboardBtn").innerHTML = "Pending Forms";
 
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
         document.getElementById("studentsBtn").addEventListener("click", gotoStudents);
         document.getElementById("historyBtn").addEventListener("click", gotoHistory);
-        document.getElementById("formsManagementBtn").addEventListener("click", gotoFormsManagement);
 
         // Load "studentSearchView" only once
         $('#studentSearchView').load('student_list.html');
@@ -94,6 +95,7 @@ function gotoHistory () {
     document.getElementById("historyPage").style.display = "block";
 }
 
+/*
 function gotoFormsManagement () {
     // Highlight only the forms management button, because it is selected
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
@@ -110,12 +112,12 @@ function gotoFormsManagement () {
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms Management";
 
-    /* Todo: call a function to populate all the forms and their versions into "formsManagementView" */
+    Todo: call a function to populate all the forms and their versions into "formsManagementView"
 
     // Unhide "formsManagementPage"
     document.getElementById("formsManagementPage").style.display = "block";
 }
-
+*/
 
 
 

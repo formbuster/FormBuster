@@ -4,10 +4,12 @@ function loadPage () {
         // Remove elements that don't apply for a Student
         document.getElementById("studentsBtn").remove();
         document.getElementById("formsManagementBtn").remove();
+        document.getElementById("notificationPreferences").remove();
 
         document.getElementById("display-name").classList.add('w3-theme-red');
         document.getElementById("generalTopBar").classList.add('w3-theme-red');
         document.getElementById("footer").classList.add('w3-theme-red');
+        document.getElementById("dashboardBtn").innerHTML = "In-Progress Forms";
 
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
