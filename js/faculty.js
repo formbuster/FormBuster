@@ -38,7 +38,7 @@ function gotoDashboard () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Dashboard";
+    document.getElementById("pageTitle").innerHTML = "Pending Forms";
 
     const facultyID = getUserName();
     getStudentFormsByReferenceList("dashboardPage", "pendingFormsList", facultyID, "pendingForms", displayFormApproveMode);

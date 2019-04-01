@@ -36,7 +36,7 @@ function gotoDashboard () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Dashboard";
+    document.getElementById("pageTitle").innerHTML = "In-Progress Forms";
 
     // Populate inProgress forms to "inProgressFormsList"
     const studentID = getUserName();
