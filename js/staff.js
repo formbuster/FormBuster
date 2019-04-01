@@ -31,13 +31,11 @@ function gotoDashboard () {
     document.getElementById("dashboardBtn").className = btnHighlighted;
     document.getElementById("studentsBtn").className = btnNotHighlighted;
     document.getElementById("historyBtn").className = btnNotHighlighted;
-    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "pendingFormsList" and hide other pages
     document.getElementById("pendingFormsList").innerHTML = '';
     document.getElementById("studentsPage").style.display = "none";
     document.getElementById("historyPage").style.display = "none";
-    document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Dashboard";
@@ -54,7 +52,6 @@ function gotoStudents () {
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
     document.getElementById("studentsBtn").className = btnHighlighted;
     document.getElementById("historyBtn").className = btnNotHighlighted;
-    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "searchInput" and "studentsList" and hide other pages
     document.getElementById("dashboardPage").style.display = "none";
@@ -62,7 +59,6 @@ function gotoStudents () {
     document.getElementById("searchButton").style.visibility = "hidden";
     document.getElementById("studentsList").innerHTML = '';
     document.getElementById("historyPage").style.display = "none";
-    document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Students";
@@ -77,13 +73,11 @@ function gotoHistory () {
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
     document.getElementById("studentsBtn").className = btnNotHighlighted;
     document.getElementById("historyBtn").className = btnHighlighted;
-    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "formsHistoryList" and hide other pages
     document.getElementById("dashboardPage").style.display = "none";
     document.getElementById("studentsPage").style.display = "none";
     document.getElementById("formsHistoryList").innerHTML = '';
-    document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "History";
