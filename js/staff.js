@@ -6,16 +6,17 @@ function loadPage () {
         document.getElementById("formsBtn").remove();
         document.getElementById("notifications").remove();
         document.getElementById("notificationPreferences").remove();
+        document.getElementById("formsManagementBtn").remove();
 
         document.getElementById("display-name").classList.add('w3-theme-darkblue');
         document.getElementById("generalTopBar").classList.add('w3-theme-darkblue');
         document.getElementById("footer").classList.add('w3-theme-darkblue');
+        document.getElementById("dashboardBtn").innerHTML = "Pending Forms";
 
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
         document.getElementById("studentsBtn").addEventListener("click", gotoStudents);
         document.getElementById("historyBtn").addEventListener("click", gotoHistory);
-        document.getElementById("formsManagementBtn").addEventListener("click", gotoFormsManagement);
 
         // Load "studentSearchView" only once
         $('#studentSearchView').load('student_list.html');
@@ -30,16 +31,14 @@ function gotoDashboard () {
     document.getElementById("dashboardBtn").className = btnHighlighted;
     document.getElementById("studentsBtn").className = btnNotHighlighted;
     document.getElementById("historyBtn").className = btnNotHighlighted;
-    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "pendingFormsList" and hide other pages
     document.getElementById("pendingFormsList").innerHTML = '';
     document.getElementById("studentsPage").style.display = "none";
     document.getElementById("historyPage").style.display = "none";
-    document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Dashboard";
+    document.getElementById("pageTitle").innerHTML = "Pending Forms";
 
     const staffID = getUserName();
     getStudentFormsByReferenceList("dashboardPage", "pendingFormsList", staffID, "pendingForms", displayFormApproveMode);
@@ -53,7 +52,6 @@ function gotoStudents () {
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
     document.getElementById("studentsBtn").className = btnHighlighted;
     document.getElementById("historyBtn").className = btnNotHighlighted;
-    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "searchInput" and "studentsList" and hide other pages
     document.getElementById("dashboardPage").style.display = "none";
@@ -61,10 +59,9 @@ function gotoStudents () {
     document.getElementById("searchButton").style.visibility = "hidden";
     document.getElementById("studentsList").innerHTML = '';
     document.getElementById("historyPage").style.display = "none";
-    document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Students";
+    document.getElementById("pageTitle").innerHTML = "Find Students Records";
 
     // Unhide "studentsPage" and put focus on the "searchInput"
     document.getElementById("studentsPage").style.display = "block";
@@ -76,16 +73,14 @@ function gotoHistory () {
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
     document.getElementById("studentsBtn").className = btnNotHighlighted;
     document.getElementById("historyBtn").className = btnHighlighted;
-    document.getElementById("formsManagementBtn").className = btnNotHighlighted;
 
     // Clear "formsHistoryList" and hide other pages
     document.getElementById("dashboardPage").style.display = "none";
     document.getElementById("studentsPage").style.display = "none";
     document.getElementById("formsHistoryList").innerHTML = '';
-    document.getElementById("formsManagementPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "History";
+    document.getElementById("pageTitle").innerHTML = "My Completed Forms";
 
     const staffID = getUserName();
     getStudentFormsByReferenceList("historyPage", "formsHistoryList", staffID, "completedForms", displayFormReadModeByReference);
@@ -94,6 +89,7 @@ function gotoHistory () {
     document.getElementById("historyPage").style.display = "block";
 }
 
+/*
 function gotoFormsManagement () {
     // Highlight only the forms management button, because it is selected
     document.getElementById("dashboardBtn").className = btnNotHighlighted;
@@ -110,12 +106,12 @@ function gotoFormsManagement () {
     // Update the page's title
     document.getElementById("pageTitle").innerHTML = "Forms Management";
 
-    /* Todo: call a function to populate all the forms and their versions into "formsManagementView" */
+    Todo: call a function to populate all the forms and their versions into "formsManagementView"
 
     // Unhide "formsManagementPage"
     document.getElementById("formsManagementPage").style.display = "block";
 }
-
+*/
 
 
 

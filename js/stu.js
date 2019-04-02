@@ -4,10 +4,12 @@ function loadPage () {
         // Remove elements that don't apply for a Student
         document.getElementById("studentsBtn").remove();
         document.getElementById("formsManagementBtn").remove();
+        document.getElementById("notificationPreferences").remove();
 
         document.getElementById("display-name").classList.add('w3-theme-red');
         document.getElementById("generalTopBar").classList.add('w3-theme-red');
         document.getElementById("footer").classList.add('w3-theme-red');
+        document.getElementById("dashboardBtn").innerHTML = "In-Progress Forms";
 
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
@@ -34,7 +36,7 @@ function gotoDashboard () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Dashboard";
+    document.getElementById("pageTitle").innerHTML = "In-Progress Forms";
 
     // Populate inProgress forms to "inProgressFormsList"
     const studentID = getUserName();
@@ -249,7 +251,7 @@ function gotoForms () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Forms";
+    document.getElementById("pageTitle").innerHTML = "Start a Form";
 
     $('#formsList').load('forms.html', function() {
         //add event listeners for each form.
@@ -280,7 +282,7 @@ function gotoHistory () {
     document.getElementById("formsHistoryList").innerHTML = '';
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "History";
+    document.getElementById("pageTitle").innerHTML = "My Completed Forms";
 
     // Populate completedForms forms to "formsHistoryList"
     const studentID = getUserName();

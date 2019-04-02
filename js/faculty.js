@@ -11,6 +11,7 @@ function loadPage () {
         document.getElementById("display-name").classList.add('w3-theme-teal');
         document.getElementById("generalTopBar").classList.add('w3-theme-teal');
         document.getElementById("footer").classList.add('w3-theme-teal');
+        document.getElementById("dashboardBtn").innerHTML = "Pending Forms";
 
         // Attach the functions to each button
         document.getElementById("dashboardBtn").addEventListener("click", gotoDashboard);
@@ -37,7 +38,7 @@ function gotoDashboard () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Dashboard";
+    document.getElementById("pageTitle").innerHTML = "Pending Forms";
 
     const facultyID = getUserName();
     getStudentFormsByReferenceList("dashboardPage", "pendingFormsList", facultyID, "pendingForms", displayFormApproveMode);
@@ -60,7 +61,7 @@ function gotoStudents () {
     document.getElementById("historyPage").style.display = "none";
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Students";
+    document.getElementById("pageTitle").innerHTML = "Find Students Records";
 
     // Unhide "studentsPage" and put focus on the "searchInput"
     document.getElementById("studentsPage").style.display = "block";
@@ -79,7 +80,7 @@ function gotoHistory () {
     document.getElementById("formsHistoryList").innerHTML = '';
 
     // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "History";
+    document.getElementById("pageTitle").innerHTML = "My Completed Forms";
 
     const facultyID = getUserName();
     /* Todo: call a function to populate all the forms in which this facultyID has signed into "formsHistoryList" */

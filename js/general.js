@@ -188,6 +188,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             var h3_form_name = document.createElement('h3');
             h3_form_name.appendChild(document.createTextNode(formName));
             h3_form_name.style.display = "flex";
+            h3_form_name.style.fontSize = "20px";
             first_nested_div.appendChild(h3_form_name);
 
             var tracking_bar = document.createElement('div');
@@ -686,6 +687,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
                     var h3_form_name = document.createElement('h3');
                     h3_form_name.appendChild(document.createTextNode(formName));
+                    h3_form_name.style.fontSize = "20px";
                     first_nested_div.appendChild(h3_form_name);
 
                     // Middle nested element (middle part)
@@ -709,6 +711,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                         const tooltipStudentEmail = '<span>' + pawsDoc.email + '</span>';
 
                                         middle_nested_element.innerHTML = studentName;
+                                        middle_nested_element.style.fontSize = "18px";
                                         middle_nested_element.setAttribute("data-tooltip-content", tooltipStudentEmail);
                                         main_div.appendChild(middle_nested_element);
 
