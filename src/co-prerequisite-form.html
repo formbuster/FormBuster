@@ -72,6 +72,8 @@
 
 <script>
     function saveCoPreqFormAsDraft(studentUsername, courses_list, wantToWaive, value) {
+        let term = document.getElementById("termSelecter").value;
+
         let currentTime = moment().format('MMDDYYYYHHmmss');
         let finalJustification = "";
         if (document.getElementById("justificationTextField")) {
@@ -82,7 +84,8 @@
             content: {
                 "1_Course Requested for Registration": courses_list,
                 "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
-                "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+                "3_Justifcation for the Waiver": {"1_Justification": finalJustification},
+                "4_Term": term
             }
         });
     }
@@ -91,10 +94,12 @@
     currently only used by Stu coord/faculty only
      */
     function sendCoPrerequisiteForm(studentUsername) {
+        let term = document.getElementById("termSelecter").value;
+
         let finalJustification = "";
         if (document.getElementById("justificationTextField")) {
             finalJustification = document.getElementById("justificationTextField").value;
-        };
+        }
 
         let courses_list = [];
         if (document.getElementById("registeredCrn" + crns[0])) {
@@ -128,10 +133,12 @@
 
     //todo: fix page, used for confirmation on drafts page/forms page.
     function saveCoPrerequisiteForm(ifSubmit, page, username) {
+        let term = document.getElementById("termSelecter").value;
+
         let finalJustification = "";
         if (document.getElementById("justificationTextField")) {
             finalJustification = document.getElementById("justificationTextField").value;
-        };
+        }
 
         let courses_list = [];
         if (document.getElementById("registeredCrn" + crns[0])) {
@@ -188,7 +195,8 @@
                                 content: {
                                     "1_Course Requested for Registration": courses_list,
                                     "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
-                                    "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+                                    "3_Justifcation for the Waiver": {"1_Justification": finalJustification},
+                                    "4_Term": term
                                 }
                             });
 
@@ -202,7 +210,8 @@
                             content: {
                                 "1_Course Requested for Registration": courses_list,
                                 "2_Missing Corequisite(s) or Prerequisite(s)": wantToWaive,
-                                "3_Justifcation for the Waiver": {"1_Justification": finalJustification}
+                                "3_Justifcation for the Waiver": {"1_Justification": finalJustification},
+                                "4_Term": term
                             }
                         });
                         displayConfirmationMessage(page, "Your form has been saved! Check your drafts section to complete this form later.");
