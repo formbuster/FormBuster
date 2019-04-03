@@ -37,7 +37,6 @@ function checkWindowWidth () {
 }
 
 function getUserName() {
-    return "aadkins2016";
     let username = window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5).toString();
 
     if (username.endsWith('#')) {
