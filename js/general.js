@@ -37,6 +37,7 @@ function checkWindowWidth () {
 }
 
 function getUserName() {
+    return "aadkins2016";
     let username = window.location.href.toString().substring(window.location.href.toString().indexOf("user")+5).toString();
 
     if (username.endsWith('#')) {
@@ -63,6 +64,21 @@ function getDisplayName() {
     });
 }
 
+// Returns the school year correpondent to their total credits
+function getSchoolYear (totalCredits) {
+    if (0 <= totalCredits && totalCredits <= 29) {
+        return "Freshman";
+    } else if (30 <= totalCredits && totalCredits <= 55) {
+        return "Sophomore";
+    } else if (56 <= totalCredits && totalCredits <= 84) {
+        return "Junior";
+    } else if (85 <= totalCredits) {
+        return "Senior";
+    } else {
+        return "ERROR in 'getSchoolYear()'";
+    }
+}
+
 // Get submission date from a Firebase "doc", in the format: MM/DD/YYYY
 function getSubmDate (doc) {
     return getFormattedDate(getDateFromTimestamp(doc.id.toString().split('_')[1]));
@@ -78,18 +94,47 @@ function getFormName (doc) {
     return doc.id.toString().split('_')[0];
 }
 
-// Get a Promise containing the due date given the name of the form [actual due date will be computed later]
-function getFormDueDate (formName) {
-    return pawsDB.collection("formDeadlines").doc(formName).get().then(function(doc) {
+// Get the due date for the "formName" of this "term", while taking into account the "totalCredits" of this student
+function getFormDueDate (formName, term, studentID) {
+    const currentDate = moment();
+    const formDates = getFormDatesForAllTerms();
+
+    formName = formName.toLowerCase();
+    term = term.toLowerCase();
+
+    return pawsDB.collection("users").doc(studentID).get().then(function(doc) {
         if (doc.exists) {
             const docData = doc.data();
-            return docData.deadline.toDate();
-        } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
+            const totalCredits = docData.totalCredits;
+
+            const schoolYear = getSchoolYear(totalCredits);
+            let dayOfWeek;
+            if (schoolYear == "Senior") {
+                dayOfWeek = "Monday";
+            } else if (schoolYear == "Junior") {
+                dayOfWeek = "Tuesday";
+            } else if (schoolYear == "Sophomore") {
+                dayOfWeek = "Wednesday";
+            } else if (schoolYear == "Freshman") {
+                dayOfWeek = "Thursday";
+            } else {
+                dayOfWeek = "ERROR";
+            }
+
+            // The form will be due this number of days before earliest day of this category of student ("schoolYear")
+            const daysBefore = 3;
+
+            let dueDate;
+            // Adjust the earliest day of the "term" to match with the "schoolYear" of the student (using "dayOfWeek")
+            eval(`dueDate = formDates.${formName}.${term}_earliestDate.day("${dayOfWeek}").subtract(${daysBefore}, 'day');`);
+
+            // If the "dueDate" has passed, then the new due date will be the latest day for this "term"
+            if (dueDate.diff(currentDate) < 0) {
+                eval(`dueDate = formDates.${formName}.${term}_latestDate;`);
+            }
+
+            return dueDate;
         }
-    }).catch(function(error) {
-        console.log("Error getting document:", error);
     });
 }
 
@@ -171,7 +216,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             const formName = getFormName(doc);
             const submDate = getSubmDate(doc);
             const exactSubmDate = getExactSubmDate(doc);
-            const dueDatePromise = getFormDueDate(formName);
+            const dueDatePromise = getFormDueDate(formName, formDoc.term.split(" ")[0], studentID);
             const approvals = formDoc.approvals;
 
             var main_div = document.createElement("div");
@@ -186,8 +231,8 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
 
             //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
             var h3_form_name = document.createElement('h3');
-            h3_form_name.appendChild(document.createTextNode(formName));
-            h3_form_name.style.display = "flex";
+            const termInfo = `<span style="font-size: 17px; color: #8E8E8E">(${formDoc.term})</span>`;
+            h3_form_name.innerHTML = `${formName} ${termInfo}`;
             h3_form_name.style.fontSize = "20px";
             first_nested_div.appendChild(h3_form_name);
 
@@ -211,9 +256,9 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             var h4_due_date = document.createElement('h3');
 
             dueDatePromise.then(function(result) {
-                h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
+                h4_due_date.appendChild(document.createTextNode("Due Date: " + result.format('M/D/YY')));
                 h4_due_date.style.textAlign = "left";
-                h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
+                h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>');
                 h4_due_date.className = "form_date_tooltip";
                 h4_due_date.style.fontSize = "20px";
 
@@ -453,7 +498,7 @@ function displayFormReadMode (event) {
         if (doc.exists) {
             const formDoc = doc.data();
             const formName = getFormName(doc);
-            const dueDatePromise = getFormDueDate(formName);
+            const dueDatePromise = getFormDueDate(formName, formDoc.term.split(" ")[0], studentID);
 
             pawsDB.collection("users").doc(studentID).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
@@ -463,8 +508,8 @@ function displayFormReadMode (event) {
                         + pawsStudentDoc.name.first + " " + pawsStudentDoc.name.last + '</span>';
 
                     dueDatePromise.then(function(result) {
-                        const dueDate = '<span style="color: #000">' + getFormattedDate(result) + '</span>';
-                        const dueDateHTML = '<span>' + getExactDateAndTime(result) + '</span>';
+                        const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
+                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>';
 
                         const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
                         const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
@@ -485,10 +530,10 @@ function displayFormReadMode (event) {
                             '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
-                            + dueDate + '</h3>\n' +
                             '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            + dueDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
                             '            <div id ="first-page">\n';
@@ -671,7 +716,8 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     const formName = getFormName(doc);
                     const submDate = getSubmDate(doc);
                     const exactSubmDate = getExactSubmDate(doc);
-                    const dueDatePromise = getFormDueDate(formName);
+                    const studentID = formReference.data().formRef.path.split("/")[1];
+                    const dueDatePromise = getFormDueDate(formName, formDoc.term.split(" ")[0], studentID);
 
                     var main_div = document.createElement("div");
                     main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
@@ -686,7 +732,8 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
 
                     //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
                     var h3_form_name = document.createElement('h3');
-                    h3_form_name.appendChild(document.createTextNode(formName));
+                    const termInfo = `<span style="font-size: 17px; color: #8E8E8E">(${formDoc.term})</span>`;
+                    h3_form_name.innerHTML = `${formName} ${termInfo}`;
                     h3_form_name.style.fontSize = "20px";
                     first_nested_div.appendChild(h3_form_name);
 
@@ -702,6 +749,8 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                 middle_nested_element.style.position = "relative";
                                 middle_nested_element.style.display = "inline-block";
                                 middle_nested_element.style.color = "#8e8e8e";
+                                middle_nested_element.style.marginBottom = "0px";
+                                middle_nested_element.style.marginTop = `13px`;
 
                                 const formReferencePath = formReference.data().formRef.path;
                                 pawsDB.collection(formReferencePath.split("/")[0]).doc(formReferencePath.split("/")[1]).get().then(function(doc) {
@@ -730,9 +779,9 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                         var h4_due_date = document.createElement('h3');
 
                                         dueDatePromise.then(function(result) {
-                                            h4_due_date.appendChild(document.createTextNode("Due Date: " + getFormattedDate(result)));
+                                            h4_due_date.appendChild(document.createTextNode("Due Date: " + result.format('M/D/YY')));
                                             h4_due_date.style.textAlign = "left";
-                                            h4_due_date.setAttribute("data-tooltip-content", '<span>' + getExactDateAndTime(result) + '</span>');
+                                            h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>');
                                             h4_due_date.className = "form_date_tooltip";
                                             h4_due_date.style.fontSize = "20px";
 
@@ -805,7 +854,8 @@ function displayFormReadModeByReference (event) {
         if (doc.exists) {
             const formDoc = doc.data();
             const formName = getFormName(doc);
-            const dueDatePromise = getFormDueDate(formName);
+            const studentID = formReference.data().formRef.path.split("/")[1];
+            const dueDatePromise = getFormDueDate(formName, formDoc.term.split(" ")[0], studentID);
 
             pawsDB.collection(formReference.path.split("/")[0]).doc(formReference.path.split("/")[1]).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
@@ -815,8 +865,8 @@ function displayFormReadModeByReference (event) {
                         + pawsStudentDoc.name.first + " " + pawsStudentDoc.name.last + '</span>';
 
                     dueDatePromise.then(function(result) {
-                        const dueDate = '<span style="color: #000">' + getFormattedDate(result) + '</span>';
-                        const dueDateHTML = '<span>' + getExactDateAndTime(result) + '</span>';
+                        const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
+                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>';
 
                         const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
                         const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
@@ -837,10 +887,10 @@ function displayFormReadModeByReference (event) {
                             '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
-                            + dueDate + '</h3>\n' +
                             '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            + dueDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
                             '            <div id ="first-page">\n';
@@ -1024,7 +1074,8 @@ function displayFormApproveMode (event) {
         if (doc.exists) {
             const formDoc = doc.data();
             const formName = getFormName(doc);
-            const dueDatePromise = getFormDueDate(formName);
+            const studentID = formReference.path.split("/")[1];
+            const dueDatePromise = getFormDueDate(formName, formDoc.term.split(" ")[0], studentID);
 
             pawsDB.collection(formReference.path.split("/")[0]).doc(formReference.path.split("/")[1]).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
@@ -1034,8 +1085,8 @@ function displayFormApproveMode (event) {
                         + pawsStudentDoc.name.first + " " + pawsStudentDoc.name.last + '</span>';
 
                     dueDatePromise.then(function(result) {
-                        const dueDate = '<span style="color: #000">' + getFormattedDate(result) + '</span>';
-                        const dueDateHTML = '<span>' + getExactDateAndTime(result) + '</span>';
+                        const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
+                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>';
 
                         const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
                         const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
@@ -1056,10 +1107,10 @@ function displayFormApproveMode (event) {
                             '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
-                            + dueDate + '</h3>\n' +
                             '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
                             + submDate + '</h3>\n' +
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
+                            + dueDate + '</h3>\n' +
                             '                </div>\n' +
                             '            </div>\n' +
                             '            <div id ="first-page">\n';
@@ -2112,4 +2163,175 @@ function sendEmail(studentName, message, tracks) {
     xhr.send(data);
     // console.log("email sent!");
     //alert("email sent!");
+}
+
+// Print the term dates for each type of form, for visualization and test purposes only
+function printTermDates () {
+    const formDates = getFormDatesForAllTerms();
+
+    for (let key in formDates) {
+        console.log({
+            "formName": key,
+            "summer_earliestDate": formDates[key].summer_earliestDate.format('MMMM Do YYYY, h:mm:ss a'),
+            "summer_latestDate": formDates[key].summer_latestDate.format('MMMM Do YYYY, h:mm:ss a')
+        });
+        console.log({
+            "formName": key,
+            "fall_earliestDate": formDates[key].fall_earliestDate.format('MMMM Do YYYY, h:mm:ss a'),
+            "fall_latestDate": formDates[key].fall_latestDate.format('MMMM Do YYYY, h:mm:ss a')
+        });
+        console.log({
+            "formName": key,
+            "spring_earliestDate": formDates[key].spring_earliestDate.format('MMMM Do YYYY, h:mm:ss a'),
+            "spring_latestDate": formDates[key].spring_latestDate.format('MMMM Do YYYY, h:mm:ss a')
+        });
+
+        const availableTerms = getTermsAvailableForForms();
+        console.log({"formName": key, "availableTerms": availableTerms[key]});
+
+        const unavailableTerms = getTermsUnavailableForForms();
+        console.log({"formName": key, "unavailableTerms": unavailableTerms[key]});
+
+        console.log("\n\n");
+    }
+
+    console.log("\n\nTEST");
+    getFormDueDate("Registration", "Fall", "aadkins2016").then(function(result) {
+        console.log(result.format('MMMM Do YYYY, h:mm:ss a'));
+    });
+
+    getFormDueDate("Coprerequisite", "Fall", "aadkins2016").then(function(result) {
+        console.log(result.format('MMMM Do YYYY, h:mm:ss a'));
+    });
+
+    getFormDueDate("Coprerequisite", "Fall", "aadkins2016").then(function(result) {
+        console.log(result.format('M/D/YY'));
+        console.log(result.format('M/D/YY [at] hh:mm:ss'));
+    });
+}
+
+// Return an object with all the form dates for all the terms
+function getFormDatesForAllTerms () {
+    const currentDate = moment();
+    const year = parseInt(currentDate.format("YYYY"));
+    const middleYear_date = moment(`0701${year}130000`, "MMDDYYYYHHmmss"); // July 1st
+
+    // "earliestDate_offset" and "latestDate_offset" are only applicable to Spring terms, because its date window
+    // spans 2 years at the same time
+    let earliestDate_offset = 0;
+    let latestDate_offset = 0;
+    if (currentDate.diff(middleYear_date) < 0) {
+        earliestDate_offset -= 1;
+    } else {
+        latestDate_offset += 1;
+    }
+
+    let formDates = {};
+
+    let summer_earliestDate;
+    let summer_latestDate;
+    let fall_earliestDate;
+    let fall_latestDate;
+    let spring_earliestDate;
+    let spring_latestDate;
+
+    /* REGISTRATION */
+    // SUMMER
+    // last week (5th week) of January, on Monday
+    summer_earliestDate = moment(`0101${year}080000`, "MMDDYYYYHHmmss").add(4, 'week').day("Monday");
+    // third week of May, on Friday
+    summer_latestDate = moment(`0501${year}170000`, "MMDDYYYYHHmmss").add(2, 'week').day("Friday");
+
+    // FALL
+    // second week of April, on Monday
+    fall_earliestDate = moment(`0401${year}080000`, "MMDDYYYYHHmmss").add(1, 'week').day("Monday");
+    // last week (5th week) of August, on Friday
+    fall_latestDate = moment(`0801${year}170000`, "MMDDYYYYHHmmss").add(4, 'week').day("Friday");
+
+    // SPRING
+    // third week of November, on Monday
+    spring_earliestDate = moment(`1101${year + earliestDate_offset}080000`, "MMDDYYYYHHmmss").add(2, 'week').day("Monday");
+    // second week of January, on Friday
+    spring_latestDate = moment(`0101${year + latestDate_offset}170000`, "MMDDYYYYHHmmss").add(1, 'week').day("Friday");
+
+    formDates.registration = {"summer_earliestDate": summer_earliestDate, "summer_latestDate": summer_latestDate,
+        "fall_earliestDate": fall_earliestDate, "fall_latestDate": fall_latestDate,
+        "spring_earliestDate": spring_earliestDate, "spring_latestDate": spring_latestDate};
+
+
+    /* COPREREQUISITE */
+    // SUMMER
+    // last week (5th week) of January, on Monday
+    summer_earliestDate = moment(`0101${year}080000`, "MMDDYYYYHHmmss").add(4, 'week').day("Monday");
+    // third week of May, on Friday
+    summer_latestDate = moment(`0501${year}170000`, "MMDDYYYYHHmmss").add(2, 'week').day("Friday");
+
+    // FALL
+    // second week of April, on Monday
+    fall_earliestDate = moment(`0401${year}080000`, "MMDDYYYYHHmmss").add(1, 'week').day("Monday");
+    // last week (5th week) of August, on Friday
+    fall_latestDate = moment(`0801${year}170000`, "MMDDYYYYHHmmss").add(4, 'week').day("Friday");
+
+    // SPRING
+    // third week of November, on Monday
+    spring_earliestDate = moment(`1101${year + earliestDate_offset}080000`, "MMDDYYYYHHmmss").add(2, 'week').day("Monday");
+    // second week of January, on Friday
+    spring_latestDate = moment(`0101${year + latestDate_offset}170000`, "MMDDYYYYHHmmss").add(1, 'week').day("Friday");
+
+    formDates.coprerequisite = {"summer_earliestDate": summer_earliestDate, "summer_latestDate": summer_latestDate,
+        "fall_earliestDate": fall_earliestDate, "fall_latestDate": fall_latestDate,
+        "spring_earliestDate": spring_earliestDate, "spring_latestDate": spring_latestDate};
+
+
+    return formDates;
+}
+
+// Return an array with the name of all the terms available for starting a form TODAY
+function getTermsAvailableForForms () {
+    const currentDate = moment();
+    const formDates = getFormDatesForAllTerms();
+
+    // Number of weeks that forms are open before the earliest date of each term
+    const weeksBefore = 3;
+
+    let availableTerms = {};
+    for (let key in formDates) {
+        let terms = [];
+        if (formDates[key].summer_earliestDate.subtract(weeksBefore, 'week').diff(currentDate) < 0 && currentDate.diff(formDates[key].summer_latestDate) < 0) {
+            terms.push("Summer");
+        }
+        if (formDates[key].fall_earliestDate.subtract(weeksBefore, 'week').diff(currentDate) < 0 && currentDate.diff(formDates[key].fall_latestDate) < 0) {
+            terms.push("Fall");
+        }
+        if (formDates[key].spring_earliestDate.subtract(weeksBefore, 'week').diff(currentDate) < 0 && currentDate.diff(formDates[key].spring_latestDate) < 0) {
+            terms.push("Spring");
+        }
+
+        availableTerms[key] = terms;
+    }
+
+    return availableTerms;
+}
+
+// Return an array with the name of all the terms that are unavailable for starting a form TODAY
+function getTermsUnavailableForForms () {
+    const availableTerms = getTermsAvailableForForms();
+
+    let unavailableTerms = {};
+    for (let key in availableTerms) {
+        let terms = [];
+        if (!availableTerms[key].includes("Summer")) {
+            terms.push("Summer");
+        }
+        if (!availableTerms[key].includes("Fall")) {
+            terms.push("Fall");
+        }
+        if (!availableTerms[key].includes("Spring")) {
+            terms.push("Spring");
+        }
+
+        unavailableTerms[key] = terms;
+    }
+
+    return unavailableTerms;
 }

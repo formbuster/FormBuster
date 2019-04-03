@@ -65,13 +65,17 @@ function loadStudentSearchView(form) {
 }
 
 function startForm(role, formName) {
+    const unavailableTerms = getTermsUnavailableForForms();
+
     if (role == "coord/staff") {
         if (formName == "registration") {
             $("#currentFormOpen").load("registration-form.html", function () {
+                removeTermSelecterOption(unavailableTerms, "registration");
                 loadStudentSearchView("registration-form");
             });
         } else if (formName == "co-prerequisite") {
             $("#currentFormOpen").load("co-prerequisite-form.html", function () {
+                removeTermSelecterOption(unavailableTerms, "coprerequisite");
                 loadStudentSearchView("co-prerequisite-form");
             });
         }
@@ -80,16 +84,24 @@ function startForm(role, formName) {
     } else {
         if (formName == "registration") {
             $("#currentFormOpen").load("registration-form.html", function () {
+                removeTermSelecterOption(unavailableTerms, "registration");
                 //reveal the form, no modifications.
                 document.getElementById("currentFormOpen").style.display = "block";
             });
         } else if (formName == "co-prerequisite") {
             $("#currentFormOpen").load("co-prerequisite-form.html", function () {
+                removeTermSelecterOption(unavailableTerms, "coprerequisite");
                 document.getElementById("currentFormOpen").style.display = "block";
             });
         }
     }
 }
 
-
-
+// Remove the options from the user of selecting a term when starting a form, in which they shouldn't be able to select
+// according to today's date
+function removeTermSelecterOption (unavailableTerms, formName) {
+    while (unavailableTerms[formName].length > 0) {
+        const id = unavailableTerms[formName].pop().toLowerCase() + "Option";
+        document.getElementById(id).remove();
+    }
+}
