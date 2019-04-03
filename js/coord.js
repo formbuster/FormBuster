@@ -29,8 +29,8 @@ function loadPage () {
             document.getElementById("registration-form-button").addEventListener("click", function() {
                 startForm("coord/staff", "registration");
             });
-            document.getElementById("co-prerequisite-form-button").addEventListener("click", function() {
-                startForm("coord/staff", "co-prerequisite");
+            document.getElementById("coprerequisite-form-button").addEventListener("click", function() {
+                startForm("coord/staff", "coprerequisite");
             });
         });
     });

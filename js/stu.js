@@ -115,7 +115,7 @@ function updateDraftButtons(formID, formType, studentID) {
     document.getElementById("save-option-2").addEventListener("click", function saveForm() {
         if (formType === "registration") {
             saveRegistrationForm(false, "draftsPage");
-        } else if (formType === "co-prerequisite") {
+        } else if (formType === "coprerequisite") {
             saveCoPrerequisiteForm(false, "draftsPage");
         }
         deleteDbEntry();
@@ -135,7 +135,7 @@ function updateDraftButtons(formID, formType, studentID) {
     document.getElementById("submit-option-2").addEventListener("click", function submit() {
         if (formType === "registration") {
             saveRegistrationForm(true, "draftsPage");
-        } else if (formType === "co-prerequisite") {
+        } else if (formType === "coprerequisite") {
             saveCoPrerequisiteForm(true, "draftsPage");
         }
         //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
@@ -150,8 +150,8 @@ function displayDraftModeCoPrerequisite (event) {
     const formsFolder = event.currentTarget.formsFolder;
     const formID = event.currentTarget.formID;
 
-    $('#editDraft').load('co-prerequisite-form.html', function() {
-        startForm("student", "co-prerequisite");
+    $('#editDraft').load('coprerequisite-form.html', function() {
+        startForm("student", "coprerequisite");
 
         //modify the registration-form with info from the db.
         formDB.collection("users").doc(getUserName()).collection("drafts").doc(formID).get().then(function(doc) {
@@ -172,7 +172,7 @@ function displayDraftModeCoPrerequisite (event) {
             }
         });
 
-        updateDraftButtons(formID, "co-prerequisite", studentID);
+        updateDraftButtons(formID, "coprerequisite", studentID);
     });
 }
 
@@ -258,8 +258,8 @@ function gotoForms () {
         document.getElementById("registration-form-button").addEventListener("click", function() {
             startForm("student", "registration");
         });
-        document.getElementById("co-prerequisite-form-button").addEventListener("click", function() {
-            startForm("student", "co-prerequisite");
+        document.getElementById("coprerequisite-form-button").addEventListener("click", function() {
+            startForm("student", "coprerequisite");
         });
     });
 

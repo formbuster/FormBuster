@@ -466,7 +466,7 @@ function register(isAudit, course, title, prefix, course_no) {
         document.getElementById('profileurl').value = '';
 
         //behavior for the co preqreusite form.
-        if (document.getElementById("co-prerequisite-form")){
+        if (document.getElementById("coprerequisite-form")){
             document.getElementById("profileurl").disabled = true;
             document.getElementById("totalCredits").style.display = "none";
             //document.getElementById("remove" + course).style.display = "none"; //don't allow removing the course.

@@ -29,7 +29,7 @@ function loadStudentSearchView(form) {
             document.getElementById("send-option-2").addEventListener("click", function () {
                 if (form == "registration-form") {
                     sendRegistrationForm(username); //pass the student username to the send to student
-                } else if (form == "co-prerequisite-form") {
+                } else if (form == "coprerequisite-form") {
                     sendCoPrerequisiteForm(username);
                 }
             });
@@ -73,10 +73,10 @@ function startForm(role, formName) {
                 removeTermSelecterOption(unavailableTerms, "registration");
                 loadStudentSearchView("registration-form");
             });
-        } else if (formName == "co-prerequisite") {
-            $("#currentFormOpen").load("co-prerequisite-form.html", function () {
+        } else if (formName == "coprerequisite") {
+            $("#currentFormOpen").load("coprerequisite-form.html", function () {
                 removeTermSelecterOption(unavailableTerms, "coprerequisite");
-                loadStudentSearchView("co-prerequisite-form");
+                loadStudentSearchView("coprerequisite-form");
             });
         }
         //reveal the form after being modified.
@@ -88,8 +88,8 @@ function startForm(role, formName) {
                 //reveal the form, no modifications.
                 document.getElementById("currentFormOpen").style.display = "block";
             });
-        } else if (formName == "co-prerequisite") {
-            $("#currentFormOpen").load("co-prerequisite-form.html", function () {
+        } else if (formName == "coprerequisite") {
+            $("#currentFormOpen").load("coprerequisite-form.html", function () {
                 removeTermSelecterOption(unavailableTerms, "coprerequisite");
                 document.getElementById("currentFormOpen").style.display = "block";
             });
