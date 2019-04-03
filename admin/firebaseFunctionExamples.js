@@ -148,4 +148,29 @@ function submitClick() {
     }).catch(function(error) {
         console.log("Error getting document:", error);
     });
+
+
+    pawsDB.collection("users").where("userType", "==", "Student").get().then(function(querySnapshot) {
+        console.log("query size: " + querySnapshot.size);
+        let studentNum = 0;
+
+        querySnapshot.forEach(function(doc) {
+            if (doc.exists) {
+                const year = parseInt(doc.id.substr(-4));
+                const totalCredits = randomTotalCredits(year);
+                studentNum++;
+
+                pawsDB.collection("users").doc(doc.id).set({
+                    totalCredits: totalCredits
+                }, { merge: true }); // merge will replace data if data is already there, otherwise it will merge
+
+                console.log(studentNum);
+            }
+        });
+    });
+
+
+    pawsDB.collection("users").doc("aadkins2016").set({
+        schoolYear: "Senior"
+    }, { merge: true }); // merge will replace data if data is already there, otherwise it will merge
 }
