@@ -110,7 +110,7 @@ function createUsers () {
     const userTypes = {student: "Student", faculty: "Faculty", studentCoordinator: "Student Coordinator", staff: "Staff"};
     emailDomainTypes = {student: "@my.fit.edu", faculty: "@fit.edu", studentCoordinator: "@fit.edu", staff: "@fit.edu"};
     facultyRoles = {deanOfStudents: "Dean of Students", headOfDepartment: "Head of Department", advisor: "Advisor", notAdvisor: "Not Advisor"};
-    const userAdmissionYears = ["2013", "2014", "2015", "2016", "2017", "2018"];
+    const userAdmissionYears = ["2013", "2014", "2015", "2016", "2017", "2018", "2019"];
     const names = shuffle(get1000Names().split("\n"));
     const addresses = get1000Addresses().split("\n");
     const majors = shuffle(get10FITMajors().split("\n"));
@@ -171,11 +171,12 @@ function createUsers () {
         const fullName = getNextName(names);
         const fullAddress = getNextAddress(addresses);
         const admissionYear = randomAdmissionYear(userAdmissionYears);
+        const totalCredits = randomTotalCredits(admissionYear);
         const majorInfo = randomMajorInfo(majors);
 
         createStudent(pawsDB, formBusterDB, userTypes.student, fullName.firstName, fullName.middleName, fullName.lastName, fullAddress.street,
             fullAddress.apartment, fullAddress.zipcode, fullAddress.city, fullAddress.state, admissionYear, majorInfo.majorTitle,
-            majorInfo.majorCode, majorInfo.department, advisorList);
+            majorInfo.majorCode, majorInfo.department, totalCredits, advisorList);
     }
 
 
@@ -200,7 +201,7 @@ function createUsers () {
 }
 
 function createStudent (pawsDB, formBusterDB, userType, userFirst, userMiddle, userLast, street, apartment, zipcode, city, state, admissionYear,
-                        majorTitle, majorCode, department, advisorList) {
+                        majorTitle, majorCode, department, totalCredits, advisorList) {
     const username = userFirst.toLowerCase().charAt(0) + userLast.toLowerCase() + admissionYear;
     const userID = generateID(username);
     const userEmail = username + emailDomainTypes.student;
@@ -239,6 +240,7 @@ function createStudent (pawsDB, formBusterDB, userType, userFirst, userMiddle, u
         major: {majorTitle: majorTitle,
             majorCode: majorCode,
             department: department},
+        totalCredits: totalCredits,
         advisor: {advisorUsername: advisorUsername,
             advisorEmail: advisorEmail}
     });
@@ -400,6 +402,36 @@ function randomMajorInfo (majors) {
 // Return a random year of admission from the "userAdmissionYears" array.
 function randomAdmissionYear (userAdmissionYears) {
     return userAdmissionYears[Math.floor(Math.random() * userAdmissionYears.length)];
+}
+
+// Return a pseudo random total credits number based on the admission year of the student
+function randomTotalCredits (admissionYear) {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+
+    const diff = parseInt(year) - parseInt(admissionYear);
+    const iterations = randomIntFromInterval(diff * 2, (diff + 1) * 2);
+
+    const minCreditsPerSemester = 9;
+    const maxCreditsPerSemester = 20;
+    let totalCredits = 0;
+
+    for (let i = 0; i < iterations; i++) {
+        totalCredits += randomIntFromInterval(minCreditsPerSemester, maxCreditsPerSemester);
+    }
+
+    const minUndergradTotalCredits = 127;
+    const maxUndergradTotalCredits = 150;
+    if (totalCredits > maxUndergradTotalCredits) {
+        totalCredits = randomIntFromInterval(minUndergradTotalCredits, maxUndergradTotalCredits);
+    }
+
+    return totalCredits
+}
+
+// Return a number between "min" and "max", both included
+function randomIntFromInterval (min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 // Remove and retrieve next (last) address from "addresses" array.
