@@ -25,6 +25,9 @@ function loadStudentSearchView(form) {
             let username = event.currentTarget.studentID;
             document.getElementById("startAFormMessage").innerHTML = "<h4>Starting a form for: <b>" + name + "</b></h4>";
 
+            // Save studentID to "currentFormOpen", so that we know later for what Student is this form
+            document.getElementById("currentFormOpen").studentID = username;
+
             //name was selected, so when the user selects the send to student parameter, we use their username as the parameter.
             document.getElementById("send-option-2").addEventListener("click", function () {
                 if (form == "registration-form") {
@@ -33,6 +36,9 @@ function loadStudentSearchView(form) {
                     sendCoPrerequisiteForm(username);
                 }
             });
+
+            // Don't forget to save the "studentID" to the form page, so we know later for what student is this form
+            saveStudentIDToPage(username);
 
             document.getElementById("send-option-2").style.display = "inline";
 
@@ -55,8 +61,7 @@ function loadStudentSearchView(form) {
     //form after they make a selection.
     document.getElementById("form-body").style.display = "none";
 
-    //hide buttons "enter pin" and save, as these are not needed for the student coordinator or faculty, these are student features.
-    document.getElementById("enter-pin-2").remove();
+    //hide button save, as this is not needed for the student coordinator, this is a student feature.
     document.getElementById("save-option-2").remove();
     document.getElementById("submit-option-2").remove();
 
@@ -66,16 +71,26 @@ function loadStudentSearchView(form) {
 
 function startForm(role, formName) {
     const unavailableTerms = getTermsUnavailableForForms();
+    const availableTerms = getTermsAvailableForForms();
+    const studentID = getUserName();
 
     if (role == "coord/staff") {
         if (formName == "registration") {
             $("#currentFormOpen").load("registration-form.html", function () {
                 removeTermSelecterOption(unavailableTerms, "registration");
+                fixTermSelecterTermNames(availableTerms, "registration");
+                saveStudentIDToPage(studentID);
+                updateFormDueDate("registration");
+                document.getElementById("registration-form-title").innerHTML = getFormNameFromID("registration") + " Form";
                 loadStudentSearchView("registration-form");
             });
         } else if (formName == "coprerequisite") {
             $("#currentFormOpen").load("coprerequisite-form.html", function () {
                 removeTermSelecterOption(unavailableTerms, "coprerequisite");
+                fixTermSelecterTermNames(availableTerms, "coprerequisite");
+                saveStudentIDToPage(studentID);
+                updateFormDueDate("coprerequisite");
+                document.getElementById("coprerequisite-form-title").innerHTML = getFormNameFromID("coprerequisite") + " Form";
                 loadStudentSearchView("coprerequisite-form");
             });
         }
@@ -85,12 +100,20 @@ function startForm(role, formName) {
         if (formName == "registration") {
             $("#currentFormOpen").load("registration-form.html", function () {
                 removeTermSelecterOption(unavailableTerms, "registration");
+                fixTermSelecterTermNames(availableTerms, "registration");
+                saveStudentIDToPage(studentID);
+                updateFormDueDate("registration");
+                document.getElementById("registration-form-title").innerHTML = getFormNameFromID("registration") + " Form";
                 //reveal the form, no modifications.
                 document.getElementById("currentFormOpen").style.display = "block";
             });
         } else if (formName == "coprerequisite") {
             $("#currentFormOpen").load("coprerequisite-form.html", function () {
                 removeTermSelecterOption(unavailableTerms, "coprerequisite");
+                fixTermSelecterTermNames(availableTerms, "coprerequisite");
+                saveStudentIDToPage(studentID);
+                updateFormDueDate("coprerequisite");
+                document.getElementById("coprerequisite-form-title").innerHTML = getFormNameFromID("coprerequisite") + " Form";
                 document.getElementById("currentFormOpen").style.display = "block";
             });
         }
@@ -101,7 +124,82 @@ function startForm(role, formName) {
 // according to today's date
 function removeTermSelecterOption (unavailableTerms, formName) {
     while (unavailableTerms[formName].length > 0) {
-        const id = unavailableTerms[formName].pop().toLowerCase() + "Option";
+        const id = unavailableTerms[formName].pop().split(' ')[0].toLowerCase() + "Option";
         document.getElementById(id).remove();
+    }
+}
+
+// Put the correct term names in the "termSelecter" drop down menu
+function fixTermSelecterTermNames (availableTerms, formName) {
+    while (availableTerms[formName].length > 0) {
+        const term = availableTerms[formName].pop();
+        const id = term.split(' ')[0].toLowerCase() + "Option";
+        document.getElementById(id).innerHTML = term;
+    }
+}
+
+// Saves the "studentID" to the form page, so we know for what student is this form
+function saveStudentIDToPage (studentID) {
+    document.getElementById("form-body").studentID = studentID;
+}
+
+// Update form due date whenever the user selects another term in the "termSelecter" drop down menu
+function updateFormDueDate (formName) {
+    const termSelected = document.getElementById("termSelecter").value;
+    const studentID = document.getElementById("form-body").studentID;
+
+    if (termSelected == "summer" || termSelected == "fall" || termSelected == "spring") {
+        const dueDatePromise = getFormDueDate(formName, termSelected, studentID, moment());
+
+        dueDatePromise.then(function (result) {
+            document.getElementById("formDueDate").innerHTML = `Due Date: ${result.format('M/D/YY')}`;
+            const tooltipContent = result.format('M/D/YY [at] hh:mm:ss');
+
+            if (document.getElementById("formDueDate").classList.contains("tooltipstered")) {
+                $('.formDueDate-tooltip').tooltipster('content', tooltipContent);
+
+            } else {
+                document.getElementById("formDueDate").setAttribute("data-tooltip-content", `<span>${tooltipContent}</span>`);
+                $(document).ready(function () {
+                    $('.formDueDate-tooltip').tooltipster({
+                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                        position: "left",
+                        animation: "grow",
+                    });
+                });
+            }
+        });
+
+    } else {
+        const tooltipMessage = "Select a term first";
+        document.getElementById("formDueDate").setAttribute("data-tooltip-content", `<span>${tooltipMessage}</span>`);
+        $(document).ready(function () {
+            $('.formDueDate-tooltip').tooltipster({
+                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                position: "left",
+                animation: "grow",
+            });
+        });
+    }
+}
+
+// Return the correct term value from "termSelecter" drop down menu.
+// If a term wasn't selected, return an empty String.
+function getCorrectTermValue () {
+    const value = document.getElementById("termSelecter").value;
+
+    let term = "";
+    if (value.length > 0) {
+        term = document.getElementById(`${value}Option`).innerHTML;
+    }
+
+    return term;
+}
+
+// Put the correct term names in the "termSelecter" drop down menu
+function changeTermSelecterTermName (term) {
+    if (term.length > 0) {
+        const id = term.split(' ')[0].toLowerCase() + "Option";
+        document.getElementById(id).innerHTML = term;
     }
 }

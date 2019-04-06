@@ -28,6 +28,13 @@ function loadPage () {
             document.getElementById("coprerequisite-form-button").addEventListener("click", function() {
                 startForm("coord/staff", "coprerequisite");
             });
+
+            // Update the name of the actual form cards
+            document.getElementById("registration-card-title").innerHTML = getFormNameFromID("registration");
+            document.getElementById("coprerequisite-card-title").innerHTML = getFormNameFromID("coprerequisite");
+
+            // Don't forget to display the forms available next to the form names
+            addAvailableTermsToFormName();
         });
 
         // Load "studentSearchView" only once

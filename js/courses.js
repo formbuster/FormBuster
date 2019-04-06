@@ -572,7 +572,8 @@ function saveFormAsDraft(studentUsername, courses_list, term){
             const userDocData = userDoc.data();
 
             formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-                content: {"1_Courses": courses_list, "2_Term": term}
+                content: {"1_Courses": courses_list},
+                term: term
                 //todo: term isn't working.
             });
         }
@@ -599,7 +600,7 @@ function sendRegistrationForm(studentUsername) {
         });
     }
 
-    saveFormAsDraft(studentUsername, courses_list, document.getElementById("termSelecter").value);
+    saveFormAsDraft(studentUsername, courses_list, getCorrectTermValue());
     closeForm();
     displayConfirmationMessage("formsList","Your form has been sent!");
 }
@@ -609,7 +610,7 @@ If the user selects save or submit, we need to save the current state of the for
 database spot (drafts or in-progress forms), unless it is blank show a empty form message.
  */
 function saveRegistrationForm (ifSubmit, page) {
-    let term = document.getElementById("termSelecter").value;
+    let term = getCorrectTermValue();
 
     let courses_list = [];
     for (i = 0; i < crns.length; i++) {
@@ -637,21 +638,26 @@ function saveRegistrationForm (ifSubmit, page) {
                     return;
                 }
 
-                let currentTime = moment().format('MMDDYYYYHHmmss');
-                formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
-                    approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor},{date: null, declinedReason: null, status:null, tracksID: getRandomStaff()}],
-                    content: {"1_Courses": courses_list} //todo: save the term to the db
+                getRandomStaff().then(function(staff) {
+                    let currentTime = moment().format('MMDDYYYYHHmmss');
+                    formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
+                        approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor}, {date: null, declinedReason: null, status: null, tracksID: staff}],
+                        content: {"1_Courses": courses_list}, //todo: save the term to the db
+                        term: term
+                    });
+
+                    formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+                        formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
+                    });
+                    displayConfirmationMessage(page, `Your form has been submitted! Check your "In-Progress Forms" for form progress.`);
                 });
 
-                formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
-                    formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
-                });
-                displayConfirmationMessage(page, "Your form has been submitted! Check your dashboard for form progress.");
             } else { //just save it for later
                 formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
-                    content: {"1_Courses": courses_list, "2_Term": term}
+                    content: {"1_Courses": courses_list},
+                    term: term
                 });
-                displayConfirmationMessage(page, "Your form has been saved! Go to drafts to revise and submit your form.");
+                displayConfirmationMessage(page, `Your form has been saved! Go to "Form Drafts" to revise and submit your form.`);
             }
         }
     });
