@@ -292,7 +292,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             dueDatePromise.then(function(result) {
                 h4_due_date.appendChild(document.createTextNode("Due Date: " + result.format('M/D/YY')));
                 h4_due_date.style.textAlign = "left";
-                h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>');
+                h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>');
                 h4_due_date.className = "form_date_tooltip";
                 h4_due_date.style.fontSize = "20px";
 
@@ -544,7 +544,7 @@ function displayFormReadMode (event) {
 
                     dueDatePromise.then(function(result) {
                         const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
-                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>';
+                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>';
 
                         const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
                         const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
@@ -819,7 +819,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                         dueDatePromise.then(function(result) {
                                             h4_due_date.appendChild(document.createTextNode("Due Date: " + result.format('M/D/YY')));
                                             h4_due_date.style.textAlign = "left";
-                                            h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>');
+                                            h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>');
                                             h4_due_date.className = "form_date_tooltip";
                                             h4_due_date.style.fontSize = "20px";
 
@@ -911,7 +911,7 @@ function displayFormReadModeByReference (event) {
 
                     dueDatePromise.then(function(result) {
                         const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
-                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>';
+                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>';
 
                         const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
                         const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
@@ -1132,7 +1132,7 @@ function displayFormApproveMode (event) {
 
                     dueDatePromise.then(function(result) {
                         const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
-                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] hh:mm:ss') + '</span>';
+                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>';
 
                         const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
                         const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
@@ -2257,7 +2257,7 @@ function printTermDates () {
 
     getFormDueDate("Coprerequisite", "Fall", "aadkins2016", moment()).then(function(result) {
         console.log(result.format('M/D/YY'));
-        console.log(result.format('M/D/YY [at] hh:mm:ss'));
+        console.log(result.format('M/D/YY [at] HH:mm:ss'));
     });
 }
 
