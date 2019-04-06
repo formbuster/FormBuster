@@ -387,7 +387,8 @@ function getNotifications () {
     formDB.collection("users").doc(studentID).collection("notifications").orderBy("timestamp", 'desc').get().then(function(querySnapshot) {
         querySnapshot.forEach(function(notification) {
             const userNotification = notification.data();
-            const notificationMessage = userNotification.message;
+            const notificationMessage = userNotification.message.replace(userNotification.message.split("\"")[1],
+                getFormNameFromID(userNotification.message.split("\"")[1]));
             const notificationDate = notification.id.toString().split('_')[1];
             const exactDate = getExactDateAndTime(getDateFromTimestamp(notificationDate));
             const dateTooltip = `<span>${exactDate}</span>`;
