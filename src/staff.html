@@ -50,14 +50,13 @@
             <!-- Todo: Finish figuring out if we need a "studentFormsView" here -->
             <!-- Students Page -->
             <div id="studentsPage" style="display: none">
-                <div class="w3-text-theme-red"><H2>Search for a Student</H2></div>
+                <div id="studentsPageTitle" class="w3-text-theme-red"><H2>Search for a Student</H2></div>
 
                 <div id="studentSearchView"></div>
                 <div id="studentFormsView" style="display: none">
-                    <button class="switch_page_grids_button back_button_tooltip" type="button" onclick="displayStudentSearchListPage()" >
-                        <img src="../img/left-arrow-transparent.png" style="width: 35px; height: 35px;" >
-                    </button>
-                    <h1 id="studentTitle" style="display: block" ></h1>
+                    <button style="border-radius: 5px; background-color: #770000; color: #fff; outline: none; cursor: pointer; border: none; margin-top: 18px"
+                            type="button" class="button_properties" onclick="displayStudentSearchListPage()" >BACK TO SEARCH RESULTS</button>
+                    <h1 id="studentTitle" style="display: block; font-size: 30px" ></h1>
                     <div style="border-bottom: #9b9b9b; border-bottom: 1px solid; background-color: transparent; margin-bottom: 20px" >
                         <button id="completedFormsButton" class="forms_tab_button" onclick="completedFormsButtonPressed()" >Completed Forms</button>
                         <button id="inProgressFormsButton" class="forms_tab_button" onclick="inProgressFormsButtonPressed()" >In-Progress Forms</button>
@@ -65,6 +64,8 @@
 
                     <div id="completedFormsList" ></div>
                     <div id="inProgressFormsList" ></div>
+                    <button style="border-radius: 5px; background-color: #770000; color: #fff; outline: none; cursor: pointer; border: none; margin-top: 8px"
+                            type="button" class="button_properties" onclick="displayStudentSearchListPage()" >BACK TO SEARCH RESULTS</button>
                 </div>
             </div>
 
