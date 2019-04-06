@@ -153,7 +153,7 @@ function updateFormDueDate (formName) {
 
         dueDatePromise.then(function (result) {
             document.getElementById("formDueDate").innerHTML = `Due Date: ${result.format('M/D/YY')}`;
-            const tooltipContent = result.format('M/D/YY [at] hh:mm:ss');
+            const tooltipContent = result.format('M/D/YY [at] HH:mm:ss');
 
             if (document.getElementById("formDueDate").classList.contains("tooltipstered")) {
                 $('.formDueDate-tooltip').tooltipster('content', tooltipContent);
