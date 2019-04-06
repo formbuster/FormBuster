@@ -13,14 +13,3 @@
     padding: 7px 7px 7px 7px;
 }
 
-/* Button used for the popups of the Faculty */
-.faculty_button {
-    width: 150px;
-    height: 30px;
-    border-radius: 16px;
-    background-color: #770000;
-    color: #fff;
-    outline: none;
-    cursor: pointer;
-    border: none;
-}

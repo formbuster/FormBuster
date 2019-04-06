@@ -267,3 +267,15 @@ body {
     position: relative;
     top: 12px;
 }
+
+/* Button used for the popup of Student lookup, used by Faculty, Staff, and Student Coordinators */
+.popup_button {
+    width: 150px;
+    height: 30px;
+    border-radius: 16px;
+    background-color: #770000;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    border: none;
+}

@@ -12,15 +12,3 @@
     transition: background-color 0.8s;
     padding: 7px 7px 7px 7px;
 }
-
-/* Button used for the popups of the Staff */
-.staff_button {
-    width: 150px;
-    height: 30px;
-    border-radius: 16px;
-    background-color: #770000;
-    color: #fff;
-    outline: none;
-    cursor: pointer;
-    border: none;
-}
