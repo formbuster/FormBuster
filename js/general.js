@@ -2,6 +2,15 @@
 const btnHighlighted = "w3-bar-item w3-button w3-hover-theme w3-large w3-text-theme-red w3-background";
 const btnNotHighlighted = "w3-bar-item w3-button w3-hover-theme w3-large";
 
+// Number of weeks that forms are open before the earliest date of each term
+// Used in "getTermsAvailableForForms()", "getTermsUnavailableForForms()", and "getFormOpenDate()"
+const weeksBefore = 3;
+
+// The form will be due this number of days before earliest day of this category of student ("schoolYear").
+// This will be this form's first due date, of 2; second due date will be when the form closes for everyone.
+// Used in "getFormDueDate()"
+const daysBefore = 3;
+
 // Only applicable for Students, Faculty, and Staff
 function openNavToggle () {
     const mySidebar = document.getElementById("mySidebar");
@@ -151,9 +160,6 @@ function getFormDueDate (formName, term, studentID, referenceDate) {
             } else {
                 dayOfWeek = "ERROR";
             }
-
-            // The form will be due this number of days before earliest day of this category of student ("schoolYear")
-            const daysBefore = 3;
 
             let dueDate;
             // Adjust the earliest day of the "term" to match with the "schoolYear" of the student (using "dayOfWeek")
@@ -2341,9 +2347,6 @@ function getTermsAvailableForForms () {
     const currentDate = moment();
     const formDates = getFormDatesForAllTerms(moment());
 
-    // Number of weeks that forms are open before the earliest date of each term
-    const weeksBefore = 3;
-
     let availableTerms = {};
     for (let key in formDates) {
         let terms = [];
@@ -2370,9 +2373,6 @@ function getTermsAvailableForForms () {
 function getTermsUnavailableForForms () {
     const currentDate = moment();
     const formDates = getFormDatesForAllTerms(moment());
-
-    // Number of weeks that forms are open before the earliest date of each term
-    const weeksBefore = 3;
 
     let unavailableTerms = {};
     for (let key in formDates) {
