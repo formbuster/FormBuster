@@ -176,6 +176,30 @@ function getFormDueDate (formName, term, studentID, referenceDate) {
     });
 }
 
+function getFormOpenDate (formName, fullTerm) {
+    const formDates = getFormDatesForAllTerms(moment());
+
+    formName = formName.toLowerCase();
+    const term = fullTerm.split(' ')[0].toLowerCase();
+
+    let dueDate;
+    eval(`dueDate = formDates.${formName}.${term}_earliestDate.subtract(${weeksBefore}, 'week');`);
+
+    return dueDate;
+}
+
+function getFormCloseDate (formName, fullTerm) {
+    const formDates = getFormDatesForAllTerms(moment());
+
+    formName = formName.toLowerCase();
+    const term = fullTerm.split(' ')[0].toLowerCase();
+
+    let dueDate;
+    eval(`dueDate = formDates.${formName}.${term}_latestDate;`);
+
+    return dueDate;
+}
+
 // Generate a Date object from a timestamp of the format: MMDDYYYYHHMMSS
 function getDateFromTimestamp (timestamp) {
     const month = timestamp.substring(0, 2);
@@ -2404,10 +2428,18 @@ function addAvailableTermsToFormName () {
     for (let key in availableTerms) {
         let terms = "";
         for (let i = 0; i < availableTerms[key].length; i++) {
+            const formName = key;
+            const fullTerm = availableTerms[key][i];
+
+            const openDate = getFormOpenDate(formName, fullTerm).format('M/D/YY [at] HH:mm:ss');
+            const closeDate = getFormCloseDate(formName, fullTerm).format('M/D/YY [at] HH:mm:ss');
+
+            const formDatesHTML = `<span><u>Open Date:</u> ${openDate}<br><br><u>Close Date:</u> ${closeDate}</span>`;
+
             if (i == 0) {
-                terms += availableTerms[key][i];
+                terms += `<span class="term_tooltip" data-tooltip-content="${formDatesHTML}">${availableTerms[key][i]}</span>`;
             } else {
-                terms += `, ${availableTerms[key][i]}`;
+                terms += `, <span class="term_tooltip" data-tooltip-content="${formDatesHTML}">${availableTerms[key][i]}</span>`;
             }
         }
         if (terms.length == 0) {
@@ -2417,6 +2449,15 @@ function addAvailableTermsToFormName () {
 
         eval(`document.getElementById("${key}-card-title").innerHTML += ' ${termsHTML}';`);
     }
+
+    // Initialize terms tooltip
+    $(document).ready(function() {
+        $('.term_tooltip').tooltipster({
+            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+            side: "bottom",
+            animation: "grow",
+        });
+    });
 }
 
 
