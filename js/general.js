@@ -606,13 +606,22 @@ function displayFormReadMode (event) {
 
                         // Iterate through the different sections of the form
                         // "formSection" will be the next object OR array of the "content" object (map)
+                        let iteration = 0;
                         for (var formSection in content) {
                             const formSectionTitle = formSection.split("_")[1];
 
-                            wholeHTML +=
-                                '<div style="display: block; overflow: auto">\n' +
-                                `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
-                                '</div>\n';
+                            if (iteration == 0) {
+                                wholeHTML +=
+                                    '<div style="display: block; overflow: auto">\n' +
+                                    `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                    '</div>\n';
+
+                            } else {
+                                wholeHTML +=
+                                    '<div style="display: block; overflow: auto">\n' +
+                                    `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                    '</div>\n';
+                            }
 
                             // This section of the form is an array
                             if (Array.isArray(content[formSection])) { // If it's an array, we print its structure in table format
@@ -626,20 +635,22 @@ function displayFormReadMode (event) {
                                 for (var objKey in content[formSection]) {
                                     wholeHTML +=
                                         '    <span style="display: block; overflow: auto">\n' +
-                                        `        <h5 class="form_content_text" style="float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
-                                        `        <h5 class="form_content_text" style="float: left; margin-left: 5px;">${content[formSection][objKey]}</h5>\n` +
+                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
+                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; margin-left: 5px">${content[formSection][objKey]}</h5>\n` +
                                         '    </span>\n';
                                 }
 
                                 // Close container
                                 wholeHTML += '</div>\n';
                             }
+
+                            iteration++;
                         }
 
 
                         wholeHTML +=
                             '<div style="display: block; overflow: auto">\n' +
-                            `   <h5 style="text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
+                            `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
                             '</div>\n';
 
                         for (let i = 0; i < approvals.length; i++) {
@@ -973,13 +984,22 @@ function displayFormReadModeByReference (event) {
 
                         // Iterate through the different sections of the form
                         // "formSection" will be the next object OR array of the "content" object (map)
+                        let iteration = 0;
                         for (var formSection in content) {
                             const formSectionTitle = formSection.split("_")[1];
 
-                            wholeHTML +=
-                                '<div style="display: block; overflow: auto">\n' +
-                                `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
-                                '</div>\n';
+                            if (iteration == 0) {
+                                wholeHTML +=
+                                    '<div style="display: block; overflow: auto">\n' +
+                                    `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                    '</div>\n';
+
+                            } else {
+                                wholeHTML +=
+                                    '<div style="display: block; overflow: auto">\n' +
+                                    `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                    '</div>\n';
+                            }
 
                             // This section of the form is an array
                             if (Array.isArray(content[formSection])) { // If it's an array, we print its structure in table format
@@ -993,20 +1013,22 @@ function displayFormReadModeByReference (event) {
                                 for (var objKey in content[formSection]) {
                                     wholeHTML +=
                                         '    <span style="display: block; overflow: auto">\n' +
-                                        `        <h5 class="form_content_text" style="float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
-                                        `        <h5 class="form_content_text" style="float: left; margin-left: 5px;">${content[formSection][objKey]}</h5>\n` +
+                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
+                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; margin-left: 5px">${content[formSection][objKey]}</h5>\n` +
                                         '    </span>\n';
                                 }
 
                                 // Close container
                                 wholeHTML += '</div>\n';
                             }
+
+                            iteration++;
                         }
 
 
                         wholeHTML +=
                             '<div style="display: block; overflow: auto">\n' +
-                            `   <h5 style="text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
+                            `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
                             '</div>\n';
 
                         for (let i = 0; i < approvals.length; i++) {
@@ -1194,13 +1216,22 @@ function displayFormApproveMode (event) {
 
                         // Iterate through the different sections of the form
                         // "formSection" will be the next object OR array of the "content" object (map)
+                        let iteration = 0;
                         for (var formSection in content) {
                             const formSectionTitle = formSection.split("_")[1];
 
-                            wholeHTML +=
-                                '<div style="display: block; overflow: auto">\n' +
-                                `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
-                                '</div>\n';
+                            if (iteration == 0) {
+                                wholeHTML +=
+                                    '<div style="display: block; overflow: auto">\n' +
+                                    `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                    '</div>\n';
+
+                            } else {
+                                wholeHTML +=
+                                    '<div style="display: block; overflow: auto">\n' +
+                                    `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                    '</div>\n';
+                            }
 
                             // This section of the form is an array
                             if (Array.isArray(content[formSection])) { // If it's an array, we print its structure in table format
@@ -1214,20 +1245,22 @@ function displayFormApproveMode (event) {
                                 for (var objKey in content[formSection]) {
                                     wholeHTML +=
                                         '    <span style="display: block; overflow: auto">\n' +
-                                        `        <h5 class="form_content_text" style="float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
-                                        `        <h5 class="form_content_text" style="float: left; margin-left: 5px;">${content[formSection][objKey]}</h5>\n` +
+                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
+                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; margin-left: 5px;">${content[formSection][objKey]}</h5>\n` +
                                         '    </span>\n';
                                 }
 
                                 // Close container
                                 wholeHTML += '</div>\n';
                             }
+
+                            iteration++;
                         }
 
 
                         wholeHTML +=
                             '<div style="display: block; overflow: auto">\n' +
-                            `   <h5 style="text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
+                            `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
                             '</div>\n';
 
                         // Used later to distinguish if the current approver is a Faculty or a Staff
