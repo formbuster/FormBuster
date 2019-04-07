@@ -932,7 +932,7 @@ function displayFormReadModeByReference (event) {
             const studentID = formReference.path.split("/")[1];
             const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
 
-            pawsDB.collection(formReference.path.split("/")[0]).doc(formReference.path.split("/")[1]).get().then(function(studentDoc) {
+            pawsDB.collection(formReference.path.split("/")[0]).doc(studentID).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
                     const pawsStudentDoc = studentDoc.data();
                     const studentTooltipHTML = '<span>' + pawsStudentDoc.email + '</span>';
@@ -1153,7 +1153,7 @@ function displayFormApproveMode (event) {
             const studentID = formReference.path.split("/")[1];
             const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
 
-            pawsDB.collection(formReference.path.split("/")[0]).doc(formReference.path.split("/")[1]).get().then(function(studentDoc) {
+            pawsDB.collection(formReference.path.split("/")[0]).doc(studentID).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
                     const pawsStudentDoc = studentDoc.data();
                     const studentTooltipHTML = '<span>' + pawsStudentDoc.email + '</span>';
@@ -1653,7 +1653,7 @@ function submitFormApproval (event) {
                                     const newDocData = newDoc.data();
 
                                     // Create an identical version of this form in the "completedForms" folder of the student
-                                    formDB.collection("users").doc(formReference.path.split("/")[1]).collection("completedForms").doc(formDoc.id).set(newDocData);
+                                    formDB.collection("users").doc(studentID).collection("completedForms").doc(formDoc.id).set(newDocData);
 
                                     // Delete the form in which was in the previous folder "inProgressForms" of the student
                                     formReference.delete().then(function() {
@@ -1663,7 +1663,7 @@ function submitFormApproval (event) {
                                     });
 
                                     // Get the form reference of the form in which is in the new folder ("completedForms")
-                                    const newFormReference = formDB.collection("users").doc(formReference.path.split("/")[1]).collection("completedForms").doc(formDoc.id);
+                                    const newFormReference = formDB.collection("users").doc(studentID).collection("completedForms").doc(formDoc.id);
                                     // Update the old references of this form for all the faculty and staff that signed this form
                                     for (let j = 0; j < approvals.length; j++) {
                                         if (approvals[j].status != null) {
