@@ -929,7 +929,7 @@ function displayFormReadModeByReference (event) {
             const formDoc = doc.data();
             const formID = getFormID(doc);
             const formName = getFormName(doc);
-            const studentID = formReference.data().formRef.path.split("/")[1];
+            const studentID = formReference.path.split("/")[1];
             const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
 
             pawsDB.collection(formReference.path.split("/")[0]).doc(formReference.path.split("/")[1]).get().then(function(studentDoc) {
