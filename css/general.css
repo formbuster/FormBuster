@@ -392,6 +392,9 @@ body {
     color: #ffffff;
     background-color: #9b0000;
 }
+.discard_button:active {
+    border-color: #9a000100;
+}
 
 /* Button used to Save a form in the "Start a Form" popup */
 .save_button {
@@ -415,6 +418,9 @@ body {
     color: #ffffff;
     background-color: #6897bb;
 }
+.save_button:active {
+    border-color: #6796ba00;
+}
 
 /* Button used to Submit a form in the "Start a Form" popup */
 .submit_button {
@@ -436,6 +442,9 @@ body {
     background-color: #8e8e8e73;
     border-color: #8d8d8d;
     cursor: not-allowed;
+}
+.submit_button:active {
+    border-color: #0000004d;
 }
 
 /* Button used to Send a form, in the "Start a Form" popup, to a student. Only Student Coordinators use this button */
