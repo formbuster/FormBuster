@@ -165,7 +165,7 @@ function updateDraftButtons(formID, formType, studentID) {
 
     //when user saves the form, we will delete the current form, and make new one.
     document.getElementById("save-option-2").setAttribute("onclick", null);
-    document.getElementById("save-option-2").addEventListener("click", function saveForm() {
+    document.getElementById("save-option-2").addEventListener("click", function saveForm () {
         if (formType === "registration") {
             saveRegistrationForm(false, "draftsPage");
         } else if (formType === "coprerequisite") {
@@ -183,7 +183,8 @@ function updateDraftButtons(formID, formType, studentID) {
         });
     }
 
-    document.getElementById("submit-option-2").setAttribute("onclick", function clicked() {
+    document.getElementById("submit-option-2").setAttribute("onclick", null);
+    document.getElementById("submit-option-2").addEventListener("click", function clicked () {
         if (formType === "registration") {
             saveRegistrationForm(true, "draftsPage");
         } else if (formType === "coprerequisite") {
