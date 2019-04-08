@@ -2669,8 +2669,11 @@ function displayStudentForms (studentID) {
     getStudentForms("studentsPage", "completedFormsList", studentID, "completedForms", displayFormReadMode);
     getStudentForms("studentsPage", "inProgressFormsList", studentID, "inProgressForms", displayFormReadMode);
 
-    // Load completed forms of the student by default
-    completedFormsButtonPressed();
+    setTimeout(function() {
+        // Load completed forms of the student by default.
+        // Use this timeout to make sure "getStudentForms()" have already finished executing
+        completedFormsButtonPressed();
+    }, 3000);
 }
 
 // Switch back to student's list when you click on the back button
