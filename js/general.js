@@ -1606,7 +1606,7 @@ function submitFormApproval (event) {
         if (formDoc.exists) {
             const formDocData = formDoc.data();
             const approvals = formDocData.approvals;
-            const formName = getFormName(formDoc);
+            const formID = getFormID(formDoc);
 
             let approvalUpdated = false;
             let nullCount = 0;
@@ -1651,7 +1651,7 @@ function submitFormApproval (event) {
                             });
 
                             // Todo: Send an email notification that the form has been signed, to the student (formReference.path.split("/")[1]) in which owns this form
-                            const notificationMessage = getStudentNotificationMessage(approved, userID_userType, fullName, formName);
+                            const notificationMessage = getStudentNotificationMessage(approved, userID_userType, fullName, formID);
                             const dateToday = new Date();
                             const notificationID = "notification_" + moment(dateToday).format('MMDDYYYYHHmmss');
                             formDB.collection("users").doc(studentID).collection("notifications").doc(notificationID).set({
@@ -1730,20 +1730,20 @@ function submitFormApproval (event) {
 }
 
 // Depending whether is a Faculty or a Staff that have approved the form, display a different confirmation message to the student
-function getStudentNotificationMessage (approved, userID_userType, fullName, formName) {
+function getStudentNotificationMessage (approved, userID_userType, fullName, formID) {
     let message = "";
     if (userID_userType === "Faculty") {
         if (approved) {
-            message = `<i>${fullName}</i> has <b>approved</b> your "${formName}" form. You can view the progress of it in your "In-Progress Forms" page.`;
+            message = `<i>${fullName}</i> has <b>approved</b> your "${formID}" form. You can view the progress of it in your "In-Progress Forms" page.`;
         } else {
-            message = `<i>${fullName}</i> has <b>declined</b> your "${formName}" form. You can view the reason of why they declined in your "My Completed Forms" page.`;
+            message = `<i>${fullName}</i> has <b>declined</b> your "${formID}" form. You can view the reason of why they declined in your "My Completed Forms" page.`;
         }
 
     } else if (userID_userType === "Staff") {
         if (approved) {
-            message = `<i>${fullName}</i> has <b>processed</b> your "${formName}" form. You can view it in your "My Completed Forms" page.`;
+            message = `<i>${fullName}</i> has <b>processed</b> your "${formID}" form. You can view it in your "My Completed Forms" page.`;
         } else {
-            message = `<i>${fullName}</i> has <b>not processed</b> your "${formName}" form. You can view the reason of why they didn't process in your "My Completed Forms" page.`;
+            message = `<i>${fullName}</i> has <b>not processed</b> your "${formID}" form. You can view the reason of why they didn't process in your "My Completed Forms" page.`;
         }
     }
 
