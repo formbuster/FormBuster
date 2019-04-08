@@ -41,6 +41,10 @@ body {
 .button_properties:active {
     opacity: 0.5;
 }
+.button_properties.disabled {
+    box-shadow: none;
+    opacity: 1;
+}
 
 /* Sets the styles of the search button of the search bar that is used for student coordinators, faculty, and staff */
 .search_button {
@@ -278,4 +282,180 @@ body {
     outline: none;
     cursor: pointer;
     border: none;
+}
+
+/* Button used for the "Add Course" in the "Start a Form" popup */
+.course_button {
+    border-radius: 16px;
+    color: #770000;
+    font-size: 13px;
+    height: 27px;
+    border-color: #770000;
+    text-align: center;
+    border-width: 2px;
+    padding-right: 13px;
+    padding-left: 13px;
+    cursor: pointer;
+    outline: none;
+    background-color: #ffffff;
+
+    transition: color .5s;
+    transition: background-color .5s;
+}
+.course_button:hover {
+    color: #ffffff;
+    background-color: #770000;
+}
+
+/* Sets the style for the term selecter when a Student or Student Coordinator is starting a form */
+.term_selecter {
+    margin-top: 0px;
+    width: 190px;
+    outline: none;
+    position: relative;
+    float: left;
+    margin-top: 2px;
+
+    padding: 6px;
+    border-style: solid;
+    border-width: thin;
+    border-color: #8d8d8d;
+    font-size: 17px;
+    color: #000;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: default;
+
+    transition: box-shadow, border-color 1.5s;
+}
+.term_selecter:hover {
+    border-color: rgba(0,149,255,0.5);
+    box-shadow: inset 0 0 2px #d3d6da, 0 0 2px rgba(0,149,255,0.2);
+}
+.term_selecter:focus {
+    border-color: #0095ff;
+    box-shadow: inset 0 2px 2px #fafafb, 0 0 5px rgba(0,119,204,0.4);
+}
+.term_selecter.disabled {
+    border-color: #8d8d8d;
+    box-shadow: none;
+    cursor: not-allowed;
+    background-color: #8e8e8e73;
+}
+
+/* Sets the style for the term selecter when a Student or Student Coordinator is starting a form */
+.course_search {
+    border: none;
+    border-bottom: 1px solid #8d8d8d;
+    width: calc(100% - 205px);
+    margin-left: 15px;
+    float: left;
+    outline: none;
+    font-size: 17px;
+
+
+    background-color: #fff;
+    cursor: text;
+
+    transition: border-color 1.5s;
+}
+.course_search:hover {
+    border-color: rgba(0,149,255,0.5);
+}
+.course_search:focus {
+    border-color: #0095ff;
+}
+.course_search.disabled {
+    border-color: #8d8d8d;
+    cursor: not-allowed;
+    background-color: #8e8e8e73;
+}
+
+/* Button used to Discard a form in the "Start a Form" popup */
+.discard_button {
+    border-radius: 16px;
+    color: #9b0000;
+    font-size: 13px;
+    height: 33px;
+    border-color: #9b0000;
+    text-align: center;
+    border-width: 2px;
+    width: 90px;
+    cursor: pointer;
+    outline: none;
+    background-color: #ffffff;
+
+    transition: color .5s;
+    transition: background-color .5s;
+}
+.discard_button:hover {
+    color: #ffffff;
+    background-color: #9b0000;
+}
+
+/* Button used to Save a form in the "Start a Form" popup */
+.save_button {
+    border-radius: 16px;
+    color: #6897bb;
+    font-size: 13px;
+    height: 33px;
+    border-color: #6897bb;
+    text-align: center;
+    border-width: 2px;
+    width: 90px;
+    cursor: pointer;
+    outline: none;
+    background-color: #ffffff;
+    margin-left: 8px;
+
+    transition: color .5s;
+    transition: background-color .5s;
+}
+.save_button:hover {
+    color: #ffffff;
+    background-color: #6897bb;
+}
+
+/* Button used to Submit a form in the "Start a Form" popup */
+.submit_button {
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    height: 33px;
+    border-color: #4b8242;
+    text-align: center;
+    border-width: 2px;
+    width: 120px;
+    cursor: pointer;
+    outline: none;
+    background-color: #67ac5b;
+    float: right;
+}
+.submit_button.disabled {
+    color: #8d8d8d;
+    background-color: #8e8e8e73;
+    border-color: #8d8d8d;
+    cursor: not-allowed;
+}
+
+/* Button used to Send a form, in the "Start a Form" popup, to a student. Only Student Coordinators use this button */
+.send_to_student_button {
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    height: 33px;
+    border-color: #4b8242;
+    text-align: center;
+    border-width: 2px;
+    width: 140px;
+    cursor: pointer;
+    outline: none;
+    background-color: #67ac5b;
+    float: right;
+}
+.send_to_student_button.disabled {
+    color: #8d8d8d;
+    background-color: #8e8e8e73;
+    border-color: #8d8d8d;
+    cursor: not-allowed;
 }

@@ -48,6 +48,8 @@ function gotoDashboard () {
 }
 
 function getDrafts() {
+    document.getElementById("draftsList").innerHTML = '';
+
     const availableTerms = getTermsAvailableForForms();
     let forEachIteration = 0;
     let deletedDrafts = 0;
@@ -101,7 +103,7 @@ function getDrafts() {
 
                 //make an h3 tag, make text, append text to h3 tag, append h3 tag to first_nested_div
                 var h3_form_name = document.createElement('h3');
-                h3_form_name.appendChild(document.createTextNode("Date Started: " + submDate));
+                h3_form_name.appendChild(document.createTextNode("Date Modified: " + submDate));
                 h3_form_name.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
                 h3_form_name.style.fontSize = "20px";
                 h3_form_name.className = "form_date_tooltip";
@@ -175,15 +177,13 @@ function updateDraftButtons(formID, formType, studentID) {
     function deleteDbEntry() {
         formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
             closeDraftForm();
-            document.getElementById("draftsList").innerHTML = "";
-            getDrafts(); //refresh pg
+            // Todo: refresh draftsList
         }).catch(function (error) {
             console.error("Error removing document: ", error);
         });
     }
 
-    document.getElementById("submit-option-2").setAttribute("onclick", null);
-    document.getElementById("submit-option-2").addEventListener("click", function submit() {
+    document.getElementById("submit-option-2").setAttribute("onclick", function clicked() {
         if (formType === "registration") {
             saveRegistrationForm(true, "draftsPage");
         } else if (formType === "coprerequisite") {
@@ -191,7 +191,7 @@ function updateDraftButtons(formID, formType, studentID) {
         }
         //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
         deleteDbEntry();
-    })
+    });
 }
 
 

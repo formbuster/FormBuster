@@ -10,21 +10,21 @@
             <div id="first-page">
                 <div id="startAFormMessage" class="w3-container"></div>
                 <div id="student-search" class="w3-container"></div>
-                <div id = "form-body" class="w3-container">
+                <div id="form-body" class="w3-container">
                     <div>
                         <div class="w3-container w3-theme-red">
-                            <p>Select a semester term, then search for courses using CRN, Title or Prefix.</p>
+                            <p>Select a semester term, then search for courses using CRN, Title, or Prefix.</p>
                         </div>
                         <br>
-                        <select id="termSelecter" autofocus="" class="w3-select w3-quarter" onchange="getCourse(); updateFormDueDate('registration')">
+                        <select id="termSelecter" autofocus class="w3-select w3-quarter term_selecter" onchange="getCourse(); updateFormDueDate('registration')">
                             <option value="" disabled selected>Select a term:</option>
                             <option id="springOption" value="spring">Spring</option>
                             <option id="summerOption" value="summer">Summer</option>
                             <option id="fallOption" value="fall">Fall</option>
                         </select>
 
-                        <input id="profileurl" class="w3-input w3-threequarter" type="text"
-                               placeholder="Search for courses using CRN, Title or Prefix">
+                        <input id="profileurl" class="course_search" autocomplete="off" type="text"
+                               placeholder="Search for courses using CRN, Title, or Prefix">
 
                         <br><br>
                         <img src="../img/loadinfo.net.gif" id="animated-gif" style="display:none;"
@@ -35,8 +35,8 @@
                         <p id="totalCredits"></p>
                     </div>
                     <br>
-                    <div>
-                        * A student may audit a course with the permission of his or her advisor and payment (if applicable)
+                    <div style="color: #8e8e8e; font-style: italic">
+                        <span style="color: #000000">*</span> A student may audit a course with the permission of his or her advisor and payment (if applicable)
                         of an audit fee. An auditor does not receive a grade; an AU is recorded
                         on the transcript in place of the grade if the auditor has, in general, maintained a satisfactory
                         course attendance (usually 75 percent class attendance) and completed the
@@ -45,20 +45,31 @@
                         will be permitted after the second week of classes.
                     </div>
                     <br>
-                    <div id=emptyFormMessage class="w3-panel w3-red" style="display: none;">
+                    <div id="emptyFormMessage" class="w3-panel w3-red" style="display: none; margin-top: -15px">
                         <p>The form is empty. Select a term and search for courses above!</p>
                     </div>
                 </div>
                 <div id="form-options-1" class="w3-container">
-                    <button id="discard-option-1" class="w3-button w3-grey w3-round-xxlarge" onclick="closeForm()">
+                    <button id="discard-option-1" class="discard_button button_tooltip" data-tooltip-content="<span>Discard all the changes made to this form</span>" onclick="closeForm()">
                         Discard
                     </button>
-                    <button id="save-option-2" class="w3-button w3-grey w3-round-xxlarge"
+                    <button id="save-option-2" class="save_button button_tooltip" data-tooltip-content='<span>Save this form with all of its filled information to "Form Drafts"</span>'
                             onclick="saveRegistrationForm(false, 'formsPage')">Save
                     </button>
-                    <button id="submit-option-2" class="w3-button w3-theme-blue w3-round-xxlarge"
+                    <button id="submit-option-2" class="submit_button disabled button_properties button_tooltip" data-tooltip-content="<span>Submit this form</span>"
                             onclick="saveRegistrationForm(true, 'formsPage')">Submit
                     </button>
+
+                    <script>
+                        // Initialize button_tooltip tooltip
+                        $(document).ready(function() {
+                            $('.button_tooltip').tooltipster({
+                                theme: "tooltipster-borderless",
+                                side: "bottom",
+                                animation: "grow",
+                            });
+                        });
+                    </script>
                 </div>
                 <br>
             </div>

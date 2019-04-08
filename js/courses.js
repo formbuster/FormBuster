@@ -219,6 +219,15 @@ function fillResults(myObj, placeholder1, placeholder2){
             i++;
         }
 
+        // Initialize terms tooltip
+        $(document).ready(function() {
+            $('.days_tooltip').tooltipster({
+                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                side: "left",
+                animation: "grow",
+            });
+        });
+
         //after filtering results, there may not be any matches.
         if (document.getElementById(placeholder1).innerText == "") {
             document.getElementById(placeholder2).innerText = "No results found";
@@ -248,11 +257,11 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
         document.getElementById("courseAccordion" + courseAccordionId).innerHTML += " <tr id=\"course" + course.crn + "\" bgcolor=\"" + rowColor + "\">\n" +
             "                                                <td id = \'crn" + course.crn + "\'>" + course.crn + "</td>\n" +
             "                                                <td id = \'sec" + course.crn + "\'>" + course.sec + "</td>\n" +
-            "                                                <td id = \'days" + course.crn + "\'>" + course.days + "</td>\n" +
-            "                                                <td id = \'time" + course.crn + "\'>" + course.beginTime + "-" + course.endTime + "</td>\n" +
+            `                                                <td class="days_tooltip" id="days${course.crn}" data-tooltip-content="${getDaysInTooltip(course.days)}">${course.days}</td>\n` +
+            "                                                <td id = \'time" + course.crn + "\'>" + getFormattedCourseTime(course.beginTime) + "-" + getFormattedCourseTime(course.endTime) + "</td>\n" +
             "                                                <td id = \'crs" + course.crn + "\'>" + course.crs + "</td>\n" +
             "                                                <td>" + course.instructor + "</td>\n" +
-            "                                                <td><button id=\'regButton" + course.crn + "\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 + ")'>Add Course</button></td>\n" +
+            "                                                <td><button class='course_button' id=\'regButton" + course.crn + "\' onclick='register(false," + course.crn + ",\"" + course.title + "\",\"" + course.prefix + "\"," + string2 + ")'>Add Course</button></td>\n" +
             "                                            </tr>\n";
 
         //check to see if the user already added the course, if so, they shouldn't be able to add the same course again.
@@ -272,6 +281,59 @@ function addCourseToAccordion(courseId, courseAccordionId, course, additonalDay,
     // "                                            </tr>\n" +
 }
 
+// Return the tooltip content for the available days of a course
+function getDaysInTooltip (days) {
+    days = days.toString().toUpperCase();
+
+    let daysList = [];
+    if (days.includes("M")) {
+        daysList.push("Monday");
+    }
+    if (days.includes("T")) {
+        daysList.push("Tuesday");
+    }
+    if (days.includes("W")) {
+        daysList.push("Wednesday");
+    }
+    if (days.includes("R")) {
+        daysList.push("Thursday");
+    }
+    if (days.includes("F")) {
+        daysList.push("Friday");
+    }
+
+    let daysHTML = `<span>To be announced</span>`;
+    if (days !== "TBA") {
+        for (let i = 0; i < daysList.length; i++) {
+            if (i === 0) {
+                daysHTML = `<span>`;
+                daysHTML += daysList[i];
+
+            } else {
+                daysHTML += `<br>${daysList[i]}`;
+            }
+
+            if (i === daysList.length - 1) {
+                daysHTML += `</span>`;
+            }
+        }
+    }
+
+    return daysHTML;
+}
+
+// Return formatted course time, with "colon"
+function getFormattedCourseTime (time) {
+    time = time.toString().replace(':', '');
+
+    if (time.length === 1) {
+        return time;
+
+    } else {
+        return time.substring(0, time.length - 2) + ":" + time.substring(time.length - 2, time.length);
+    }
+}
+
 let waivers = [];
 
 function generateNewCourseRowAccordion(div ,rowID, course) {
@@ -280,7 +342,7 @@ function generateNewCourseRowAccordion(div ,rowID, course) {
         $(div).append("<button onclick=\"myFunc('CourseSlider" + rowID + "')\" class=\"w3-padding-16 w3-button w3-block w3-left-align w3-lightgrey w3-leftbar w3-border-theme w3-round-large\">" + "+  " + course.prefix + " " + course.course_no + " " + course.title + "</button>\n");
         $(div).append("                                    <div id=\"CourseSlider" + rowID + "\" class=\"w3-hide w3-card\">\n" +
             "                                        <table id=\"courseAccordion" + rowID + "\" class=\"w3-table\">\n" +
-            "                                            <tr>\n" +
+            "                                            <tr style='background-color: #770000; color: #ffffff'>\n" +
             "                                                <th>CRN</th>\n" +
             "                                                <th>Sec.</th>\n" +
             "                                                <th>Days</th>\n" +
@@ -321,7 +383,7 @@ function myFunc(id) {
 function addCourseTableHeader() {
     //todo: fix the p tag, for the co/preq form.
     $("#registrationTableResults").append("     <br><div id=\"registrationResultsMessage\" class=\"w3-container w3-theme-red\">\n" +
-        "                                       <p>Select the corresponding check boxes if any courses will be added as an Audit or Continuing Education Unit (CEU). Review table before submitting. Delete added courses using the 'X', if needed.</p>\n" +
+        "                                       <p>Select the corresponding check boxes if any courses will be added as an Audit or Continuing Education Unit (CEU). Review table before submitting. Delete added courses using the 'X' button, if needed.</p>\n" +
         "                                    </div>\n" +
         "                                    <br>   " +
         "<table id=\"registrationResults\" class=\"w3-table\">\n" +
@@ -355,9 +417,10 @@ function setUpCoPrerequisiteDraft(content) {
                     }
                     addResultToCoursesTable(array[i]['1_CRN'], array[i]['2_Prefix'], array[i]['3_Course No.'],
                         array[i]['4_Section'], array[i]['5_Course Title'], array[i]['6_Days'], array[i]['7_Time'],
-                        array[i]['8_Credits'], array[i]['9_Audit']);
+                        array[i]['8_Credits'], array[i]['9_Audit'], array[i]['10_CEU']);
 
                     document.getElementById("profileurl").disabled = true;
+                    document.getElementById("profileurl").classList.add("disabled");
                     document.getElementById("totalCredits").style.display = "none";
 
                     finishUpCoPreqForm();
@@ -366,6 +429,15 @@ function setUpCoPrerequisiteDraft(content) {
                    todo: implement ceu and ceu db spot
                     */
                 }
+
+                // Initialize terms tooltip
+                $(document).ready(function() {
+                    $('.days_tooltip').tooltipster({
+                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                        side: "left",
+                        animation: "grow",
+                    });
+                });
             }
         }
         if (formSection == "2_Missing Corequisite(s) or Prerequisite(s)") {
@@ -381,10 +453,22 @@ function setUpCoPrerequisiteDraft(content) {
 
             if (justificationArray["1_Justification"] != "") {
                 document.getElementById("justificationTextField").value = justificationArray["1_Justification"];
+
+                if (document.getElementById("justificationTextField").value.length > 0) {
+                    waiverTextBoxKeyPressed();
+                }
             }
         }
     }
 
+    if (document.getElementById("coprerequisite-form") !== null) {
+        if (document.getElementById("registrationResults") !== null && document.getElementById("waiverResults") !== null) {
+            waiverTextBoxKeyPressed();
+        } else {
+            document.getElementById("submit-option-2").classList.add("disabled");
+            document.getElementById("emptyFormMessage").style.display = "block";
+        }
+    }
 }
 
 function setUpRegistrationDraft(content) {
@@ -400,11 +484,27 @@ function setUpRegistrationDraft(content) {
                 }
                 addResultToCoursesTable(array[i]['1_CRN'], array[i]['2_Prefix'], array[i]['3_Course No.'],
                     array[i]['4_Section'], array[i]['5_Course Title'], array[i]['6_Days'], array[i]['7_Time'],
-                    array[i]['8_Credits'], array[i]['9_Audit']);
-                /*
-               todo: implement ceu and ceu db spot
-                */
+                    array[i]['8_Credits'], array[i]['9_Audit'], array[i]['10_CEU']);
             }
+
+            // Initialize days_tooltip tooltip
+            $(document).ready(function() {
+                $('.days_tooltip').tooltipster({
+                    theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                    side: "left",
+                    animation: "grow",
+                });
+            });
+        }
+    }
+
+    if (document.getElementById("registration-form") !== null) {
+        if (document.getElementById("registrationResults") === null) {
+            document.getElementById("submit-option-2").classList.add("disabled");
+            document.getElementById("emptyFormMessage").style.display = "block";
+        } else {
+            document.getElementById("submit-option-2").classList.remove("disabled");
+            document.getElementById("emptyFormMessage").style.display = "none";
         }
     }
 }
@@ -419,8 +519,8 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
         "<td id='registeredCourseNo"+ course + "'>" + course_no +"</td>\n"+
         "<td id='registeredSec"+ course + "'>" + sec +"</td>\n" +
         "<td id='registeredTitle"+ course + "'>" + title +"</td>\n" +
-        "<td id='registeredDays"+ course + "'>" + days +"</td>\n"+
-        "<td id='registeredTime"+ course + "'>" + time +"</td>\n"+
+        `<td id='registeredDays${course}' class='days_tooltip' data-tooltip-content="${getDaysInTooltip(days)}">${days}</td>\n`+
+        `<td id='registeredTime${course}'>${getFormattedCourseTime(time.split('-')[0])}-${getFormattedCourseTime(time.split('-')[1])}</td>\n`+
         "<td id='registeredCrs"+ course + "'>" + crs +"</td>\n"+
         "<td><input class=\"w3-check\" onclick='auditCourse(" + course + ")' id=\"audit" + course + "\"type=\"checkbox\"></td>\n"+
         "<td><input class=\"w3-check\" onclick='adjustCreditsForCEU(" + course + ")' id=\"ceu" + course + "\"type=\"checkbox\"></td>\n"+
@@ -430,6 +530,11 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
 
     if (auditIsChecked) {
         document.getElementById("audit"+course).checked = true;
+        auditCourse(course);
+
+    } else if (ceuIsChecked) {
+        document.getElementById("ceu"+course).checked = true;
+        adjustCreditsForCEU(course);
     }
 
     //todo: call method here, to look through each row of the registrationResults and update to row colors to alternate.
@@ -437,6 +542,7 @@ function addResultToCoursesTable(course, prefix, course_no, sec, title, days, ti
     creditsCount += parseInt(crs);
 
     document.getElementById("termSelecter").disabled = true;
+    document.getElementById("termSelecter").classList.add("disabled");
     document.getElementById("totalCredits").innerText = "Total credits: " + creditsCount;
     document.getElementById("emptyFormMessage").style.display = "none";
 
@@ -459,27 +565,55 @@ function register(isAudit, course, title, prefix, course_no) {
             document.getElementById("days" + course).innerText, document.getElementById("time" + course).innerText,
             document.getElementById("crs" + course).innerText);
 
+        // Initialize terms tooltip
+        $(document).ready(function() {
+            $('.days_tooltip').tooltipster({
+                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                side: "left",
+                animation: "grow",
+            });
+        });
+
         //get rid of search results.
         $("#courseResultsMessage").html('');
         document.getElementById("searchRegistrationResults").innerText = "";
         //empty the text field of any input, reset it so it shows the placeholder text.
         document.getElementById('profileurl').value = '';
 
-        //behavior for the co preqreusite form.
+        //behavior for the coprerequisite form.
         if (document.getElementById("coprerequisite-form")){
             document.getElementById("profileurl").disabled = true;
+            document.getElementById("profileurl").classList.add("disabled");
             document.getElementById("totalCredits").style.display = "none";
             //document.getElementById("remove" + course).style.display = "none"; //don't allow removing the course.
 
             finishUpCoPreqForm();
         }
     } else { //user selected to remove that particular course.
-        //behavior for the co preqreusite form. todo: when user deleted the course, it does not reenable the search bar.
+        //behavior for the coprerequisite form. todo: when user deleted the course, it does not reenable the search bar.
         if (document.getElementById("profileurl").disabled == true) {
             document.getElementById("profileurl").disabled = false;
+            document.getElementById("profileurl").classList.remove("disabled");
         }
 
         remove(course);
+    }
+
+    if (document.getElementById("registration-form") !== null) {
+        if (document.getElementById("registrationResults") === null) {
+            document.getElementById("submit-option-2").classList.add("disabled");
+            document.getElementById("emptyFormMessage").style.display = "block";
+        } else {
+            document.getElementById("submit-option-2").classList.remove("disabled");
+            document.getElementById("emptyFormMessage").style.display = "none";
+        }
+    } else if (document.getElementById("coprerequisite-form") !== null) {
+        if (document.getElementById("registrationResults") !== null && document.getElementById("waiverResults") !== null) {
+            waiverTextBoxKeyPressed();
+        } else {
+            document.getElementById("submit-option-2").classList.add("disabled");
+            document.getElementById("emptyFormMessage").style.display = "block";
+        }
     }
 }
 
@@ -507,11 +641,13 @@ function remove (course) {
 
         //no classes are added, allow the user to change the term if needed.
         document.getElementById("termSelecter").disabled = false;
+        document.getElementById("termSelecter").classList.remove("disabled");
 
 
         //-------co/prerequiste form.
         //todo: create a list of used divs to know which ones to delete, this would be independent of form.
         document.getElementById("profileurl").disabled = false;
+        document.getElementById("profileurl").classList.remove("disabled");
         if (document.getElementById("registrationResultsMessage")) {
             document.getElementById("waiverSearchInstructions").innerHTML = "";
         }
@@ -525,6 +661,23 @@ function remove (course) {
 
     if (creditsCount != 0) {
         document.getElementById("totalCredits").innerText = "Total credits: " + creditsCount;
+    }
+
+    if (document.getElementById("registration-form") !== null) {
+        if (document.getElementById("registrationResults") === null) {
+            document.getElementById("submit-option-2").classList.add("disabled");
+            document.getElementById("emptyFormMessage").style.display = "block";
+        } else {
+            document.getElementById("submit-option-2").classList.remove("disabled");
+            document.getElementById("emptyFormMessage").style.display = "none";
+        }
+    } else if (document.getElementById("coprerequisite-form") !== null) {
+        if (document.getElementById("registrationResults") !== null && document.getElementById("waiverResults") !== null) {
+            waiverTextBoxKeyPressed();
+        } else {
+            document.getElementById("submit-option-2").classList.add("disabled");
+            document.getElementById("emptyFormMessage").style.display = "block";
+        }
     }
 }
 
@@ -558,7 +711,7 @@ function auditCourse (course) {
         //disable audit option
         document.getElementById("ceu" + course).disabled = true;
     } else {
-        //enable audit option
+        //enable ceu option
         document.getElementById("ceu" + course).disabled = false;
     }
 }
@@ -574,7 +727,6 @@ function saveFormAsDraft(studentUsername, courses_list, term){
             formDB.collection("users").doc(studentUsername).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
                 content: {"1_Courses": courses_list},
                 term: term
-                //todo: term isn't working.
             });
         }
     });
@@ -597,6 +749,7 @@ function sendRegistrationForm(studentUsername) {
             "7_Time": document.getElementById("registeredTime" + crns[i]).innerText,
             "8_Credits": document.getElementById("registeredCrs" + crns[i]).innerText,
             "9_Audit": document.getElementById("audit" + crns[i]).checked == true,
+            "10_CEU": document.getElementById("ceu" + crns[i]).checked == true
         });
     }
 
@@ -624,6 +777,7 @@ function saveRegistrationForm (ifSubmit, page) {
             "7_Time" : document.getElementById("registeredTime" + crns[i]).innerText,
             "8_Credits" : document.getElementById("registeredCrs" + crns[i]).innerText,
             "9_Audit" : document.getElementById("audit" + crns[i]).checked == true,
+            "10_CEU": document.getElementById("ceu" + crns[i]).checked == true
         });
     }
 
@@ -638,19 +792,22 @@ function saveRegistrationForm (ifSubmit, page) {
                     return;
                 }
 
-                getRandomStaff().then(function(staff) {
-                    let currentTime = moment().format('MMDDYYYYHHmmss');
-                    formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
-                        approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor}, {date: null, declinedReason: null, status: null, tracksID: staff}],
-                        content: {"1_Courses": courses_list}, //todo: save the term to the db
-                        term: term
-                    });
+                if (getComputedStyle(document.getElementById("submit-option-2")).cursor === "pointer") {
+                    getRandomStaff().then(function(staff) {
+                        let currentTime = moment().format('MMDDYYYYHHmmss');
+                        formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime).set({
+                            approvals: [{date: null, declinedReason: null, status:null, tracksID: advisor}, {date: null, declinedReason: null, status: null, tracksID: staff}],
+                            content: {"1_Courses": courses_list},
+                            term: term
+                        });
 
-                    formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
-                        formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
+                        formDB.collection("users").doc(advisor).collection("pendingForms").doc("pendingForm_" + currentTime).set({
+                            formRef: formDB.collection("users").doc(getUserName()).collection("inProgressForms").doc("Registration_" + currentTime)
+                        });
+                        displayConfirmationMessage(page, `Your form has been submitted! Check your "In-Progress Forms" for form progress.`);
+                        closeForm();
                     });
-                    displayConfirmationMessage(page, `Your form has been submitted! Check your "In-Progress Forms" for form progress.`);
-                });
+                }
 
             } else { //just save it for later
                 formDB.collection("users").doc(getUserName()).collection("drafts").doc("Registration_" + moment().format('MMDDYYYYHHmmss')).set({
@@ -658,10 +815,11 @@ function saveRegistrationForm (ifSubmit, page) {
                     term: term
                 });
                 displayConfirmationMessage(page, `Your form has been saved! Go to "Form Drafts" to revise and submit your form.`);
+                closeForm();
+                // Todo: refresh draftsList
             }
         }
     });
-    closeForm();
 }
 
 /*

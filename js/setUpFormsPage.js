@@ -66,7 +66,16 @@ function loadStudentSearchView(form) {
     document.getElementById("submit-option-2").remove();
 
     //add new button for sending to student
-    $("#form-options-1").append('<button id="send-option-2" class="w3-button w3-theme-blue w3-round-xxlarge" style="display: none">Send to Student</button>');
+    $("#form-options-1").append(`<button id="send-option-2" class="send_to_student_button button_properties button_tooltip" data-tooltip-content='<span>Send this form with all of its filled information to the student above</span>' style="display: none">Send to Student</button>`);
+
+    // Initialize button_tooltip tooltip
+    $(document).ready(function() {
+        $('.button_tooltip').tooltipster({
+            theme: "tooltipster-borderless",
+            side: "bottom",
+            animation: "grow",
+        });
+    });
 }
 
 function startForm(role, formName) {
