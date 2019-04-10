@@ -116,7 +116,7 @@ body {
     position: absolute;
     border-left: calc(var(--width) / 2) solid transparent; /* 100px */
     border-right: calc(var(--width) / 2) solid transparent; /* 100px */
-    border-top: 100px solid var(--color-top); /* 60px */
+    border-top: 102px solid var(--color-top); /* 60px */ /* 2px of overhead to avoid visual glitch */
     transform: perspective(500px);
     transform-origin: top center;
     transition: transform 1s ease-in-out 1s;
