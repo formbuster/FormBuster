@@ -27,6 +27,22 @@ function validateUser () {
             pawsDB.collection("users").doc(username).get().then(function(userDoc) {
                 if (userDoc.exists) {
                     const userDocData = userDoc.data();
+                    const userType = userDocData.userType;
+
+                    const url = window.location.href;
+                    const urlUserType = url.substring(url.indexOf("src") + 4, url.indexOf("html") - 1);
+
+                    let urlUsername = url.substring(url.indexOf("=") + 1, url.length);
+                    if (urlUsername.endsWith('#')) {
+                        urlUsername = urlUsername.substring(0, urlUsername.length - 1);
+                    }
+
+                    // User is already logged in and authenticated, but we need to make sure that the user authenticated can
+                    // access this URL; if the user can't, then it will be redirected to their correct URL
+                    if (userType !== urlUserType || username !== urlUsername) {
+                        redirectUser(userType, username);
+                    }
+
 
                 } else {
                     console.log(`ERROR: User was logged in (exists) on "pseudoTRACKS", but doesn't exist in "formDB".`);
@@ -53,15 +69,7 @@ function validateUserLoginPage () {
                     const userDocData = userDoc.data();
                     const userType = userDocData.userType;
 
-                    if (userType == "Student") {
-                        window.location.replace(`../src/stu.html?user=${username}`);
-                    } else if (userType == "Faculty") {
-                        window.location.replace(`../src/faculty.html?user=${username}`);
-                    } else if (userType == "Staff") {
-                        window.location.replace(`../src/staff.html?user=${username}`);
-                    } else {
-                        window.location.replace(`../src/coord.html?user=${username}`);
-                    }
+                    redirectUser(userType, username);
 
                 } else {
                     console.log(`ERROR: User was logged in (exists) on "pseudoTRACKS", but doesn't exist in "formDB".`);
@@ -71,6 +79,19 @@ function validateUserLoginPage () {
             // User wasn't logged in before OR user just logged out
         }
     });
+}
+
+// Redirect the user to their correct URL page, based on their "userType"
+function redirectUser (userType, username) {
+    if (userType === "Student") {
+        window.location.replace(`../src/stu.html?user=${username}`);
+    } else if (userType === "Faculty") {
+        window.location.replace(`../src/faculty.html?user=${username}`);
+    } else if (userType === "Staff") {
+        window.location.replace(`../src/staff.html?user=${username}`);
+    } else {
+        window.location.replace(`../src/coord.html?user=${username}`);
+    }
 }
 
 // Sign in the user by their username/email and password, and handle errors/failed attempts
