@@ -45,8 +45,14 @@ function checkWindowWidth () {
 }
 
 function getUserName() {
-    const userEmail = pseudoTRACKS.auth().currentUser.email;
-    return userEmail.substring(0, userEmail.indexOf("@"));
+    const url = window.location.href;
+
+    let urlUsername = url.substring(url.indexOf("=") + 1, url.length);
+    if (urlUsername.endsWith('#')) {
+        urlUsername = urlUsername.substring(0, urlUsername.length - 1);
+    }
+
+    return urlUsername;
 }
 
 // Get the user's full name

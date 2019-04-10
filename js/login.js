@@ -30,7 +30,7 @@ function validateUser () {
                     const userType = userDocData.userType;
 
                     const url = window.location.href;
-                    const urlUserType = url.substring(url.indexOf("src") + 4, url.indexOf("html") - 1);
+                    const urlUserType = getCorrecturlUserType(url.substring(url.indexOf("src") + 4, url.indexOf("html") - 1));
 
                     let urlUsername = url.substring(url.indexOf("=") + 1, url.length);
                     if (urlUsername.endsWith('#')) {
@@ -156,6 +156,19 @@ function signIn () {
 function signOut () {
     pseudoTRACKS.auth().signOut();
     window.location.replace('../src/login.html');
+}
+
+function getCorrecturlUserType (urlUserType) {
+    urlUserType = urlUserType.toLowerCase();
+    if (urlUserType === "stu") {
+        return "Student";
+    } else if (urlUserType === "faculty") {
+        return "Faculty";
+    } else if (urlUserType === "staff") {
+        return "Staff";
+    } else if (urlUserType === "coord") {
+        return "Student Coordinator";
+    }
 }
 
 // Returns "true" if a String contains a number
