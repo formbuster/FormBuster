@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login Authentication</title>
+        <link rel="icon" type="image/png" href="../img/favicon-32x32.png" sizes="32x32" />
+
+        <!-- Firebase Initialization scripts -->
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+
+        <!-- FormBuster's scripts -->
+        <script src="../js/firebase.js"></script>
+        <script src="../js/login.js"></script>
+
+        <!-- CSS Files -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" type="text/css"href="../css/login.css">
+    </head>
+
+    <body onload="loadLoginPage()" style="position: absolute; overflow: hidden; width: 100%; height: 100%;">
+        <div class="background_image"></div>
+
+        <div id="envelope_wrap">
+            <div class="fold"></div>
+            <div class="bg"></div>
+            <div class="sheet" style="    background-image: url(../img/paper_texture.jpg); background-size: cover; position: absolute; background-position: center">
+                <a style="display: none" href="http://www.freepik.com">Designed by Bedneyimages / Freepik</a>
+                <h2 class="loginTitle">Authentication Form</h2>
+                <div id="recaptcha" style="position: absolute; left: 0; bottom: 45%"></div>
+
+                <div style="position: absolute; margin-top: 73px; margin-left: 30px; margin-right: 30px; font-variant: all-small-caps">
+                    This form is provided by Form Buster, but its authentication is handled by a third party company — don’t worry, your data is secure.
+                    <br><br>
+                    You can sign in with either your username or your full email address that is used in your university. If you don't remember your password, please contact your university's technical support.
+                    <br><br>
+                    By clicking in “Sign In” you agree with Form Buster’s terms and conditions, and you recognize that Form Buster is awesome!
+                </div>
+
+                <div class="loginDiv">
+                    <div class="usernameDiv">
+                        <input class="username_input" autocomplete="on" type="text" onkeyup="(function(){
+                            if (event.key === 'Enter') {
+                                document.getElementsByClassName('password_input')[0].focus();
+                            }
+                        })();">
+                        <div class="username_title">Username</div>
+                    </div>
+
+                    <div class="passwordDiv">
+                        <input class="password_input" autocomplete="on" type="password" onkeyup="(function(){
+                            if (event.key === 'Enter') {
+                                signIn();
+                            }
+                        })();">
+                        <div class="password_title">Password</div>
+                    </div>
+                </div>
+
+                <button id="signInBtn" class="signInBtn" onclick="signIn()">Sign In</button>
+            </div>
+            <div class="envelope"></div>
+        </div>
+    </body>
+</html>

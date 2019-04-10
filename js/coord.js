@@ -1,6 +1,8 @@
 var currentUserOfStudentList; // only one div can have student_list.html loaded. will be used to empty the element stored here before loading.
 
 function loadPage () {
+    validateUser();
+
     // Load "general_dashboard.html" and the rest of the page
     $('#generalDashboard').load("general_dashboard.html", function () {
         // Remove elements that don't apply for a Student Coordinator

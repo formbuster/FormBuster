@@ -1,4 +1,6 @@
 function loadPage () {
+    validateUser();
+
     // Load "general_dashboard.html" and the rest of the page
     $('#generalDashboard').load("general_dashboard.html", function () {
         // Remove elements that don't apply for a Staff
