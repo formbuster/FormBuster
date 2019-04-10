@@ -43,7 +43,12 @@
                     <div class="usernameDiv">
                         <input class="username_input" autocomplete="on" type="text" onkeyup="(function(){
                             if (event.key === 'Enter') {
-                                document.getElementsByClassName('password_input')[0].focus();
+                                if (document.getElementsByClassName('username_input')[0].value.length > 0
+                                && document.getElementsByClassName('password_input')[0].value.length > 0) {
+                                    signIn();
+                                } else if (document.getElementsByClassName('username_input')[0].value.length > 0) {
+                                    document.getElementsByClassName('password_input')[0].focus();
+                                }
                             }
                         })();">
                         <div class="username_title">Username</div>
@@ -52,7 +57,9 @@
                     <div class="passwordDiv">
                         <input class="password_input" autocomplete="on" type="password" onkeyup="(function(){
                             if (event.key === 'Enter') {
-                                signIn();
+                                if (document.getElementsByClassName('password_input')[0].value.length > 0) {
+                                    signIn();
+                                }
                             }
                         })();">
                         <div class="password_title">Password</div>
