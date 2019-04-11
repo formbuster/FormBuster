@@ -179,6 +179,7 @@ function updateDraftButtons(formID, formType, studentID) {
     });
 
     document.getElementById("form-body").formID = formID;
+    document.getElementById("form-body").studentID = studentID;
 
     document.getElementById("submit-option-2").setAttribute("onclick", null);
     document.getElementById("submit-option-2").addEventListener("click", function clicked () {
@@ -192,7 +193,7 @@ function updateDraftButtons(formID, formType, studentID) {
 }
 
 function deleteDbEntry (formID) {
-    formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
+    formDB.collection("users").doc(document.getElementById("form-body").studentID).collection("drafts").doc(formID).delete().then(function () {
         closeDraftForm();
         // Todo: refresh draftsList
     }).catch(function (error) {
