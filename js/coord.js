@@ -39,11 +39,7 @@ function loadPage () {
             addAvailableTermsToFormName();
         });
 
-        // Load "studentSearchView" only once
-        $('#studentSearchView').load('student_list.html', function() {
-            // Load students page by default
-            gotoStudents();
-        });
+        gotoStudents();
     });
 }
 
@@ -52,21 +48,43 @@ function gotoStudents () {
     document.getElementById("studentsBtn").className = btnHighlighted;
     document.getElementById("formsBtn").className = btnNotHighlighted;
 
-    // Clear elements and switch back to the search page
-    displayStudentSearchListPage();
+    // If "student_list.html" was not loaded or was removed, then load it
+    if (document.getElementById("studentSearchView").innerHTML.length === 0) {
+        $('#studentSearchView').load('student_list.html', function() {
+            // Clear elements and switch back to the search page
+            displayStudentSearchListPage();
 
-    // Clear "searchInput" and "studentsList" and hide other pages
-    document.getElementById("searchInput").value = '';
-    document.getElementById("searchButton").style.visibility = "hidden";
-    document.getElementById("studentsList").innerHTML = '';
-    document.getElementById("formsPage").style.display = "none";
+            // Clear "searchInput" and "studentsList" and hide other pages
+            document.getElementById("searchInput").value = '';
+            document.getElementById("searchButton").style.visibility = "hidden";
+            document.getElementById("studentsList").innerHTML = '';
+            document.getElementById("formsPage").style.display = "none";
 
-    // Update the page's title
-    document.getElementById("pageTitle").innerHTML = "Find Students Records";
+            // Update the page's title
+            document.getElementById("pageTitle").innerHTML = "Find Students Records";
 
-    // Unhide "studentsPage" and put focus on the "searchInput"
-    document.getElementById("studentsPage").style.display = "block";
-    document.getElementById("searchInput").focus();
+            // Unhide "studentsPage" and put focus on the "searchInput"
+            document.getElementById("studentsPage").style.display = "block";
+            document.getElementById("searchInput").focus();
+        });
+
+    } else {
+        // Clear elements and switch back to the search page
+        displayStudentSearchListPage();
+
+        // Clear "searchInput" and "studentsList" and hide other pages
+        document.getElementById("searchInput").value = '';
+        document.getElementById("searchButton").style.visibility = "hidden";
+        document.getElementById("studentsList").innerHTML = '';
+        document.getElementById("formsPage").style.display = "none";
+
+        // Update the page's title
+        document.getElementById("pageTitle").innerHTML = "Find Students Records";
+
+        // Unhide "studentsPage" and put focus on the "searchInput"
+        document.getElementById("studentsPage").style.display = "block";
+        document.getElementById("searchInput").focus();
+    }
 }
 
 function gotoForms () {
