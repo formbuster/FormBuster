@@ -966,7 +966,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                             h4_due_date.appendChild(document.createTextNode("Due Date: " + result.format('M/D/YY')));
                                             h4_due_date.style.textAlign = "left";
                                             h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>');
-                                            h4_due_date.className = "form_date_tooltip";
+                                            h4_due_date.className = `form_date_tooltip dueDate_formCard-${pageDiv}`;
                                             h4_due_date.style.fontSize = "20px";
 
                                             // Make "date" to be prioritized first by dueDate and second by submDate, if we are in the
@@ -1003,6 +1003,9 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
 
                                                 // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv"
                                                 if (pageDiv === "historyPage") {
+                                                    // If we are in the Completed Forms for either Faculty or Staff, hide due date
+                                                    $(`.dueDate_formCard-${pageDiv}`).css('display', 'none');
+
                                                     // Descending order for "historyPage" (newer forms first)
                                                     $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
 
@@ -1016,7 +1019,6 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                                 }
 
                                                 // Unhide "targetDiv" after we have populated it
-                                                console.log("UNHIDE!");
                                                 document.getElementById(targetDiv).style.display = "block";
                                             }
 
@@ -1081,8 +1083,7 @@ function displayFormReadModeByReference (event) {
                             '                <div class="w3-right">\n' +
                             '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission: '
                             + submDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
-                            + dueDate + '</h3>\n' +
+                            `                    <h3 class="form_date_tooltip dueDate_formOpened-${pageDiv.id}" style="font-size: 22px;" data-tooltip-content="${dueDateHTML}">Due Date: ${dueDate}</h3>\n` +
                             '                </div>\n' +
                             '            </div>\n' +
                             '            <div id ="first-page">\n';
@@ -1237,6 +1238,11 @@ function displayFormReadModeByReference (event) {
                                                 animation: "grow",
                                             });
                                         });
+
+                                        // If we are in the Completed Forms for either Faculty or Staff, hide due date
+                                        if (pageDiv.id === "historyPage") {
+                                            $(`.dueDate_formOpened-${pageDiv.id}`).css('display', 'none');
+                                        }
                                     }
                                 } else {
                                     // doc.data() will be undefined in this case
