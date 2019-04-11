@@ -89,7 +89,7 @@ function startForm(role, formName) {
                 removeTermSelecterOption(unavailableTerms, "registration");
                 fixTermSelecterTermNames(availableTerms, "registration");
                 saveStudentIDToPage(studentID);
-                updateFormDueDate("registration");
+                updateFormDeadline("registration");
                 document.getElementById("registration-form-title").innerHTML = getFormNameFromID("registration") + " Form";
                 loadStudentSearchView("registration-form");
             });
@@ -98,7 +98,7 @@ function startForm(role, formName) {
                 removeTermSelecterOption(unavailableTerms, "coprerequisite");
                 fixTermSelecterTermNames(availableTerms, "coprerequisite");
                 saveStudentIDToPage(studentID);
-                updateFormDueDate("coprerequisite");
+                updateFormDeadline("coprerequisite");
                 document.getElementById("coprerequisite-form-title").innerHTML = getFormNameFromID("coprerequisite") + " Form";
                 loadStudentSearchView("coprerequisite-form");
             });
@@ -111,7 +111,7 @@ function startForm(role, formName) {
                 removeTermSelecterOption(unavailableTerms, "registration");
                 fixTermSelecterTermNames(availableTerms, "registration");
                 saveStudentIDToPage(studentID);
-                updateFormDueDate("registration");
+                updateFormDeadline("registration");
                 document.getElementById("registration-form-title").innerHTML = getFormNameFromID("registration") + " Form";
                 //reveal the form, no modifications.
                 document.getElementById("currentFormOpen").style.display = "block";
@@ -121,7 +121,7 @@ function startForm(role, formName) {
                 removeTermSelecterOption(unavailableTerms, "coprerequisite");
                 fixTermSelecterTermNames(availableTerms, "coprerequisite");
                 saveStudentIDToPage(studentID);
-                updateFormDueDate("coprerequisite");
+                updateFormDeadline("coprerequisite");
                 document.getElementById("coprerequisite-form-title").innerHTML = getFormNameFromID("coprerequisite") + " Form";
                 document.getElementById("currentFormOpen").style.display = "block";
             });
@@ -153,40 +153,39 @@ function saveStudentIDToPage (studentID) {
 }
 
 // Update form due date whenever the user selects another term in the "termSelecter" drop down menu
-function updateFormDueDate (formName) {
+function updateFormDeadline (formName) {
     const termSelected = document.getElementById("termSelecter").value;
-    const studentID = document.getElementById("form-body").studentID;
 
     if (termSelected == "summer" || termSelected == "fall" || termSelected == "spring") {
-        const dueDatePromise = getFormDueDate(formName, termSelected, studentID, moment());
+        const deadlineDate = getFormDeadline(formName, termSelected, moment());
 
-        dueDatePromise.then(function (result) {
-            document.getElementById("formDueDate").innerHTML = `Due Date: ${result.format('M/D/YY')}`;
-            const tooltipContent = result.format('M/D/YY [at] HH:mm:ss');
+        document.getElementById("formDeadline").innerHTML = `Deadline: ${deadlineDate.format('M/D/YY')}`;
+        const tooltipContent = '<span>' + '<u>' + getDeadlineText(formName) + '</u><br>' + deadlineDate.format('M/D/YY [at] HH:mm:ss') + '</span>';
 
-            if (document.getElementById("formDueDate").classList.contains("tooltipstered")) {
-                $('.formDueDate-tooltip').tooltipster('content', tooltipContent);
+        if (document.getElementById("formDeadline").classList.contains("tooltipstered")) {
+            $('.formDeadline-tooltip').tooltipster('content', tooltipContent);
 
-            } else {
-                document.getElementById("formDueDate").setAttribute("data-tooltip-content", `<span>${tooltipContent}</span>`);
-                $(document).ready(function () {
-                    $('.formDueDate-tooltip').tooltipster({
-                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                        position: "left",
-                        animation: "grow",
-                    });
+        } else {
+            document.getElementById("formDeadline").setAttribute("data-tooltip-content", tooltipContent);
+            $(document).ready(function () {
+                $('.formDeadline-tooltip').tooltipster({
+                    theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                    position: "left",
+                    animation: "grow",
+                    contentAsHTML: true
                 });
-            }
-        });
+            });
+        }
 
     } else {
-        const tooltipMessage = "Select a term first";
-        document.getElementById("formDueDate").setAttribute("data-tooltip-content", `<span>${tooltipMessage}</span>`);
+        const tooltipMessage = "<span>Select a term first<span>";
+        document.getElementById("formDeadline").setAttribute("data-tooltip-content", tooltipMessage);
         $(document).ready(function () {
-            $('.formDueDate-tooltip').tooltipster({
+            $('.formDeadline-tooltip').tooltipster({
                 theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
                 position: "left",
                 animation: "grow",
+                contentAsHTML: true
             });
         });
     }

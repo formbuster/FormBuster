@@ -231,7 +231,7 @@ function displayDraftModeCoPrerequisite (event) {
                 fixTermSelecterTermNames(availableTerms, "coprerequisite");
                 changeTermSelecterTermName(formDoc.term); // important
                 saveStudentIDToPage(studentID); // might be redundant, since this function was already called in "startForm()" earlier on
-                updateFormDueDate("coprerequisite");
+                updateFormDeadline("coprerequisite");
 
                 const content = formDoc.content;
                 setUpCoPrerequisiteDraft(content);
@@ -275,7 +275,7 @@ function displayDraftModeRegistration (event) {
                 fixTermSelecterTermNames(availableTerms, "registration");
                 changeTermSelecterTermName(formDoc.term); // important
                 saveStudentIDToPage(studentID); // might be redundant, since this function was already called in "startForm()" earlier on
-                updateFormDueDate("registration");
+                updateFormDeadline("registration");
 
                 const content = formDoc.content;
                 setUpRegistrationDraft(content);

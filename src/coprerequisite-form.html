@@ -5,7 +5,7 @@
             <div class="w3-text-theme-red w3-container" style="display: block">
                 <p></p>
                 <h3 class="w3-left" id="coprerequisite-form-title">Co/Prerequisite Waiver Request Form</h3>
-                <h3 id="formDueDate" class="w3-right w3-padding-right formDueDate-tooltip">Due Date: N/A</h3>
+                <h3 id="formDeadline" class="w3-right w3-padding-right formDeadline-tooltip">Deadline: N/A</h3>
             </div>
             <div id="first-page">
                 <div id="startAFormMessage" class="w3-container"></div>
@@ -18,7 +18,7 @@
                         </div>
                         <br>
                         <div id ="first-part-of-form">
-                            <select id="termSelecter" autofocus class="w3-select w3-quarter term_selecter" onchange="getCourse(); updateFormDueDate('registration')">
+                            <select id="termSelecter" autofocus class="w3-select w3-quarter term_selecter" onchange="getCourse(); updateFormDeadline('registration')">
                                 <option value="" disabled selected>Select a term:</option>
                                 <option id="springOption" value="spring">Spring</option>
                                 <option id="summerOption" value="summer">Summer</option>

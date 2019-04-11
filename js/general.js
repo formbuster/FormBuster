@@ -4,12 +4,12 @@ const btnNotHighlighted = "w3-bar-item w3-button w3-hover-theme w3-large";
 
 // Number of weeks that forms are open before the earliest date of each term
 // Used in "getTermsAvailableForForms()", "getTermsUnavailableForForms()", and "getFormOpenDate()"
-const weeksBefore = 3;
+const weeksBefore = 4;
 
-// The form will be due this number of days before earliest day of this category of student ("schoolYear").
-// This will be this form's first due date, of 2; second due date will be when the form closes for everyone.
-// Used in "getFormDueDate()"
-const daysBefore = 3;
+// Number of days in which a Faculty or Staff member will have for their due date, from either the submission date or
+// the last person who have approved/declined the form. This number won't apply if the date is too close to the actual
+// "earliestDay" or "latestDay" of that form.
+const daysToApprove = 3;
 
 // Only applicable for Students, Faculty, and Staff
 function openNavToggle () {
@@ -129,11 +129,13 @@ function getFormName (doc) {
 }
 
 // Get the due date for the "formName" of this "term", while taking into account the "totalCredits" of this student
-// IMPORTANT: "referenceDate" is used as a reference for the form due dates gathered in "getFormDatesForAllTerms()"
-function getFormDueDate (formName, term, studentID, referenceDate) {
-    const formDates = getFormDatesForAllTerms(referenceDate);
+// IMPORTANT: "referenceDate" is used as a reference for the form dates gathered in "getFormDatesForAllTerms()"
 
-    const currentDate = moment();
+// Due date will be always "daysToApprove" days after the last person who signed or of the submission date of the form, unless
+// we are too close of one of the 2 possible dates -- earliest day for that student to register (for example), or latest day
+// for that student to register (for example) -- in that case the die date becomes one of these 2 above dates.
+function getFormDueDate (formName, term, studentID, referenceDate, approvalsArray) {
+    const formDates = getFormDatesForAllTerms(referenceDate);
 
     formName = formName.toLowerCase();
     term = term.toLowerCase();
@@ -160,21 +162,127 @@ function getFormDueDate (formName, term, studentID, referenceDate) {
                 dayOfWeek = "Thursday";
             } else {
                 dayOfWeek = "ERROR";
+                alert("ERROR: 'dayOfWeek' is 'ERROR' in 'getFormDueDate()'");
+            }
+
+            let earliestDate;
+            // Adjust the earliest date of the "term" to match with the "schoolYear" of the student (using "dayOfWeek")
+            eval(`earliestDate = formDates.${formName}.${term}_earliestDate.day("${dayOfWeek}");`);
+
+            let latestDate;
+            eval(`latestDate = formDates.${formName}.${term}_latestDate;`);
+
+            // If no one have signed the form yet, then "lastDateApproved" will the submission date of the form ("referenceDate");
+            // otherwise this will be the date of the last approval/decline of the form
+            let lastDateApproved = referenceDate;
+            for (let i = 0; i < approvalsArray.length; i++) {
+                if (approvalsArray[i].date != null) {
+                    lastDateApproved = moment(approvalsArray[i].date.toDate());
+                }
             }
 
             let dueDate;
-            // Adjust the earliest day of the "term" to match with the "schoolYear" of the student (using "dayOfWeek")
-            eval(`dueDate = formDates.${formName}.${term}_earliestDate.day("${dayOfWeek}").subtract(${daysBefore}, 'day');`);
+            // if "lastDateApproved" is BEFORE "earliestDate"
+            if (lastDateApproved.diff(earliestDate) < 0) {
+                // If dates are apart by at least "daysToApprove", then we give the next approval "daysToApprove" weekdays
+                if (areDatesApartWeekdays(lastDateApproved, earliestDate, daysToApprove)) {
+                    dueDate = addWeekdays(lastDateApproved, daysToApprove);
 
-            // If the "dueDate" has passed, then the new due date will be the latest day for this "term"
-            // This means that "dueDate" is before "currentDate"
-            if (dueDate.diff(currentDate) < 0) {
-                eval(`dueDate = formDates.${formName}.${term}_latestDate;`);
+                } else {
+                    dueDate = earliestDate;
+                }
+
+            } else { // "lastDateApproved" is AFTER "earliestDate"
+                //  If "lastDateApproved" comes before "latestDate" AND dates are apart by at least "daysToApprove"
+                // then we give the next approval "daysToApprove" weekdays
+                if (lastDateApproved.diff(latestDate) < 0 && areDatesApartWeekdays(lastDateApproved, latestDate, daysToApprove)) {
+                    dueDate = addWeekdays(lastDateApproved, daysToApprove);
+
+                } else {
+                    dueDate = latestDate;
+                }
             }
 
             return dueDate;
         }
     });
+}
+
+// Get the deadline for the "formName" of this "term" in relation to the "referenceDate" given, which would be the "submDate"
+// IMPORTANT: "referenceDate" is used as a reference for the form dates gathered in "getFormDatesForAllTerms()"
+function getFormDeadline (formName, term, referenceDate) {
+    const formDates = getFormDatesForAllTerms(referenceDate);
+
+    formName = formName.toLowerCase();
+    term = term.toLowerCase();
+
+    let deadline;
+    eval(`deadline = formDates.${formName}.${term}_latestDate;`);
+
+    return deadline;
+}
+
+function getDeadlineText (formID) {
+    formID = formID.toLowerCase();
+
+    let text = "ERROR";
+    if (formID === "registration") {
+        text = "Last day to Add/Drop a course"
+    } else if (formID === "coprerequisite") {
+        text = "Last day to Add/Drop a course"
+    }
+
+    return text;
+}
+
+// Return true if date1 and date2 have at least "days" amount of days from each other
+// It doesn't matter if date2 comes before date1, the function will see if their difference is more or equal to "days"
+function areDatesApartWeekdays (date1, date2, days) {
+    // date1 is before than date2
+    if (date1.diff(date2) < 0) {
+        const tempDate = addWeekdays(date1, days);
+        if (tempDate.diff(date2) <= 0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } else { // date1 is after date2
+        const tempDate = addWeekdays(date2, days);
+        if (tempDate.diff(date1) <= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+// Return true if date1 and date2 have at least "days" amount of days from each other
+// It doesn't matter if date2 comes before date1, the function will see if their difference is more or equal to "days"
+function areDatesApart (date1, date2, days) {
+    const daysDiff = Math.abs(date1.diff(date2, 'day'));
+
+    if (daysDiff >= days) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function addWeekdays (date, days) {
+    // use a clone
+    date = moment(date);
+
+    while (days > 0) {
+        date = date.add(1, 'day');
+
+        // decrease "days" only if it's a weekday
+        if (date.isoWeekday() !== 6 && date.isoWeekday() !== 7) {
+            days -= 1;
+        }
+    }
+
+    return date;
 }
 
 function getFormOpenDate (formName, fullTerm) {
@@ -280,7 +388,7 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             const formName = getFormName(doc);
             const submDate = getSubmDate(doc);
             const exactSubmDate = getExactSubmDate(doc);
-            const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
+            const deadlineDate = getFormDeadline(formID, formDoc.term.split(" ")[0], moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
             const approvals = formDoc.approvals;
 
             var main_div = document.createElement("div");
@@ -311,62 +419,60 @@ function getStudentForms (pageDiv, targetDiv, studentID, formsFolder, mainButton
             second_nested_div.className = "w3-right";
 
             var h4_submission_date = document.createElement('h3');
-            h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
+            h4_submission_date.appendChild(document.createTextNode("Submission: " + submDate));
             h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
             h4_submission_date.className = "form_date_tooltip";
             h4_submission_date.style.fontSize = "20px";
 
 
             second_nested_div.appendChild(h4_submission_date);
-            var h4_due_date = document.createElement('h3');
+            var h4_deadline = document.createElement('h3');
 
-            dueDatePromise.then(function(result) {
-                h4_due_date.appendChild(document.createTextNode("Due Date: " + result.format('M/D/YY')));
-                h4_due_date.style.textAlign = "left";
-                h4_due_date.setAttribute("data-tooltip-content", '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>');
-                h4_due_date.className = "form_date_tooltip";
-                h4_due_date.style.fontSize = "20px";
+            h4_deadline.appendChild(document.createTextNode("Deadline: " + deadlineDate.format('M/D/YY')));
+            h4_deadline.style.textAlign = "left";
+            h4_deadline.setAttribute("data-tooltip-content", '<span>' + '<u>' + getDeadlineText(formID) + '</u><br>' + deadlineDate.format('M/D/YY [at] HH:mm:ss') + '</span>');
+            h4_deadline.className = "form_date_tooltip";
+            h4_deadline.style.fontSize = "20px";
 
-                second_nested_div.appendChild(h4_due_date);
-                main_div.appendChild(second_nested_div);
+            second_nested_div.appendChild(h4_deadline);
+            main_div.appendChild(second_nested_div);
 
-                // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
-                main_div.addEventListener("click", mainButtonFunction);
-                main_div.pageDiv = pageDiv;
-                main_div.studentID = studentID;
-                main_div.formsFolder = formsFolder;
-                main_div.formID = doc.id;
-                document.getElementById(targetDiv).appendChild(main_div);
+            // another way to call function "onclick" --> main_div.onclick = function() {console.log("clicked")};
+            main_div.addEventListener("click", mainButtonFunction);
+            main_div.pageDiv = pageDiv;
+            main_div.studentID = studentID;
+            main_div.formsFolder = formsFolder;
+            main_div.formID = doc.id;
+            document.getElementById(targetDiv).appendChild(main_div);
 
-                if (forEachIteration == querySnapshot.size - 1) {
-                    // Initialize tooltips after all the elements have been created
-                    $(document).ready(function() {
-                        $('.form_date_tooltip').tooltipster({
-                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                            position: "left",
-                            animation: "grow",
-                        });
+            if (forEachIteration == querySnapshot.size - 1) {
+                // Initialize tooltips after all the elements have been created
+                $(document).ready(function() {
+                    $('.form_date_tooltip').tooltipster({
+                        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                        position: "left",
+                        animation: "grow",
                     });
+                });
 
-                    // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv" or "targetDiv"
-                    if (pageDiv === "historyPage" || targetDiv === "completedFormsList") {
-                        // Descending order for "historyPage" and "completedFormsList" (newer forms first)
-                        $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
+                // Sort all the "divs-to-sort" in either ascending or descending order, depending on "pageDiv" or "targetDiv"
+                if (pageDiv === "historyPage" || targetDiv === "completedFormsList") {
+                    // Descending order for "historyPage" and "completedFormsList" (newer forms first)
+                    $(`.divs-to-sort-${targetDiv}`).sort(sortDescending).appendTo(document.getElementById(targetDiv));
 
-                    } else if (pageDiv === "dashboardPage" || targetDiv === "inProgressFormsList") {
-                        // Ascending order for "dashboardPage" and "inProgressFormsList" (older forms first)
-                        $(`.divs-to-sort-${targetDiv}`).sort(sortAscending).appendTo(document.getElementById(targetDiv));
+                } else if (pageDiv === "dashboardPage" || targetDiv === "inProgressFormsList") {
+                    // Ascending order for "dashboardPage" and "inProgressFormsList" (older forms first)
+                    $(`.divs-to-sort-${targetDiv}`).sort(sortAscending).appendTo(document.getElementById(targetDiv));
 
-                    } else {
-                        alert("EXCEPTION in Sort all the \"divs-to-sort\"");
-                    }
-
-                    // Unhide "targetDiv" after we have populated it
-                    document.getElementById(targetDiv).style.display = "block";
+                } else {
+                    alert("EXCEPTION in Sort all the \"divs-to-sort\"");
                 }
 
-                forEachIteration++;
-            });
+                // Unhide "targetDiv" after we have populated it
+                document.getElementById(targetDiv).style.display = "block";
+            }
+
+            forEachIteration++;
         });
     }).catch(function(error) {
         console.log("Error getting documents (querySnapshot): ", error);
@@ -564,7 +670,7 @@ function displayFormReadMode (event) {
             const formDoc = doc.data();
             const formID = getFormID(doc);
             const formName = getFormName(doc);
-            const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
+            const deadlineDate = getFormDeadline(formID, formDoc.term.split(" ")[0], moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
 
             pawsDB.collection("users").doc(studentID).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
@@ -573,185 +679,183 @@ function displayFormReadMode (event) {
                     const studentName = '<span class="student_name_tooltip" data-tooltip-content="' + studentTooltipHTML + '" style="color: #000">'
                         + pawsStudentDoc.name.first + " " + pawsStudentDoc.name.last + '</span>';
 
-                    dueDatePromise.then(function(result) {
-                        const dueDate = '<span style="color: #000">' + result.format('M/D/YY') + '</span>';
-                        const dueDateHTML = '<span>' + result.format('M/D/YY [at] HH:mm:ss') + '</span>';
+                    const deadline = '<span style="color: #000">' + deadlineDate.format('M/D/YY') + '</span>';
+                    const deadlineHTML = '<span>' + '<u>' + getDeadlineText(formID) + '</u><br>' + deadlineDate.format('M/D/YY [at] HH:mm:ss') + '</span>';
 
-                        const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
-                        const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
+                    const submDate = '<span style="color: #000">' + getSubmDate(doc) + '</span>';
+                    const exactSubmDateHTML = '<span>' + getExactSubmDate(doc) + '</span>';
 
-                        const content = formDoc.content;
-                        const approvals = formDoc.approvals;
+                    const content = formDoc.content;
+                    const approvals = formDoc.approvals;
 
-                        let wholeHTML = '';
-                        wholeHTML +=
-                            '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
-                            `    <div class="w3-modal-content w3-round-xlarge" style="border-left: ${borderLeft}">\n` +
-                            '        <div class="w3-container">\n' +
-                            '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
-                            'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
-                            '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
-                            '                <div class="w3-left">\n' +
-                            '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
-                            '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
-                            '                </div>\n' +
-                            '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
-                            + submDate + '</h3>\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
-                            + dueDate + '</h3>\n' +
-                            '                </div>\n' +
-                            '            </div>\n' +
-                            '            <div id ="first-page">\n';
+                    let wholeHTML = '';
+                    wholeHTML +=
+                        '<div id="mainModal" class="w3-modal" style="display: block; padding-bottom: 100px">\n' +
+                        `    <div class="w3-modal-content w3-round-xlarge" style="border-left: ${borderLeft}">\n` +
+                        '        <div class="w3-container">\n' +
+                        '            <span onclick="closeFormModal(document.getElementsByClassName(\'w3-modal\').item(0))" ' +
+                        'class="w3-button w3-display-topright w3-round-xlarge" style="padding: 4px 16px">&times;</span>\n' +
+                        '            <div class="w3-text-theme-red" style="display: block; overflow: auto; margin-top: 15px">\n' +
+                        '                <div class="w3-left">\n' +
+                        '                    <h3 style="font-size: 22px;">' + formName + ' Form</h3>\n' +
+                        '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
+                        '                </div>\n' +
+                        '                <div class="w3-right">\n' +
+                        '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission: '
+                        + submDate + '</h3>\n' +
+                        '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + deadlineHTML + '" > Deadline: '
+                        + deadline + '</h3>\n' +
+                        '                </div>\n' +
+                        '            </div>\n' +
+                        '            <div id ="first-page">\n';
 
 
-                        // Iterate through the different sections of the form
-                        // "formSection" will be the next object OR array of the "content" object (map)
-                        let iteration = 0;
-                        for (var formSection in content) {
-                            const formSectionTitle = formSection.split("_")[1];
+                    // Iterate through the different sections of the form
+                    // "formSection" will be the next object OR array of the "content" object (map)
+                    let iteration = 0;
+                    for (var formSection in content) {
+                        const formSectionTitle = formSection.split("_")[1];
 
-                            if (iteration == 0) {
-                                wholeHTML +=
-                                    '<div style="display: block; overflow: auto">\n' +
-                                    `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
-                                    '</div>\n';
+                        if (iteration == 0) {
+                            wholeHTML +=
+                                '<div style="display: block; overflow: auto">\n' +
+                                `   <h5 style="text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                '</div>\n';
 
-                            } else {
-                                wholeHTML +=
-                                    '<div style="display: block; overflow: auto">\n' +
-                                    `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
-                                    '</div>\n';
-                            }
-
-                            // This section of the form is an array
-                            if (Array.isArray(content[formSection])) { // If it's an array, we print its structure in table format
-                                wholeHTML += createTableFromArray(content[formSection]);
-
-                                // This section of the form is a map (object)
-                            } else {// If it's a map (object), we print its structure in the format --> property: value
-                                wholeHTML += '<div class="w3-container">\n';
-
-                                // Iterate through the objects in this section of the form
-                                for (var objKey in content[formSection]) {
-                                    wholeHTML +=
-                                        '    <span style="display: block; overflow: auto">\n' +
-                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
-                                        `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; margin-left: 5px">${content[formSection][objKey]}</h5>\n` +
-                                        '    </span>\n';
-                                }
-
-                                // Close container
-                                wholeHTML += '</div>\n';
-                            }
-
-                            iteration++;
+                        } else {
+                            wholeHTML +=
+                                '<div style="display: block; overflow: auto">\n' +
+                                `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">${formSectionTitle}</h5>\n` +
+                                '</div>\n';
                         }
 
+                        // This section of the form is an array
+                        if (Array.isArray(content[formSection])) { // If it's an array, we print its structure in table format
+                            wholeHTML += createTableFromArray(content[formSection]);
 
-                        wholeHTML +=
-                            '<div style="display: block; overflow: auto">\n' +
-                            `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
-                            '</div>\n';
+                            // This section of the form is a map (object)
+                        } else {// If it's a map (object), we print its structure in the format --> property: value
+                            wholeHTML += '<div class="w3-container">\n';
 
-                        for (let i = 0; i < approvals.length; i++) {
-                            const approvalID = approvals[i].tracksID;
+                            // Iterate through the objects in this section of the form
+                            for (var objKey in content[formSection]) {
+                                wholeHTML +=
+                                    '    <span style="display: block; overflow: auto">\n' +
+                                    `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; font-weight: bold">${objKey.split("_")[1]}: </h5>\n` +
+                                    `        <h5 class="form_content_text" style="margin-top: 0; margin-bottom: 0; float: left; margin-left: 5px">${content[formSection][objKey]}</h5>\n` +
+                                    '    </span>\n';
+                            }
 
-                            pawsDB.collection("users").doc(approvalID).get().then(function(doc) {
-                                if (doc.exists) {
-                                    const pawsDoc2 = doc.data();
-                                    const approvalObj = approvals[i];
-                                    const approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
+                            // Close container
+                            wholeHTML += '</div>\n';
+                        }
 
-                                    let approvalEmail;
-                                    if (pawsDoc2.userType != "Staff") { // then it means it's a Faculty member
-                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u> (${pawsDoc2.facultyRole})</br>${pawsDoc2.email}</span>`;
-                                    } else {
-                                        approvalEmail = `<span><u>${pawsDoc2.userType}</u></br>${pawsDoc2.email}</span>`;
-                                    }
+                        iteration++;
+                    }
 
-                                    const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
-                                    const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
-                                    const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
 
-                                    const declinedReasonTooltip = getDeclinedReasonTooltipText(approvalObj.status, pawsDoc2.userType);
+                    wholeHTML +=
+                        '<div style="display: block; overflow: auto">\n' +
+                        `   <h5 style="margin-top: 35px; text-decoration: underline; font-weight: bold">Approvals</h5>\n` +
+                        '</div>\n';
 
-                                    // Initialize table and its titles
-                                    if (i == 0) {
-                                        wholeHTML +=
-                                            '<div class="w3-container form_content_text">\n' +
-                                            '    <table id="approvalsTable" class="w3-table-all w3-card">\n';
+                    for (let i = 0; i < approvals.length; i++) {
+                        const approvalID = approvals[i].tracksID;
 
-                                        // Insert table titles first
-                                        wholeHTML += '        <tr>\n';
-                                        wholeHTML += `            <th>Name<th>\n`;
-                                        wholeHTML += `            <th>Status<th>\n`;
-                                        wholeHTML += `            <th>Date<th>\n`;
-                                        wholeHTML += `            <th>Declined Reason<th>\n`;
-                                        wholeHTML += '        </tr>\n';
-                                    }
+                        pawsDB.collection("users").doc(approvalID).get().then(function(doc) {
+                            if (doc.exists) {
+                                const pawsDoc2 = doc.data();
+                                const approvalObj = approvals[i];
+                                const approvalName = pawsDoc2.name.first + " " +  pawsDoc2.name.last;
 
-                                    // Insert table data
-                                    wholeHTML += '        <tr>\n';
-                                    wholeHTML += `            <td class="approval_tooltip" data-tooltip-content="${approvalEmail}" >${approvalName}<td>\n`;
-                                    wholeHTML += getApprovalStatusHTML(approvalObj.status, pawsDoc2.userType);
-                                    wholeHTML += `            <td class="approval_tooltip" 
-                                            data-tooltip-content="${approvalExactDate}" >${approvalDate}<td>\n`;
-                                    wholeHTML += `            <td class="approval_tooltip" 
-                                            data-tooltip-content="${declinedReasonTooltip}" >${approvalDeclinedReason}<td>\n`;
-                                    wholeHTML += '       </tr>\n';
-
-                                    // Close table element and finish everything
-                                    if (i == approvals.length - 1) {
-                                        wholeHTML +=
-                                            '   </table>\n' +
-                                            '</div>\n';
-
-                                        // Close all the divs
-                                        wholeHTML +=
-                                            '                <br>\n' +
-                                            '            </div>\n' +
-                                            '        </div>\n' +
-                                            '    </div>\n' +
-                                            '</div>';
-
-                                        // Insert the HTML at the end of "pageDiv"
-                                        pageDiv.insertAdjacentHTML("beforeend", wholeHTML);
-
-                                        // Initialize tooltip
-                                        $(document).ready(function() {
-                                            $('.student_name_tooltip').tooltipster({
-                                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                                position: "right",
-                                                animation: "grow",
-                                            });
-
-                                            $('.form_date_tooltip').tooltipster({
-                                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                                position: "left",
-                                                animation: "grow",
-                                            });
-
-                                            $('.approval_tooltip').tooltipster({
-                                                theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-                                                position: "left",
-                                                animation: "grow",
-                                                functionPosition: function(instance, helper, position){
-                                                    position.coord.left += 10;
-                                                    return position;
-                                                }
-                                            });
-                                        });
-                                    }
+                                let approvalEmail;
+                                if (pawsDoc2.userType != "Staff") { // then it means it's a Faculty member
+                                    approvalEmail = `<span><u>${pawsDoc2.userType}</u> (${pawsDoc2.facultyRole})</br>${pawsDoc2.email}</span>`;
                                 } else {
-                                    // doc.data() will be undefined in this case
-                                    console.log("No such document!");
+                                    approvalEmail = `<span><u>${pawsDoc2.userType}</u></br>${pawsDoc2.email}</span>`;
                                 }
-                            }).catch(function(error) {
-                                console.log("Error getting document:", error);
-                            });
-                        }
-                    });
+
+                                const approvalDate = (approvalObj.date == null) ? "N/A" : getFormattedDate(approvalObj.date.toDate());
+                                const approvalExactDate = getApprovalExactDayTooltipText(approvalObj.date, pawsDoc2.userType);
+                                const approvalDeclinedReason = (approvalObj.declinedReason == null) ? "N/A" : approvalObj.declinedReason;
+
+                                const declinedReasonTooltip = getDeclinedReasonTooltipText(approvalObj.status, pawsDoc2.userType);
+
+                                // Initialize table and its titles
+                                if (i == 0) {
+                                    wholeHTML +=
+                                        '<div class="w3-container form_content_text">\n' +
+                                        '    <table id="approvalsTable" class="w3-table-all w3-card">\n';
+
+                                    // Insert table titles first
+                                    wholeHTML += '        <tr>\n';
+                                    wholeHTML += `            <th>Name<th>\n`;
+                                    wholeHTML += `            <th>Status<th>\n`;
+                                    wholeHTML += `            <th>Date<th>\n`;
+                                    wholeHTML += `            <th>Declined Reason<th>\n`;
+                                    wholeHTML += '        </tr>\n';
+                                }
+
+                                // Insert table data
+                                wholeHTML += '        <tr>\n';
+                                wholeHTML += `            <td class="approval_tooltip" data-tooltip-content="${approvalEmail}" >${approvalName}<td>\n`;
+                                wholeHTML += getApprovalStatusHTML(approvalObj.status, pawsDoc2.userType);
+                                wholeHTML += `            <td class="approval_tooltip" 
+                                            data-tooltip-content="${approvalExactDate}" >${approvalDate}<td>\n`;
+                                wholeHTML += `            <td class="approval_tooltip" 
+                                            data-tooltip-content="${declinedReasonTooltip}" >${approvalDeclinedReason}<td>\n`;
+                                wholeHTML += '       </tr>\n';
+
+                                // Close table element and finish everything
+                                if (i == approvals.length - 1) {
+                                    wholeHTML +=
+                                        '   </table>\n' +
+                                        '</div>\n';
+
+                                    // Close all the divs
+                                    wholeHTML +=
+                                        '                <br>\n' +
+                                        '            </div>\n' +
+                                        '        </div>\n' +
+                                        '    </div>\n' +
+                                        '</div>';
+
+                                    // Insert the HTML at the end of "pageDiv"
+                                    pageDiv.insertAdjacentHTML("beforeend", wholeHTML);
+
+                                    // Initialize tooltip
+                                    $(document).ready(function() {
+                                        $('.student_name_tooltip').tooltipster({
+                                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                            position: "right",
+                                            animation: "grow",
+                                        });
+
+                                        $('.form_date_tooltip').tooltipster({
+                                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                            position: "left",
+                                            animation: "grow",
+                                        });
+
+                                        $('.approval_tooltip').tooltipster({
+                                            theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+                                            position: "left",
+                                            animation: "grow",
+                                            functionPosition: function(instance, helper, position){
+                                                position.coord.left += 10;
+                                                return position;
+                                            }
+                                        });
+                                    });
+                                }
+                            } else {
+                                // doc.data() will be undefined in this case
+                                console.log("No such document!");
+                            }
+                        }).catch(function(error) {
+                            console.log("Error getting document:", error);
+                        });
+                    }
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
@@ -795,7 +899,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                     const submDate = getSubmDate(doc);
                     const exactSubmDate = getExactSubmDate(doc);
                     const studentID = formReference.data().formRef.path.split("/")[1];
-                    const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
+                    const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"), formDoc.approvals);
 
                     var main_div = document.createElement("div");
                     main_div.className = "w3-white w3-button w3-block w3-leftbar w3-border-theme w3-round-xlarge w3-margin-bottom";
@@ -850,7 +954,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                         second_nested_div.className = "w3-right";
 
                                         var h4_submission_date = document.createElement('h3');
-                                        h4_submission_date.appendChild(document.createTextNode("Submission Date: " + submDate));
+                                        h4_submission_date.appendChild(document.createTextNode("Submission: " + submDate));
                                         h4_submission_date.setAttribute("data-tooltip-content", '<span>' + exactSubmDate + '</span>');
                                         h4_submission_date.className = "form_date_tooltip";
                                         h4_submission_date.style.fontSize = "20px";
@@ -912,6 +1016,7 @@ function getStudentFormsByReferenceList (pageDiv, targetDiv, userID, formsFolder
                                                 }
 
                                                 // Unhide "targetDiv" after we have populated it
+                                                console.log("UNHIDE!");
                                                 document.getElementById(targetDiv).style.display = "block";
                                             }
 
@@ -942,7 +1047,7 @@ function displayFormReadModeByReference (event) {
             const formID = getFormID(doc);
             const formName = getFormName(doc);
             const studentID = formReference.path.split("/")[1];
-            const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
+            const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"), formDoc.approvals);
 
             pawsDB.collection(formReference.path.split("/")[0]).doc(studentID).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
@@ -974,7 +1079,7 @@ function displayFormReadModeByReference (event) {
                             '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission: '
                             + submDate + '</h3>\n' +
                             '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
@@ -1174,7 +1279,7 @@ function displayFormApproveMode (event) {
             const formID = getFormID(doc);
             const formName = getFormName(doc);
             const studentID = formReference.path.split("/")[1];
-            const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"));
+            const dueDatePromise = getFormDueDate(formID, formDoc.term.split(" ")[0], studentID, moment(doc.id.toString().split('_')[1], "MMDDYYYYHHmmss"), formDoc.approvals);
 
             pawsDB.collection(formReference.path.split("/")[0]).doc(studentID).get().then(function(studentDoc) {
                 if (studentDoc.exists) {
@@ -1206,7 +1311,7 @@ function displayFormApproveMode (event) {
                             '                    <h3 style="font-size: 22px;">Student: ' + studentName + '</h3>\n' +
                             '                </div>\n' +
                             '                <div class="w3-right">\n' +
-                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission Date: '
+                            '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + exactSubmDateHTML + '" > Submission: '
                             + submDate + '</h3>\n' +
                             '                    <h3 class="form_date_tooltip" style="font-size: 22px;" data-tooltip-content="' + dueDateHTML + '" > Due Date: '
                             + dueDate + '</h3>\n' +
@@ -2309,20 +2414,6 @@ function printTermDates () {
 
         console.log("\n\n");
     }
-
-    console.log("\n\nTEST");
-    getFormDueDate("Registration", "Fall", "aadkins2016", moment()).then(function(result) {
-        console.log(result.format('MMMM Do YYYY, h:mm:ss a'));
-    });
-
-    getFormDueDate("Coprerequisite", "Fall", "aadkins2016", moment()).then(function(result) {
-        console.log(result.format('MMMM Do YYYY, h:mm:ss a'));
-    });
-
-    getFormDueDate("Coprerequisite", "Fall", "aadkins2016", moment()).then(function(result) {
-        console.log(result.format('M/D/YY'));
-        console.log(result.format('M/D/YY [at] HH:mm:ss'));
-    });
 }
 
 // Return an object with all the form dates for all the terms
@@ -2468,7 +2559,7 @@ function addAvailableTermsToFormName () {
             const openDate = getFormOpenDate(formName, fullTerm).format('M/D/YY [at] HH:mm:ss');
             const closeDate = getFormCloseDate(formName, fullTerm).format('M/D/YY [at] HH:mm:ss');
 
-            const formDatesHTML = `<span><u>Open Date:</u> ${openDate}<br><br><u>Close Date:</u> ${closeDate}</span>`;
+            const formDatesHTML = `<span><u>Form Open Date:</u> ${openDate}<br><br><u>Form Close Date:</u> ${closeDate}</span>`;
 
             if (i == 0) {
                 terms += `<span class="term_tooltip" data-tooltip-content="${formDatesHTML}">${availableTerms[key][i]}</span>`;
@@ -2498,7 +2589,7 @@ function addAvailableTermsToFormName () {
 
 // --------------------------------------------------------------
 // Refactored code that was in other JS files.
-// This is used by Faculty, Staff, and Stuident Coordinators
+// This is used by Faculty, Staff, and Student Coordinators
 
 
 // After clicking on a student's entry, show a popup with the Student's information and have a button for visualizing the Student's records
