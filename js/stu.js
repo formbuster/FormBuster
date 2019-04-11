@@ -163,7 +163,9 @@ function updateDraftButtons(formID, formType, studentID) {
     document.getElementById("close-registration-form").onclick = closeDraftForm;
 
     document.getElementById("discard-option-1").setAttribute("onclick", null);
-    document.getElementById("discard-option-1").addEventListener("click", deleteDbEntry);
+    document.getElementById("discard-option-1").addEventListener("click", function deleteEntry () {
+        deleteDbEntry(formID);
+    });
 
     //when user saves the form, we will delete the current form, and make new one.
     document.getElementById("save-option-2").setAttribute("onclick", null);
@@ -173,17 +175,10 @@ function updateDraftButtons(formID, formType, studentID) {
         } else if (formType === "coprerequisite") {
             saveCoPrerequisiteForm(false, "draftsPage");
         }
-        deleteDbEntry();
+        deleteDbEntry(formID);
     });
 
-    function deleteDbEntry() {
-        formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
-            closeDraftForm();
-            // Todo: refresh draftsList
-        }).catch(function (error) {
-            console.error("Error removing document: ", error);
-        });
-    }
+    document.getElementById("form-body").formID = formID;
 
     document.getElementById("submit-option-2").setAttribute("onclick", null);
     document.getElementById("submit-option-2").addEventListener("click", function clicked () {
@@ -193,10 +188,17 @@ function updateDraftButtons(formID, formType, studentID) {
             saveCoPrerequisiteForm(true, "draftsPage");
         }
         //todo: BUG - if a coord sends a form to a student that's blank, this will prevent the student from submitting it blank
-        deleteDbEntry();
     });
 }
 
+function deleteDbEntry (formID) {
+    formDB.collection("users").doc(studentID).collection("drafts").doc(formID).delete().then(function () {
+        closeDraftForm();
+        // Todo: refresh draftsList
+    }).catch(function (error) {
+        console.error("Error removing document: ", error);
+    });
+}
 
 function displayDraftModeCoPrerequisite (event) {
     const pageDiv = document.getElementById(event.currentTarget.pageDiv);

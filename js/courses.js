@@ -806,6 +806,7 @@ function saveRegistrationForm (ifSubmit, page) {
                         });
                         displayConfirmationMessage(page, `Your form has been submitted! Check your "In-Progress Forms" for form progress.`);
                         closeForm();
+                        deleteDbEntry(document.getElementById("form-body").formID);
                     });
                 }
 
